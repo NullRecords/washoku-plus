@@ -6,13 +6,13 @@ Static GitHub Pages marketing site starter for Washoku Plus.
 
 - GitHub repo: `https://github.com/NullRecords/washoku-plus`
 - Default branch: `main`
-- GitHub Pages deploy source: `website/` via Actions workflow
+- GitHub Pages deploy source: `main` branch, `/docs` folder
 
 ## Structure
 
-- `website/` is the deployable site folder.
-- `website/guides/` contains starter free nutrition/education guides.
-- `.github/workflows/pages.yml` deploys the `website/` folder to GitHub Pages.
+- `docs/` is the deployable site folder for GitHub Pages branch deploy mode.
+- `docs/guides/` contains starter free nutrition/education guides.
+- `.github/workflows/` is optional for CI; GitHub Pages deploy is branch-based (no deploy workflow required).
 
 ## ForgeWeb
 
@@ -28,6 +28,8 @@ cd ForgeWeb
 
 Then use ForgeWeb to maintain the static pages and guide content.
 
+When using ForgeWeb prompts/scripts that mention `website/`, map that to `docs/` in this repository.
+
 If ForgeWeb updates are needed:
 
 ```bash
@@ -38,9 +40,9 @@ git commit -m "chore: update ForgeWeb submodule"
 
 ## Deploy, Test, and Manage Content
 
-- Deploy: push to `main`; `.github/workflows/pages.yml` publishes `website/` to GitHub Pages.
+- Deploy: push to `main`; GitHub Pages publishes from `/docs`.
 - Test: run your content/build checks in `ForgeWeb/` before pushing.
-- Manage content: edit site files under `website/` and use ForgeWeb tooling to streamline updates.
+- Manage content: edit site files under `docs/` and use ForgeWeb tooling to streamline updates.
 
 ## Notes
 
