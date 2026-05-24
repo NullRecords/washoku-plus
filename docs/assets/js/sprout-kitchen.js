@@ -42,7 +42,7 @@ const ingredientCatalog = {
 const state = {
   recipeName: "",
   cuisine: "japanese",
-  selected: { protein: null, plants: [], starch: null, flavor: null },
+  selected: { protein: [], plants: [], starch: [], flavor: [] },
   prep: { targetSlices: 6, currentSlices: 0, targetLabel: "" },
   prepPlan: { rows: [], confirmed: false },
   slicing: {
@@ -124,7 +124,7 @@ sproutExpressions.celebrate.src = "assets/images/sprout/sprout-celebrate.png";
 sproutExpressions.sad.src = "assets/images/sprout/sprout-sad.png";
 
 let currentSproutMood = "neutral";
-const sprout = { x: STATION_X.protein, y: 310, targetX: STATION_X.protein, t: 0 };
+const sprout = { x: STATION_X.protein, y: 468, targetX: STATION_X.protein, t: 0 };
 
 const flyingIngredients = [];
 const sliceBits = [];
@@ -134,16 +134,27 @@ let pointerDown = false;
 let pointerLast = null;
 let spawnAccumulator = 0;
 
+function hasRequiredBuildSelections() {
+  return state.selected.protein.length > 0
+    && state.selected.plants.length >= 2
+    && state.selected.starch.length > 0
+    && state.selected.flavor.length > 0;
+}
+
+function canStartSliceRound() {
+  return hasRequiredBuildSelections() && state.prepPlan.confirmed && !state.slicing.active && !state.slicing.countdownActive;
+}
+
 function getById(group, id) {
   return ingredientCatalog[group].find((item) => item.id === id) || null;
 }
 
 function allSelectedItems() {
   const items = [];
-  if (state.selected.protein) items.push(getById("protein", state.selected.protein));
+  state.selected.protein.forEach((id) => items.push(getById("protein", id)));
   state.selected.plants.forEach((id) => items.push(getById("plants", id)));
-  if (state.selected.starch) items.push(getById("starch", state.selected.starch));
-  if (state.selected.flavor) items.push(getById("flavor", state.selected.flavor));
+  state.selected.starch.forEach((id) => items.push(getById("starch", id)));
+  state.selected.flavor.forEach((id) => items.push(getById("flavor", id)));
   return items.filter(Boolean);
 }
 
@@ -156,35 +167,83 @@ function nutritionTotals() {
   }, { kcal: 0, protein: 0, plants: 0 });
 }
 
+function clampScore(value) {
+  return Math.max(0, Math.min(100, Math.round(value)));
+}
+
+function flavorItems() {
+  return state.selected.flavor.map((id) => getById("flavor", id)).filter(Boolean);
+}
+
+function isAcidicFlavor(item) {
+  if (!item) return false;
+  const text = `${item.name} ${(item.tags || []).join(" ")}`.toLowerCase();
+  return text.includes("bright")
+    || text.includes("citrus")
+    || text.includes("lemon")
+    || text.includes("salsa")
+    || text.includes("vinegar")
+    || text.includes("kimchi");
+}
+
+function selectionPenaltyStats() {
+  const acidicCount = flavorItems().filter((item) => isAcidicFlavor(item)).length;
+  return {
+    extraProtein: Math.max(0, state.selected.protein.length - 1),
+    extraStarch: Math.max(0, state.selected.starch.length - 1),
+    extraAcidic: Math.max(0, acidicCount - 1)
+  };
+}
+
+function calorieScoreBreakdown() {
+  const kcal = nutritionTotals().kcal;
+  if (!kcal) return 0;
+  if (kcal >= 460 && kcal <= 720) return 100;
+  if (kcal >= 380 && kcal <= 820) return 86;
+  if (kcal >= 320 && kcal <= 900) return 70;
+  if (kcal >= 260 && kcal <= 980) return 52;
+  return 30;
+}
+
 function proteinScoreBreakdown() {
   const grams = nutritionTotals().protein;
-  if (grams >= 40) return 100;
-  if (grams >= 32) return 86;
-  if (grams >= 26) return 74;
-  if (grams >= 20) return 58;
-  if (grams >= 14) return 40;
-  return 20;
+  const { extraProtein } = selectionPenaltyStats();
+  let score = 20;
+  if (grams >= 40) score = 100;
+  else if (grams >= 32) score = 86;
+  else if (grams >= 26) score = 74;
+  else if (grams >= 20) score = 58;
+  else if (grams >= 14) score = 40;
+
+  if (grams > 82) score -= 16;
+  score -= extraProtein * 12;
+  return clampScore(score);
 }
 
 function nutritionScoreBreakdown() {
   const totals = nutritionTotals();
+  const calorieScore = calorieScoreBreakdown();
+  const penalties = selectionPenaltyStats();
   let score = 0;
   if (totals.plants >= 4) score += 30;
   else if (totals.plants >= 3) score += 24;
   else if (totals.plants >= 2) score += 16;
-  if (state.selected.starch) score += 14;
-  if (totals.kcal >= 420 && totals.kcal <= 780) score += 24;
-  else if (totals.kcal >= 340 && totals.kcal <= 880) score += 12;
+  if (state.selected.starch.length) score += 14;
+  score += Math.round(calorieScore * 0.24);
   if (state.prep.currentSlices >= state.prep.targetSlices) score += 12;
-  if (state.selected.flavor) score += 10;
-  if (state.selected.protein) score += 10;
-  return Math.min(100, score);
+  if (state.selected.flavor.length) score += 10;
+  if (state.selected.protein.length) score += 10;
+  score -= penalties.extraProtein * 8;
+  score -= penalties.extraStarch * 11;
+  score -= penalties.extraAcidic * 9;
+  if (totals.kcal > 900) score -= 12;
+  return clampScore(score);
 }
 
 function washokuScoreBreakdown() {
   const tags = new Set(allSelectedItems().flatMap((item) => item.tags || []));
   let score = 0;
-  if (state.selected.protein && state.selected.starch && state.selected.flavor && state.selected.plants.length >= 2) score += 30;
+  if (state.selected.protein.length && state.selected.starch.length && state.selected.flavor.length && state.selected.plants.length >= 2) score += 30;
   if (tags.has("japanese") || tags.has("washoku")) score += 24;
   if (tags.has("umami") || tags.has("fermented")) score += 12;
   if (tags.has("bright")) score += 8;
@@ -196,15 +255,20 @@ function washokuScoreBreakdown() {
 function tastinessScoreBreakdown() {
   const items = allSelectedItems();
   if (!items.length) return 0;
+  const penalties = selectionPenaltyStats();
   const tagSet = new Set(items.flatMap((item) => item.tags || []));
   const baseTaste = Math.round((items.reduce((sum, item) => sum + (item.taste || 6), 0) / items.length) * 10);
   let bonus = 0;
+  let penalty = 0;
   if (tagSet.has(state.cuisine)) bonus += 10;
   if (tagSet.has("umami") && tagSet.has("bright")) bonus += 8;
   if (tagSet.has("spicy") && (state.cuisine === "korean" || state.cuisine === "mexican")) bonus += 7;
   if (state.selected.plants.length >= 3) bonus += 6;
   if (state.prep.currentSlices >= state.prep.targetSlices) bonus += 8;
-  return Math.min(100, baseTaste + bonus);
+  penalty += penalties.extraProtein * 6;
+  penalty += penalties.extraStarch * 8;
+  penalty += penalties.extraAcidic * 10;
+  return clampScore(baseTaste + bonus - penalty);
 }
 
 function combinedScore() {
@@ -212,16 +276,17 @@ function combinedScore() {
   const protein = proteinScoreBreakdown();
   const nutrition = nutritionScoreBreakdown();
   const washoku = washokuScoreBreakdown();
-  const overall = Math.round(tastiness * 0.3 + protein * 0.25 + nutrition * 0.25 + washoku * 0.2);
-  return { tastiness, protein, nutrition, washoku, overall };
+  const calorie = calorieScoreBreakdown();
+  const overall = Math.round(tastiness * 0.26 + nutrition * 0.26 + calorie * 0.2 + protein * 0.16 + washoku * 0.12);
+  return { tastiness, protein, nutrition, washoku, calorie, overall };
 }
 
 function selectedIdsInOrder() {
   const ids = [];
-  if (state.selected.protein) ids.push({ id: state.selected.protein, group: "protein" });
+  state.selected.protein.forEach((id) => ids.push({ id, group: "protein" }));
   state.selected.plants.forEach((id) => ids.push({ id, group: "plants" }));
-  if (state.selected.starch) ids.push({ id: state.selected.starch, group: "starch" });
-  if (state.selected.flavor) ids.push({ id: state.selected.flavor, group: "flavor" });
+  state.selected.starch.forEach((id) => ids.push({ id, group: "starch" }));
+  state.selected.flavor.forEach((id) => ids.push({ id, group: "flavor" }));
   return ids;
 }
 
@@ -349,10 +414,10 @@ function bindPrepPlanEditor() {
 
 function selectedForSlicing() {
   const ids = [];
-  if (state.selected.protein) ids.push(state.selected.protein);
+  state.selected.protein.forEach((id) => ids.push(id));
   state.selected.plants.forEach((id) => ids.push(id));
-  if (state.selected.starch) ids.push(state.selected.starch);
-  if (state.selected.flavor) ids.push(state.selected.flavor);
+  state.selected.starch.forEach((id) => ids.push(id));
+  state.selected.flavor.forEach((id) => ids.push(id));
   if (ids.length) return ids;
   return ingredientCatalog[state.activeStation].slice(0, 4).map((item) => item.id);
 }
@@ -412,6 +477,8 @@ function updateSliceStatsUI() {
   } else {
     dom.sliceHint.textContent = "Press Slice to start a timed prep round.";
   }
+
+  dom.sliceBtn.disabled = !canStartSliceRound() && !state.slicing.active;
 }
 
 function celebrateStep(step) {
@@ -421,10 +488,10 @@ function celebrateStep(step) {
 }
 
 function updateStepCompletion() {
-  if (state.selected.protein && !state.completedSteps.protein) celebrateStep("protein");
+  if (state.selected.protein.length && !state.completedSteps.protein) celebrateStep("protein");
   if (state.selected.plants.length >= 2 && !state.completedSteps.plants) celebrateStep("plants");
-  if (state.selected.starch && !state.completedSteps.starch) celebrateStep("starch");
-  if (state.selected.flavor && !state.completedSteps.flavor) celebrateStep("flavor");
+  if (state.selected.starch.length && !state.completedSteps.starch) celebrateStep("starch");
+  if (state.selected.flavor.length && !state.completedSteps.flavor) celebrateStep("flavor");
   if (state.prep.currentSlices >= state.prep.targetSlices && state.prepPlan.confirmed && allIngredientsPlated() && !state.completedSteps.prep) celebrateStep("prep");
 }
 
@@ -434,7 +501,7 @@ function renderStepBadges() {
 }
 
 function updatePrepTarget() {
-  const picked = state.selected.protein || state.selected.starch || state.selected.flavor || state.selected.plants[0];
+  const picked = state.selected.protein[0] || state.selected.starch[0] || state.selected.flavor[0] || state.selected.plants[0];
   const targetItem = getById("protein", picked) || getById("starch", picked) || getById("flavor", picked) || getById("plants", picked);
   state.prep.targetLabel = targetItem?.name || "Ingredient";
   const prepHint = state.prepPlan.confirmed ? "plan confirmed" : "plan not confirmed";
@@ -450,7 +517,7 @@ function updateScoreUI() {
 
   const totals = nutritionTotals();
   const score = combinedScore();
-  const complete = Boolean(state.selected.protein && state.selected.starch && state.selected.flavor) && state.selected.plants.length >= 2;
+  const complete = hasRequiredBuildSelections();
 
   dom.tastinessScore.textContent = String(score.tastiness);
   dom.proteinScore.textContent = String(score.protein);
@@ -470,7 +537,7 @@ function updateScoreUI() {
   if (state.slicing.active) {
     currentSproutMood = Date.now() < state.celebrateUntil ? "happy" : "neutral";
     dom.status.textContent = `Slice mode: ${state.prep.currentSlices}/${state.prep.targetSlices} cuts | score ${state.slicing.score}`;
-    dom.panelSproutAvatar.src = sproutExpressions[currentSproutMood].src;
+    if (dom.panelSproutAvatar) dom.panelSproutAvatar.src = sproutExpressions[currentSproutMood].src;
     return;
   }
 
@@ -480,7 +547,7 @@ function updateScoreUI() {
     return;
   }
 
-  if (!complete && (state.selected.protein || state.selected.starch || state.selected.flavor || state.selected.plants.length)) {
+  if (!complete && (state.selected.protein.length || state.selected.starch.length || state.selected.flavor.length || state.selected.plants.length)) {
     currentSproutMood = "sad";
     dom.status.textContent = "Sprout: complete all stations and prep for max score.";
   } else if (complete && score.overall >= 84) {
@@ -497,7 +564,8 @@ function updateScoreUI() {
     dom.status.textContent = "Sprout is ready. Build one balanced recipe.";
   }
 
-  dom.panelSproutAvatar.src = sproutExpressions[currentSproutMood].src;
+  if (dom.panelSproutAvatar) dom.panelSproutAvatar.src = sproutExpressions[currentSproutMood].src;
+  dom.sliceBtn.disabled = !canStartSliceRound() && !state.slicing.active;
 }
 
 function setStation(station) {
@@ -648,7 +716,7 @@ function registerSliceHit(target) {
   state.celebrateUntil = Date.now() + 520;
 
   const plateX = canvas.width - 132;
-  const plateY = 320;
+  const plateY = 278;
   plateTransfers.push({
     x: target.x,
     y: target.y,
@@ -704,7 +772,7 @@ function finishSliceRound(reason) {
 
 function drawPlatedMealPreview() {
   const plateX = canvas.width - 132;
-  const plateY = 320;
+  const plateY = 278;
   const progress = Math.min(1, state.prep.currentSlices / Math.max(1, state.prep.targetSlices));
 
   ctx.fillStyle = "rgba(255,255,255,0.88)";
@@ -723,7 +791,7 @@ function drawPlatedMealPreview() {
   const platedCounts = state.slicing.platedCounts;
   const hasIngredientOnPlate = (id) => (platedCounts[id] || 0) > 0;
 
-  const starchItem = getById("starch", state.selected.starch);
+  const starchItem = getById("starch", state.selected.starch[0]);
   if (starchItem && hasIngredientOnPlate(starchItem.id)) {
     ctx.fillStyle = colorForItem(starchItem);
     ctx.globalAlpha = 0.45 + progress * 0.45;
@@ -733,7 +801,7 @@ function drawPlatedMealPreview() {
     ctx.globalAlpha = 1;
   }
 
-  const proteinItem = getById("protein", state.selected.protein);
+  const proteinItem = getById("protein", state.selected.protein[0]);
   if (proteinItem && hasIngredientOnPlate(proteinItem.id)) {
     ctx.fillStyle = colorForItem(proteinItem);
     ctx.beginPath();
@@ -753,7 +821,7 @@ function drawPlatedMealPreview() {
     ctx.fill();
   });
 
-  const flavorItem = getById("flavor", state.selected.flavor);
+  const flavorItem = getById("flavor", state.selected.flavor[0]);
   if (flavorItem && hasIngredientOnPlate(flavorItem.id)) {
     ctx.strokeStyle = colorForItem(flavorItem);
     ctx.lineWidth = 4;
@@ -945,10 +1013,10 @@ function drawKitchen() {
     ctx.fillText(label, x - 28, 156);
   });
 
-  state.selected.protein && drawIngredientDot(STATION_X.protein, 120, "#2a6f57");
+  state.selected.protein.length && drawIngredientDot(STATION_X.protein, 120, "#2a6f57");
   state.selected.plants.length && drawIngredientDot(STATION_X.plants, 120, "#6f9a4a");
-  state.selected.starch && drawIngredientDot(STATION_X.starch, 120, "#a57d3e");
-  state.selected.flavor && drawIngredientDot(STATION_X.flavor, 120, "#b4623f");
+  state.selected.starch.length && drawIngredientDot(STATION_X.starch, 120, "#a57d3e");
+  state.selected.flavor.length && drawIngredientDot(STATION_X.flavor, 120, "#b4623f");
 
   advanceSlicingFrame();
   drawSlicingLayer();
@@ -958,11 +1026,11 @@ function drawKitchen() {
   const bob = Math.sin(sprout.t) * 4;
   sprout.x += (sprout.targetX - sprout.x) * 0.08;
 
-  const sproutSize = state.slicing.active ? 158 : 138;
+  const sproutSize = state.slicing.active ? 136 : 118;
   if (state.slicing.active || Date.now() < state.celebrateUntil) {
     ctx.fillStyle = "rgba(18, 27, 23, 0.46)";
     ctx.beginPath();
-    ctx.arc(sprout.x, sprout.y + 8 + bob, 78, 0, Math.PI * 2);
+    ctx.arc(sprout.x, sprout.y + 8 + bob, 66, 0, Math.PI * 2);
     ctx.fill();
   }
 
@@ -982,10 +1050,10 @@ function drawKitchen() {
 function renderRecipeSummary() {
   renderPrepPlan();
   const lines = [];
-  if (state.selected.protein) lines.push(`Protein: ${getById("protein", state.selected.protein).name}`);
+  if (state.selected.protein.length) lines.push(`Protein: ${state.selected.protein.map((id) => getById("protein", id)?.name).filter(Boolean).join(", ")}`);
   if (state.selected.plants.length) lines.push(`Plants: ${state.selected.plants.map((id) => getById("plants", id)?.name).filter(Boolean).join(", ")}`);
-  if (state.selected.starch) lines.push(`Starch: ${getById("starch", state.selected.starch).name}`);
-  if (state.selected.flavor) lines.push(`Flavor: ${getById("flavor", state.selected.flavor).name}`);
+  if (state.selected.starch.length) lines.push(`Starch: ${state.selected.starch.map((id) => getById("starch", id)?.name).filter(Boolean).join(", ")}`);
+  if (state.selected.flavor.length) lines.push(`Flavor: ${state.selected.flavor.map((id) => getById("flavor", id)?.name).filter(Boolean).join(", ")}`);
   dom.recipeList.innerHTML = lines.length ? lines.map((line) => `<li>${line}</li>`).join("") : "<li>Pick ingredients from each station to build your dish.</li>";
   updateScoreUI();
 }
@@ -1004,13 +1072,9 @@ function bindStationButtons() {
     btn.addEventListener("click", () => {
       const group = btn.dataset.group;
       const id = btn.dataset.id;
-      if (group === "plants") {
-        const has = state.selected.plants.includes(id);
-        if (has) state.selected.plants = state.selected.plants.filter((value) => value !== id);
-        else if (state.selected.plants.length < 5) state.selected.plants.push(id);
-      } else {
-        state.selected[group] = state.selected[group] === id ? null : id;
-      }
+      const has = state.selected[group].includes(id);
+      if (has) state.selected[group] = state.selected[group].filter((value) => value !== id);
+      else state.selected[group].push(id);
       setStation(group);
       refreshButtonState();
       renderRecipeSummary();
@@ -1026,13 +1090,13 @@ function refreshButtonState() {
   document.querySelectorAll(".item-btn").forEach((btn) => {
     const group = btn.dataset.group;
     const id = btn.dataset.id;
-    const picked = group === "plants" ? state.selected.plants.includes(id) : state.selected[group] === id;
+    const picked = state.selected[group].includes(id);
     btn.classList.toggle("is-picked", picked);
   });
 }
 
 function runSliceAction() {
-  if (!state.selected.protein && !state.selected.starch && !state.selected.flavor && !state.selected.plants.length) {
+  if (!state.selected.protein.length && !state.selected.starch.length && !state.selected.flavor.length && !state.selected.plants.length) {
     dom.status.textContent = "Pick ingredients first. Then swipe across flying ingredients.";
     return;
   }
@@ -1150,7 +1214,7 @@ function generateDishPreviewDataUrl(recipeName) {
   const platedCounts = state.slicing.platedCounts;
   const hasOnPlate = (id) => (platedCounts[id] || 0) > 0;
 
-  const starch = getById("starch", state.selected.starch);
+  const starch = getById("starch", state.selected.starch[0]);
   if (starch && hasOnPlate(starch.id)) {
     ptx.fillStyle = colorForItem(starch);
     ptx.globalAlpha = 0.7;
@@ -1160,7 +1224,7 @@ function generateDishPreviewDataUrl(recipeName) {
     ptx.globalAlpha = 1;
   }
 
-  const protein = getById("protein", state.selected.protein);
+  const protein = getById("protein", state.selected.protein[0]);
   if (protein && hasOnPlate(protein.id)) {
     ptx.fillStyle = colorForItem(protein);
     ptx.beginPath();
@@ -1178,7 +1242,7 @@ function generateDishPreviewDataUrl(recipeName) {
     ptx.fill();
   });
 
-  const flavor = getById("flavor", state.selected.flavor);
+  const flavor = getById("flavor", state.selected.flavor[0]);
   if (flavor && hasOnPlate(flavor.id)) {
     ptx.strokeStyle = colorForItem(flavor);
     ptx.lineWidth = 5;
@@ -1291,9 +1355,9 @@ function renderCommunity() {
 }
 
 function submitRecipe() {
-  const ready = state.selected.protein
-    && state.selected.starch
-    && state.selected.flavor
+  const ready = state.selected.protein.length
+    && state.selected.starch.length
+    && state.selected.flavor.length
     && state.selected.plants.length >= 2
     && state.prep.currentSlices >= state.prep.targetSlices
     && allIngredientsPlated()

@@ -49,7 +49,7 @@
 
 .kitchen-stage {
   display: grid;
-  gap: 0.8rem;
+  gap: 0.42rem;
 }
 
 #kitchenCanvas {
@@ -64,7 +64,7 @@
   border: 1px solid var(--game-line);
   border-radius: 12px;
   background: #fff;
-  padding: 0.55rem;
+  padding: 0.42rem;
   display: grid;
   grid-template-columns: 1fr 108px;
   gap: 0.6rem;
@@ -107,29 +107,6 @@
   display: flex;
   gap: 0.45rem;
   flex-wrap: wrap;
-}
-
-.sprout-dock {
-  border: 1px solid var(--game-line);
-  border-radius: 10px;
-  background: #f8f3e6;
-  display: grid;
-  place-items: center;
-  padding: 0.35rem;
-  text-align: center;
-}
-
-.sprout-dock img {
-  width: 72px;
-  height: 72px;
-  object-fit: contain;
-}
-
-.sprout-dock p {
-  margin: 0;
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--game-muted);
 }
 
 .stage-caption {
@@ -287,6 +264,13 @@
   font-weight: 700;
   cursor: pointer;
   padding: 0.62rem 0.85rem;
+}
+
+.action-btn:disabled {
+  cursor: not-allowed;
+  background: #8a9690;
+  color: #eef2ef;
+  opacity: 0.88;
 }
 
 .action-btn.alt {
@@ -497,16 +481,4 @@
     grid-template-columns: 1fr;
   }
 
-  .sprout-dock {
-    grid-template-columns: auto 1fr;
-    display: grid;
-    place-items: center start;
-    gap: 0.45rem;
-    text-align: left;
-  }
-
-  .sprout-dock img {
-    width: 62px;
-    height: 62px;
-  }
 }
