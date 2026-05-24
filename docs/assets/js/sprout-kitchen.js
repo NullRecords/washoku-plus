@@ -58,7 +58,8 @@ const state = {
     timeLeft: 0,
     roundStartedAt: 0,
     requiredIds: [],
-    platedCounts: {}
+    platedCounts: {},
+    topScoreFlashUntil: 0
   },
   completedSteps: { protein: false, plants: false, starch: false, flavor: false, prep: false },
   community: [],
@@ -72,6 +73,7 @@ const storageKey = "washoku-community-recipes-v2";
 const bestSliceScoreKey = "washoku-slice-best-v1";
 const voteRegistryKey = "washoku-community-votes-v1";
 const mobileBreakpointPx = 980;
+const landingIntroSpeech = "Hi chef. Build your bowl, balance the score, then slice and serve your best idea.";
 
 const canvas = document.getElementById("kitchenCanvas");
 const ctx = canvas.getContext("2d");
@@ -84,6 +86,9 @@ const dom = {
   recipePanel: document.getElementById("recipePanel"),
   builderGrid: document.getElementById("builderGrid"),
   prepPlanCard: document.getElementById("prepPlanCard"),
+  mobileSproutCoach: document.getElementById("mobileSproutCoach"),
+  mobileSproutAvatar: document.getElementById("mobileSproutAvatar"),
+  mobileSproutText: document.getElementById("mobileSproutText"),
   cuisineSelect: document.getElementById("cuisineSelect"),
   recipeName: document.getElementById("recipeName"),
   recipeList: document.getElementById("recipeList"),
@@ -95,6 +100,7 @@ const dom = {
   liveScore: document.getElementById("liveScore"),
   livePlated: document.getElementById("livePlated"),
   sliceCountdownBadge: document.getElementById("sliceCountdownBadge"),
+  topScorePulse: document.getElementById("topScorePulse"),
   panelStatus: document.getElementById("panelStatus"),
   panelSproutAvatar: document.getElementById("panelSproutAvatar"),
   prepBar: document.getElementById("prepBar"),
@@ -136,6 +142,7 @@ const flyingIngredients = [];
 const sliceBits = [];
 const slashTrail = [];
 const plateTransfers = [];
+const celebrationConfetti = [];
 let pointerDown = false;
 let pointerLast = null;
 let spawnAccumulator = 0;
@@ -511,6 +518,8 @@ function updateSliceStatsUI() {
   dom.liveTimer.textContent = `Time ${timerText}`;
   dom.liveScore.textContent = `Score ${state.slicing.score}`;
   dom.livePlated.textContent = `Plated ${platedUniqueCount()}/${platedNeed}`;
+  const topScoreActive = Date.now() < state.slicing.topScoreFlashUntil;
+  if (dom.topScorePulse) dom.topScorePulse.hidden = !topScoreActive;
 
   if (state.slicing.active) {
     dom.sliceBtn.textContent = "Quick Chop";
@@ -545,6 +554,14 @@ function celebrateStep(step) {
   state.completedSteps[step] = true;
   state.celebrateUntil = Date.now() + 1300;
   currentSproutMood = "celebrate";
+  const cheers = {
+    protein: "Yum, protein picked. Tiny victory dance!",
+    plants: "Greens glow-up. Your bowl looks happy.",
+    starch: "Cozy carbs locked in. Nice balance!",
+    flavor: "Flavor spark added. Chef magic!",
+    prep: "Prep complete. Plate looks amazing!"
+  };
+  dom.status.textContent = cheers[step] || "Cute progress unlocked!";
 }
 
 function updateStepCompletion() {
@@ -603,25 +620,25 @@ function updateScoreUI() {
 
   if (Date.now() < state.celebrateUntil) {
     currentSproutMood = "celebrate";
-    dom.status.textContent = "Sprout celebrates: step complete!";
+    dom.status.textContent = "Wow good job, your meal is complete!";
     return;
   }
 
   if (!complete && (state.selected.protein.length || state.selected.starch.length || state.selected.flavor.length || state.selected.plants.length)) {
     currentSproutMood = "sad";
-    dom.status.textContent = "Sprout: complete all stations and prep for max score.";
+    dom.status.textContent = "Almost there. Finish each station and I'll cheer loudly.";
   } else if (complete && score.overall >= 84) {
     currentSproutMood = "celebrate";
-    dom.status.textContent = "Sprout: restaurant-level build. Community-ready.";
+    dom.status.textContent = "Wow, chef-level bowl. Community spotlight ready!";
   } else if (complete && score.overall >= 64) {
     currentSproutMood = "happy";
-    dom.status.textContent = "Sprout: tasty build. Try one more flavor contrast.";
+    dom.status.textContent = "Tasty! Add one bold contrast for extra sparkle.";
   } else if (complete) {
     currentSproutMood = "sad";
-    dom.status.textContent = "Sprout: good start. Add contrast and prep to improve.";
+    dom.status.textContent = "Good start. A little prep and contrast will boost it.";
   } else {
     currentSproutMood = "neutral";
-    dom.status.textContent = "Sprout is ready. Build one balanced recipe.";
+    dom.status.textContent = landingIntroSpeech;
   }
 
   if (dom.panelSproutAvatar) dom.panelSproutAvatar.src = sproutExpressions[currentSproutMood].src;
@@ -681,6 +698,89 @@ function drawIngredientDot(x, y, color) {
   ctx.fill();
 }
 
+function wrapCanvasText(text, maxWidth) {
+  const clean = (text || "").replace(/\s+/g, " ").trim();
+  if (!clean) return [];
+  const words = clean.split(" ");
+  const lines = [];
+  let line = "";
+  words.forEach((word) => {
+    const next = line ? `${line} ${word}` : word;
+    if (ctx.measureText(next).width <= maxWidth || !line) {
+      line = next;
+      return;
+    }
+    lines.push(line);
+    line = word;
+  });
+  if (line) lines.push(line);
+  return lines.slice(0, 5);
+}
+
+function drawSproutSpeechBubble(message, sproutX, sproutY) {
+  const text = (message || "").trim();
+  if (!text) return;
+
+  ctx.save();
+  const bubbleW = Math.min(360, canvas.width * 0.52);
+  ctx.font = "700 15px 'Marker Felt', 'Comic Sans MS', 'Trebuchet MS', cursive";
+  const lines = wrapCanvasText(text, bubbleW - 26);
+  if (!lines.length) {
+    ctx.restore();
+    return;
+  }
+
+  const lineHeight = 18;
+  const bubbleH = lines.length * lineHeight + 24;
+  const leftBound = 12;
+  const rightBound = canvas.width - bubbleW - 12;
+  const bx = Math.max(leftBound, Math.min(rightBound, sproutX - bubbleW * 0.52));
+  const by = Math.max(12, sproutY - 178 - lines.length * 1.5);
+
+  ctx.shadowColor = "rgba(0,0,0,0.16)";
+  ctx.shadowBlur = 10;
+  ctx.shadowOffsetY = 3;
+  ctx.fillStyle = "rgba(255,255,255,0.97)";
+  ctx.beginPath();
+  ctx.roundRect(bx, by, bubbleW, bubbleH, 16);
+  ctx.fill();
+
+  const tailX = Math.max(bx + 28, Math.min(bx + bubbleW - 28, sproutX - 10));
+  ctx.beginPath();
+  ctx.moveTo(tailX, by + bubbleH - 1);
+  ctx.lineTo(tailX + 18, by + bubbleH - 1);
+  ctx.lineTo(sproutX - 2, sproutY - 54);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.shadowColor = "transparent";
+  ctx.strokeStyle = "rgba(22,54,41,0.24)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(bx, by, bubbleW, bubbleH, 16);
+  ctx.stroke();
+
+  ctx.fillStyle = "#163629";
+  lines.forEach((line, index) => {
+    ctx.fillText(line, bx + 13, by + 18 + index * lineHeight);
+  });
+  ctx.restore();
+}
+
+function syncSproutCoachUI() {
+  const text = (dom.status?.textContent || "").trim();
+  if (dom.mobileSproutText && text) dom.mobileSproutText.textContent = text;
+  if (dom.mobileSproutAvatar) dom.mobileSproutAvatar.src = sproutExpressions[currentSproutMood].src;
+  if (dom.mobileSproutCoach) {
+    const canvasRect = canvas.getBoundingClientRect();
+    const originalSproutVisible = mobileGuide.enabled
+      && canvasRect.top < window.innerHeight * 0.88
+      && canvasRect.bottom > 120;
+    dom.mobileSproutCoach.classList.toggle("is-hidden", originalSproutVisible);
+    dom.mobileSproutCoach.classList.toggle("is-ready", canStartSliceRound());
+  }
+}
+
 function ingredientGroupForId(id) {
   if (getById("protein", id)) return "protein";
   if (getById("plants", id)) return "plants";
@@ -720,6 +820,46 @@ function mealPhotoForItem(item) {
     mealPhotoCache.set(path, img);
   }
   return mealPhotoCache.get(path);
+}
+
+function heroMealPhotoForCuisine() {
+  const pools = {
+    japanese: [1, 2, 4, 8, 10],
+    korean: [11, 14, 17, 24],
+    thai: [2, 14, 17, 18],
+    mediterranean: [3, 13, 15, 19],
+    mexican: [7, 14, 16, 24],
+    global: [11, 12, 21, 22, 24]
+  };
+  const selectedIds = selectedIdsInOrder().map((entry) => entry.id).join("|");
+  const pool = pools[state.cuisine] || pools.global;
+  const idx = pool[hashText(`${state.cuisine}|${selectedIds}`) % pool.length];
+  const path = mealPhotoPathByIndex(idx);
+  if (!mealPhotoCache.has(path)) {
+    const img = new Image();
+    img.src = path;
+    mealPhotoCache.set(path, img);
+  }
+  return mealPhotoCache.get(path);
+}
+
+function drawPreviewFoodPiece(drawCtx, x, y, size, item, opacity = 1) {
+  if (!item) return;
+  const photo = mealPhotoForItem(item);
+  drawCtx.save();
+  drawCtx.globalAlpha = opacity;
+  drawCtx.fillStyle = colorForItem(item);
+  drawCtx.beginPath();
+  drawCtx.arc(x, y, size, 0, Math.PI * 2);
+  drawCtx.fill();
+  if (photo && photo.complete && photo.naturalWidth > 0) {
+    drawCtx.beginPath();
+    drawCtx.arc(x, y, size, 0, Math.PI * 2);
+    drawCtx.clip();
+    drawCtx.globalAlpha = Math.min(1, opacity * 0.86);
+    drawCtx.drawImage(photo, x - size * 1.15, y - size * 1.15, size * 2.3, size * 2.3);
+  }
+  drawCtx.restore();
 }
 
 function traceIngredientShapePath(group, size) {
@@ -860,22 +1000,54 @@ function sliceAlongSegment(ax, ay, bx, by) {
   updateScoreUI();
 }
 
+function triggerTopScoreCelebration() {
+  const colors = ["#f25f5c", "#ffe066", "#70c1b3", "#247ba0", "#b388eb", "#ff9f1c"];
+  celebrationConfetti.length = 0;
+  for (let i = 0; i < 96; i += 1) {
+    celebrationConfetti.push({
+      x: 24 + Math.random() * (canvas.width - 48),
+      y: 42 + Math.random() * 40,
+      vx: (Math.random() - 0.5) * 4.2,
+      vy: 1.2 + Math.random() * 3.1,
+      rot: Math.random() * Math.PI * 2,
+      spin: (Math.random() - 0.5) * 0.22,
+      size: 5 + Math.random() * 5,
+      life: 1,
+      color: colors[i % colors.length]
+    });
+  }
+}
+
 function saveBestSliceScoreIfNeeded() {
-  if (state.slicing.score <= state.slicing.bestScore) return;
+  if (state.slicing.score <= state.slicing.bestScore) return false;
   state.slicing.bestScore = state.slicing.score;
   localStorage.setItem(bestSliceScoreKey, String(state.slicing.bestScore));
+  return true;
 }
 
 function finishSliceRound(reason) {
   state.slicing.active = false;
-  saveBestSliceScoreIfNeeded();
+  const newTopScore = saveBestSliceScoreIfNeeded();
   if (allIngredientsPlated() && state.prep.currentSlices >= state.prep.targetSlices) {
     celebrateStep("prep");
-    currentSproutMood = "celebrate";
-    dom.status.textContent = `Prep complete: ${reason}. Score ${state.slicing.score}.`;
+    if (newTopScore) {
+      currentSproutMood = "celebrate";
+      triggerTopScoreCelebration();
+      state.slicing.topScoreFlashUntil = Date.now() + 3200;
+      dom.status.textContent = `Wow good job, your meal is complete! NEW TOP SCORE ${state.slicing.score}!`;
+    } else if (state.slicing.score >= 170) {
+      currentSproutMood = "celebrate";
+      dom.status.textContent = `Wow good job, your meal is complete! Incredible score ${state.slicing.score}!`;
+    } else if (state.slicing.score >= 120) {
+      currentSproutMood = "happy";
+      dom.status.textContent = `Wow good job, your meal is complete! Great score ${state.slicing.score}!`;
+    } else {
+      currentSproutMood = "happy";
+      dom.status.textContent = `Wow good job, your meal is complete! Score ${state.slicing.score}.`;
+    }
   } else {
     currentSproutMood = "sad";
-    dom.status.textContent = `Round ended: ${reason}. Plate all selected ingredients and reach prep target.`;
+    dom.status.textContent = `Round ended: ${reason}. Plate all picks and hit prep target next round.`;
   }
   updateScoreUI();
 }
@@ -955,7 +1127,7 @@ function advanceSlicingFrame() {
       state.slicing.roundStartedAt = performance.now();
       state.slicing.timeLeft = state.slicing.timerSeconds;
       for (let i = 0; i < 4; i += 1) spawnIngredientTarget();
-      dom.status.textContent = "Slice mode on: plate every selected ingredient before time ends.";
+      dom.status.textContent = "Slice mode ON. Catch every ingredient and plate it!";
     } else {
       dom.status.textContent = `Slice starts in ${Math.ceil(remainingMs / 1000)}...`;
     }
@@ -1020,6 +1192,16 @@ function advanceSlicingFrame() {
     if (transfer.progress >= 1.1) plateTransfers.splice(i, 1);
   }
 
+  for (let i = celebrationConfetti.length - 1; i >= 0; i -= 1) {
+    const bit = celebrationConfetti[i];
+    bit.x += bit.vx;
+    bit.y += bit.vy;
+    bit.vy += 0.05;
+    bit.rot += bit.spin;
+    bit.life -= 0.014;
+    if (bit.life <= 0 || bit.y > canvas.height + 28) celebrationConfetti.splice(i, 1);
+  }
+
   if (state.slicing.active && state.prep.currentSlices >= state.prep.targetSlices && allIngredientsPlated()) {
     const timeBonus = Math.round(state.slicing.timeLeft * 3);
     state.slicing.score += timeBonus;
@@ -1062,6 +1244,16 @@ function drawSlicingLayer() {
       || getById("flavor", transfer.itemId);
     if (transferItem) drawPhotoFoodPiece(transfer.x, transfer.y, 11, transferItem, { opacity: Math.max(0.46, 1 - transfer.progress * 0.5) });
     ctx.globalAlpha = 1;
+  });
+
+  celebrationConfetti.forEach((bit) => {
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, bit.life);
+    ctx.translate(bit.x, bit.y);
+    ctx.rotate(bit.rot);
+    ctx.fillStyle = bit.color;
+    ctx.fillRect(-bit.size * 0.55, -bit.size * 0.25, bit.size, bit.size * 0.5);
+    ctx.restore();
   });
 }
 
@@ -1126,12 +1318,6 @@ function drawKitchen() {
   sprout.x += (sprout.targetX - sprout.x) * 0.08;
 
   const sproutSize = state.slicing.active ? 136 : 118;
-  if (state.slicing.active || Date.now() < state.celebrateUntil) {
-    ctx.fillStyle = "rgba(18, 27, 23, 0.46)";
-    ctx.beginPath();
-    ctx.arc(sprout.x, sprout.y + 8 + bob, 66, 0, Math.PI * 2);
-    ctx.fill();
-  }
 
   const activeSprout = sproutExpressions[currentSproutMood] || sproutExpressions.neutral;
   if (activeSprout && activeSprout.complete) {
@@ -1142,6 +1328,9 @@ function drawKitchen() {
     ctx.arc(sprout.x, sprout.y + bob, sproutSize * 0.25, 0, Math.PI * 2);
     ctx.fill();
   }
+
+  drawSproutSpeechBubble(dom.status?.textContent || "", sprout.x, sprout.y + bob);
+  syncSproutCoachUI();
 
   requestAnimationFrame(drawKitchen);
 }
@@ -1197,17 +1386,17 @@ function refreshButtonState() {
 
 function runSliceAction() {
   if (!state.selected.protein.length && !state.selected.starch.length && !state.selected.flavor.length && !state.selected.plants.length) {
-    dom.status.textContent = "Pick ingredients first. Then swipe across flying ingredients.";
+    dom.status.textContent = "Pick your ingredients first, then we slice like ninjas.";
     return;
   }
   if (!state.prepPlan.confirmed) {
-    dom.status.textContent = "Confirm prep plan first (actions + sizes), then start slicing.";
+    dom.status.textContent = "Tap Confirm Prep Plan first so our slice round can start.";
     currentSproutMood = "sad";
     return;
   }
 
   if (state.slicing.countdownActive) {
-    dom.status.textContent = "Countdown in progress. Get ready to slice.";
+    dom.status.textContent = "Countdown is on. Blades ready, chef!";
     return;
   }
 
@@ -1227,7 +1416,7 @@ function runSliceAction() {
 
     state.slicing.countdownActive = true;
     state.slicing.countdownEndsAt = performance.now() + state.slicing.countdownSeconds * 1000;
-    dom.status.textContent = `Slice starts in ${state.slicing.countdownSeconds}...`;
+    dom.status.textContent = `Slice starts in ${state.slicing.countdownSeconds}... Deep breath!`;
     updateScoreUI();
     return;
   }
@@ -1301,54 +1490,61 @@ function generateDishPreviewDataUrl(recipeName) {
   off.height = 220;
   const ptx = off.getContext("2d");
 
-  ptx.fillStyle = "#f6eedc";
+  const heroPhoto = heroMealPhotoForCuisine();
+  const dishCx = 110;
+  const dishCy = 108;
+  const dishR = 79;
+
+  ptx.fillStyle = "#f5ebd7";
   ptx.fillRect(0, 0, off.width, off.height);
-  ptx.fillStyle = "#ffffff";
+
+  ptx.save();
   ptx.beginPath();
-  ptx.arc(110, 112, 78, 0, Math.PI * 2);
-  ptx.fill();
-  ptx.strokeStyle = "#bca789";
-  ptx.lineWidth = 4;
+  ptx.arc(dishCx, dishCy, dishR, 0, Math.PI * 2);
+  ptx.clip();
+  if (heroPhoto && heroPhoto.complete && heroPhoto.naturalWidth > 0) {
+    ptx.drawImage(heroPhoto, dishCx - 88, dishCy - 88, 176, 176);
+  } else {
+    ptx.fillStyle = "#e9ddc8";
+    ptx.fillRect(dishCx - 88, dishCy - 88, 176, 176);
+  }
+  ptx.restore();
+
+  ptx.strokeStyle = "rgba(92,70,45,0.35)";
+  ptx.lineWidth = 5;
+  ptx.beginPath();
+  ptx.arc(dishCx, dishCy, dishR, 0, Math.PI * 2);
   ptx.stroke();
+
+  ptx.fillStyle = "rgba(255,255,255,0.18)";
+  ptx.beginPath();
+  ptx.arc(dishCx - 20, dishCy - 26, 36, 0, Math.PI * 2);
+  ptx.fill();
 
   const platedCounts = state.slicing.platedCounts;
   const hasOnPlate = (id) => (platedCounts[id] || 0) > 0;
 
   const starch = getById("starch", state.selected.starch[0]);
   if (starch && hasOnPlate(starch.id)) {
-    ptx.fillStyle = colorForItem(starch);
-    ptx.globalAlpha = 0.7;
-    ptx.beginPath();
-    ptx.arc(110, 118, 50, 0, Math.PI * 2);
-    ptx.fill();
-    ptx.globalAlpha = 1;
+    drawPreviewFoodPiece(ptx, dishCx, dishCy + 8, 44, starch, 0.82);
   }
 
   const protein = getById("protein", state.selected.protein[0]);
   if (protein && hasOnPlate(protein.id)) {
-    ptx.fillStyle = colorForItem(protein);
-    ptx.beginPath();
-    ptx.ellipse(138, 102, 28, 18, -0.2, 0, Math.PI * 2);
-    ptx.fill();
+    drawPreviewFoodPiece(ptx, dishCx + 24, dishCy - 16, 24, protein, 0.92);
   }
 
   const plants = state.selected.plants.map((id) => getById("plants", id)).filter(Boolean);
   plants.forEach((item, index) => {
     if (!hasOnPlate(item.id)) return;
     const angle = (Math.PI * 2 * index) / Math.max(1, plants.length);
-    ptx.fillStyle = colorForItem(item);
-    ptx.beginPath();
-    ptx.arc(110 + Math.cos(angle) * 34, 114 + Math.sin(angle) * 24, 11, 0, Math.PI * 2);
-    ptx.fill();
+    drawPreviewFoodPiece(ptx, dishCx + Math.cos(angle) * 35, dishCy + 8 + Math.sin(angle) * 26, 11, item, 0.9);
   });
 
   const flavor = getById("flavor", state.selected.flavor[0]);
   if (flavor && hasOnPlate(flavor.id)) {
-    ptx.strokeStyle = colorForItem(flavor);
-    ptx.lineWidth = 5;
-    ptx.beginPath();
-    ptx.arc(110, 114, 36, 0.4, 2.8);
-    ptx.stroke();
+    drawPreviewFoodPiece(ptx, dishCx - 20, dishCy + 4, 9, flavor, 0.8);
+    drawPreviewFoodPiece(ptx, dishCx + 17, dishCy + 30, 8, flavor, 0.75);
   }
 
   ptx.fillStyle = "#524133";
@@ -1464,7 +1660,7 @@ function submitRecipe() {
     && state.prepPlan.confirmed;
 
   if (!ready) {
-    dom.status.textContent = "Complete ingredient picks, confirm prep plan, and plate all selected ingredients before submit.";
+    dom.status.textContent = "One more step: finish picks, confirm prep, and plate everything.";
     currentSproutMood = "sad";
     return;
   }
@@ -1475,11 +1671,12 @@ function submitRecipe() {
   renderCommunity();
   celebrateStep("prep");
   currentSproutMood = "celebrate";
-  dom.status.textContent = `Submitted ${payload.name}. Community can vote it up.`;
+  dom.status.textContent = `Submitted ${payload.name}. Sprinkle those community votes!`;
 }
 
 function initGame() {
   mobileGuide.enabled = isMobileViewport();
+  dom.status.textContent = landingIntroSpeech;
   state.slicing.bestScore = Number(localStorage.getItem(bestSliceScoreKey) || 0);
   loadCommunity();
   bindStationButtons();

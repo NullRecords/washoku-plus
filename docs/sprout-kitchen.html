@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Sprout Kitchen Lab - Washoku Plus</title>
+  <title>Sprout's Kitchen Lab - Washoku Plus</title>
   <meta name="description" content="Build recipes with Sprout, score nutrition and washoku fit, and submit community ideas.">
   <meta name="theme-color" content="#123B2A">
   <link rel="icon" href="assets/images/favicon.svg">
@@ -32,15 +32,10 @@
 
 <main class="game-main">
   <div class="game-shell">
-    <section class="game-hero" id="gameHero">
-      <p class="eyebrow">Sprout Kitchen Lab</p>
-      <h1>Build a recipe and score its washoku fit.</h1>
-      <p>Pick ingredients in a simple kitchen game, get nutrition and washoku-alignment scoring, then submit your recipe for local community voting. Top-voted recipes can be exported for app and admin review.</p>
-    </section>
-
     <div class="game-layout">
       <section class="game-card kitchen-stage" id="kitchenStage">
-        <canvas id="kitchenCanvas" width="760" height="520" aria-label="Sprout kitchen animation"></canvas>
+        <p class="kitchen-title">Sprout's Kitchen Lab</p>
+        <canvas id="kitchenCanvas" width="760" height="520" aria-label="Sprout's kitchen animation"></canvas>
         <section class="slice-control-panel">
           <div class="slice-control-main">
             <div class="slice-meters">
@@ -48,6 +43,7 @@
               <span id="liveScore" class="slice-meter">Score 0</span>
               <span id="livePlated" class="slice-meter">Plated 0/0</span>
               <span id="sliceCountdownBadge" class="slice-meter alt">Ready</span>
+              <span id="topScorePulse" class="slice-meter top-score-pulse" hidden>TOP SCORE!</span>
             </div>
             <div class="slice-controls">
               <button id="sliceBtn" class="action-btn" type="button">Start Slice Round</button>
@@ -158,6 +154,11 @@
         </div>
       </section>
     </div>
+
+    <aside id="mobileSproutCoach" class="mobile-sprout-coach" aria-live="polite" aria-label="Sprout coach">
+      <img id="mobileSproutAvatar" src="assets/images/sprout/sprout-neutral.png" alt="Sprout coach expression">
+      <p id="mobileSproutText">Let's build something delicious.</p>
+    </aside>
 
     <section class="game-card community-panel">
       <div class="flex items-center justify-between" style="display:flex;justify-content:space-between;align-items:center;gap:.8rem;flex-wrap:wrap;">
