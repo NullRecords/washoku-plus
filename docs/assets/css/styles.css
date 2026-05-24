@@ -3,3 +3,9 @@
 .menu-image-gallery img{display:block;width:100%;height:auto;border-radius:12px}
 .menu-image-gallery figcaption{margin-top:.55rem;font-size:.84rem;color:var(--ink-2);font-weight:700;text-align:center}
 @media(max-width:860px){.menu-image-gallery{grid-template-columns:1fr}}
+.menu-card{display:grid;grid-template-columns:120px 1fr;gap:.9rem;align-items:center}
+.menu-card-no-image{grid-template-columns:1fr}
+.menu-card-body{min-width:0}
+.menu-card-media{margin:0;width:120px;height:120px;border-radius:16px;background:radial-gradient(circle at 30% 30%,rgba(220,166,74,.22),rgba(18,59,42,.06));display:grid;place-items:center;overflow:hidden}
+.menu-card-media img{display:block;width:100%;height:100%;object-fit:contain}
+@media(max-width:640px){.menu-card{grid-template-columns:1fr}.menu-card-media{width:100%;height:184px}}

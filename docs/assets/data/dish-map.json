@@ -1,0 +1,76 @@
+{
+  "version": "1.0.0",
+  "assets": [
+    { "id": "meal-cat-01", "image": "assets/images/dishes/meal-cat-01.png" },
+    { "id": "meal-cat-02", "image": "assets/images/dishes/meal-cat-02.png" },
+    { "id": "meal-cat-03", "image": "assets/images/dishes/meal-cat-03.png" },
+    { "id": "meal-cat-04", "image": "assets/images/dishes/meal-cat-04.png" },
+    { "id": "meal-cat-05", "image": "assets/images/dishes/meal-cat-05.png" },
+    { "id": "meal-cat-06", "image": "assets/images/dishes/meal-cat-06.png" },
+    { "id": "meal-cat-07", "image": "assets/images/dishes/meal-cat-07.png" },
+    { "id": "meal-cat-08", "image": "assets/images/dishes/meal-cat-08.png" },
+    { "id": "meal-cat-09", "image": "assets/images/dishes/meal-cat-09.png" },
+    { "id": "meal-cat-10", "image": "assets/images/dishes/meal-cat-10.png" },
+    { "id": "meal-cat-11", "image": "assets/images/dishes/meal-cat-11.png" },
+    { "id": "meal-cat-12", "image": "assets/images/dishes/meal-cat-12.png" },
+    { "id": "meal-cat-13", "image": "assets/images/dishes/meal-cat-13.png" },
+    { "id": "meal-cat-14", "image": "assets/images/dishes/meal-cat-14.png" },
+    { "id": "meal-cat-15", "image": "assets/images/dishes/meal-cat-15.png" },
+    { "id": "meal-cat-16", "image": "assets/images/dishes/meal-cat-16.png" },
+    { "id": "meal-cat-17", "image": "assets/images/dishes/meal-cat-17.png" },
+    { "id": "meal-cat-18", "image": "assets/images/dishes/meal-cat-18.png" },
+    { "id": "meal-cat-19", "image": "assets/images/dishes/meal-cat-19.png" },
+    { "id": "meal-cat-20", "image": "assets/images/dishes/meal-cat-20.png" },
+    { "id": "meal-cat-21", "image": "assets/images/dishes/meal-cat-21.png" },
+    { "id": "meal-cat-22", "image": "assets/images/dishes/meal-cat-22.png" },
+    { "id": "meal-cat-23", "image": "assets/images/dishes/meal-cat-23.png" },
+    { "id": "meal-cat-24", "image": "assets/images/dishes/meal-cat-24.png" }
+  ],
+  "categoryPools": {
+    "bowls": [
+      "meal-cat-01",
+      "meal-cat-02",
+      "meal-cat-03",
+      "meal-cat-13",
+      "meal-cat-17",
+      "meal-cat-18"
+    ],
+    "burgers": [
+      "meal-cat-06"
+    ],
+    "global-favorites": [
+      "meal-cat-09",
+      "meal-cat-10",
+      "meal-cat-11",
+      "meal-cat-12",
+      "meal-cat-16",
+      "meal-cat-22"
+    ],
+    "plates-and-bento": [
+      "meal-cat-07",
+      "meal-cat-08",
+      "meal-cat-21"
+    ],
+    "salads": [
+      "meal-cat-15"
+    ],
+    "soups-and-noodles": [
+      "meal-cat-04",
+      "meal-cat-14",
+      "meal-cat-16",
+      "meal-cat-23"
+    ],
+    "wraps-and-rolls": [
+      "meal-cat-05",
+      "meal-cat-20",
+      "meal-cat-24"
+    ],
+    "default": [
+      "meal-cat-01",
+      "meal-cat-03",
+      "meal-cat-17",
+      "meal-cat-18"
+    ]
+  },
+  "mealImageOverrides": {}
+}

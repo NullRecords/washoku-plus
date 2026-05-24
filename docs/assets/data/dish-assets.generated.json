@@ -1,0 +1,295 @@
+{
+  "version": "1.0.0",
+  "generator": "docs/tools/slice_meal_board.py",
+  "assets": [
+    {
+      "id": "board-01-dish-01",
+      "image": "assets/images/dishes/board-01-dish-01.png",
+      "source": "meal-cats-1-12.png",
+      "bbox": {
+        "x0": 31,
+        "y0": 81,
+        "x1": 365,
+        "y1": 377
+      },
+      "area": 68869
+    },
+    {
+      "id": "board-01-dish-02",
+      "image": "assets/images/dishes/board-01-dish-02.png",
+      "source": "meal-cats-1-12.png",
+      "bbox": {
+        "x0": 418,
+        "y0": 94,
+        "x1": 719,
+        "y1": 371
+      },
+      "area": 57349
+    },
+    {
+      "id": "board-01-dish-03",
+      "image": "assets/images/dishes/board-01-dish-03.png",
+      "source": "meal-cats-1-12.png",
+      "bbox": {
+        "x0": 769,
+        "y0": 98,
+        "x1": 1090,
+        "y1": 375
+      },
+      "area": 61634
+    },
+    {
+      "id": "board-01-dish-04",
+      "image": "assets/images/dishes/board-01-dish-04.png",
+      "source": "meal-cats-1-12.png",
+      "bbox": {
+        "x0": 1132,
+        "y0": 113,
+        "x1": 1405,
+        "y1": 371
+      },
+      "area": 47851
+    },
+    {
+      "id": "board-01-dish-05",
+      "image": "assets/images/dishes/board-01-dish-05.png",
+      "source": "meal-cats-1-12.png",
+      "bbox": {
+        "x0": 32,
+        "y0": 416,
+        "x1": 348,
+        "y1": 691
+      },
+      "area": 60072
+    },
+    {
+      "id": "board-01-dish-06",
+      "image": "assets/images/dishes/board-01-dish-06.png",
+      "source": "meal-cats-1-12.png",
+      "bbox": {
+        "x0": 385,
+        "y0": 420,
+        "x1": 705,
+        "y1": 690
+      },
+      "area": 60033
+    },
+    {
+      "id": "board-01-dish-07",
+      "image": "assets/images/dishes/board-01-dish-07.png",
+      "source": "meal-cats-1-12.png",
+      "bbox": {
+        "x0": 737,
+        "y0": 422,
+        "x1": 1046,
+        "y1": 693
+      },
+      "area": 52334
+    },
+    {
+      "id": "board-01-dish-08",
+      "image": "assets/images/dishes/board-01-dish-08.png",
+      "source": "meal-cats-1-12.png",
+      "bbox": {
+        "x0": 1075,
+        "y0": 438,
+        "x1": 1425,
+        "y1": 689
+      },
+      "area": 62660
+    },
+    {
+      "id": "board-01-dish-09",
+      "image": "assets/images/dishes/board-01-dish-09.png",
+      "source": "meal-cats-1-12.png",
+      "bbox": {
+        "x0": 41,
+        "y0": 723,
+        "x1": 314,
+        "y1": 993
+      },
+      "area": 29825
+    },
+    {
+      "id": "board-01-dish-10",
+      "image": "assets/images/dishes/board-01-dish-10.png",
+      "source": "meal-cats-1-12.png",
+      "bbox": {
+        "x0": 360,
+        "y0": 740,
+        "x1": 688,
+        "y1": 1006
+      },
+      "area": 73712
+    },
+    {
+      "id": "board-01-dish-11",
+      "image": "assets/images/dishes/board-01-dish-11.png",
+      "source": "meal-cats-1-12.png",
+      "bbox": {
+        "x0": 717,
+        "y0": 746,
+        "x1": 1053,
+        "y1": 1005
+      },
+      "area": 61769
+    },
+    {
+      "id": "board-01-dish-12",
+      "image": "assets/images/dishes/board-01-dish-12.png",
+      "source": "meal-cats-1-12.png",
+      "bbox": {
+        "x0": 1075,
+        "y0": 746,
+        "x1": 1404,
+        "y1": 1004
+      },
+      "area": 60358
+    },
+    {
+      "id": "board-02-dish-01",
+      "image": "assets/images/dishes/board-02-dish-01.png",
+      "source": "meal-cats-13-24.png",
+      "bbox": {
+        "x0": 315,
+        "y0": 123,
+        "x1": 621,
+        "y1": 383
+      },
+      "area": 51792
+    },
+    {
+      "id": "board-02-dish-02",
+      "image": "assets/images/dishes/board-02-dish-02.png",
+      "source": "meal-cats-13-24.png",
+      "bbox": {
+        "x0": 8,
+        "y0": 131,
+        "x1": 311,
+        "y1": 381
+      },
+      "area": 51762
+    },
+    {
+      "id": "board-02-dish-03",
+      "image": "assets/images/dishes/board-02-dish-03.png",
+      "source": "meal-cats-13-24.png",
+      "bbox": {
+        "x0": 949,
+        "y0": 135,
+        "x1": 1244,
+        "y1": 383
+      },
+      "area": 44143
+    },
+    {
+      "id": "board-02-dish-04",
+      "image": "assets/images/dishes/board-02-dish-04.png",
+      "source": "meal-cats-13-24.png",
+      "bbox": {
+        "x0": 622,
+        "y0": 143,
+        "x1": 931,
+        "y1": 385
+      },
+      "area": 50690
+    },
+    {
+      "id": "board-02-dish-05",
+      "image": "assets/images/dishes/board-02-dish-05.png",
+      "source": "meal-cats-13-24.png",
+      "bbox": {
+        "x0": 959,
+        "y0": 491,
+        "x1": 1225,
+        "y1": 749
+      },
+      "area": 49105
+    },
+    {
+      "id": "board-02-dish-06",
+      "image": "assets/images/dishes/board-02-dish-06.png",
+      "source": "meal-cats-13-24.png",
+      "bbox": {
+        "x0": 11,
+        "y0": 496,
+        "x1": 301,
+        "y1": 736
+      },
+      "area": 47429
+    },
+    {
+      "id": "board-02-dish-07",
+      "image": "assets/images/dishes/board-02-dish-07.png",
+      "source": "meal-cats-13-24.png",
+      "bbox": {
+        "x0": 632,
+        "y0": 512,
+        "x1": 908,
+        "y1": 740
+      },
+      "area": 42704
+    },
+    {
+      "id": "board-02-dish-08",
+      "image": "assets/images/dishes/board-02-dish-08.png",
+      "source": "meal-cats-13-24.png",
+      "bbox": {
+        "x0": 313,
+        "y0": 530,
+        "x1": 616,
+        "y1": 746
+      },
+      "area": 44835
+    },
+    {
+      "id": "board-02-dish-09",
+      "image": "assets/images/dishes/board-02-dish-09.png",
+      "source": "meal-cats-13-24.png",
+      "bbox": {
+        "x0": 631,
+        "y0": 839,
+        "x1": 916,
+        "y1": 1109
+      },
+      "area": 33394
+    },
+    {
+      "id": "board-02-dish-10",
+      "image": "assets/images/dishes/board-02-dish-10.png",
+      "source": "meal-cats-13-24.png",
+      "bbox": {
+        "x0": 6,
+        "y0": 849,
+        "x1": 320,
+        "y1": 1102
+      },
+      "area": 55806
+    },
+    {
+      "id": "board-02-dish-11",
+      "image": "assets/images/dishes/board-02-dish-11.png",
+      "source": "meal-cats-13-24.png",
+      "bbox": {
+        "x0": 315,
+        "y0": 849,
+        "x1": 622,
+        "y1": 1101
+      },
+      "area": 54359
+    },
+    {
+      "id": "board-02-dish-12",
+      "image": "assets/images/dishes/board-02-dish-12.png",
+      "source": "meal-cats-13-24.png",
+      "bbox": {
+        "x0": 918,
+        "y0": 850,
+        "x1": 1242,
+        "y1": 1105
+      },
+      "area": 57838
+    }
+  ],
+  "notes": "Auto-generated transparent dish cutouts. Update category mapping in dish-map.json."
+}

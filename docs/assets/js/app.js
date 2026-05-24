@@ -33,6 +33,65 @@ function buildMealMeta(meal) {
 	return bits.join(" · ");
 }
 
+function pickFromPool(pool, cursors, key) {
+	if (!Array.isArray(pool) || !pool.length) return "";
+	const idx = cursors[key] || 0;
+	const value = pool[idx % pool.length];
+	cursors[key] = idx + 1;
+	return value;
+}
+
+async function loadDishConfig() {
+	try {
+		const response = await fetch("assets/data/dish-map.json", { cache: "no-store" });
+		if (!response.ok) throw new Error(`dish map load failed: ${response.status}`);
+		const map = await response.json();
+
+		let assets = Array.isArray(map.assets) ? map.assets : [];
+		if (!assets.length && map.assetsManifest) {
+			const assetsResponse = await fetch(map.assetsManifest, { cache: "no-store" });
+			if (assetsResponse.ok) {
+				const manifest = await assetsResponse.json();
+				assets = Array.isArray(manifest.assets) ? manifest.assets : [];
+			}
+		}
+
+		return {
+			categoryPools: map.categoryPools || {},
+			mealImageOverrides: map.mealImageOverrides || {},
+			assets
+		};
+	} catch (error) {
+		console.warn("Dish config unavailable; continuing without dish cutouts:", error);
+		return null;
+	}
+}
+
+function applyDishImages(menuData, dishConfig) {
+	if (!menuData || !Array.isArray(menuData.meals) || !dishConfig) return;
+
+	const assetById = new Map((dishConfig.assets || []).map((asset) => [asset.id, asset.image]));
+	const pools = dishConfig.categoryPools || {};
+	const overrides = dishConfig.mealImageOverrides || {};
+	const cursors = {};
+
+	menuData.meals.forEach((meal) => {
+		if (!meal || meal.image) return;
+
+		const overrideId = overrides[meal.id];
+		if (overrideId && assetById.has(overrideId)) {
+			meal.image = assetById.get(overrideId);
+			return;
+		}
+
+		const pool = pools[meal.category] || pools.default || [];
+		const dishId = pickFromPool(pool, cursors, meal.category || "default");
+		if (dishId && assetById.has(dishId)) {
+			meal.image = assetById.get(dishId);
+		}
+	});
+}
+
 function updateNextMealCard(meal) {
 	if (!meal) return;
 	const nameEl = document.querySelector("#nextMealName");
@@ -94,12 +153,19 @@ function renderMenuCards(targetId, meals, limit = 0) {
 	grid.innerHTML = list
 		.map((meal) => {
 			const tags = Array.isArray(meal.tags) ? meal.tags.slice(0, 3).join(" · ") : "";
+			const imageMarkup = meal.image
+				? `<figure class="menu-card-media"><img src="${meal.image}" alt="${meal.name || "Meal"} dish"></figure>`
+				: "";
+			const cardClass = meal.image ? "menu-card" : "menu-card menu-card-no-image";
 			return `
-				<article class="menu-card">
-					<h3>${meal.name || "Unnamed meal"}</h3>
-					<p class="menu-meta">${buildMealMeta(meal)}</p>
-					<p>${meal.protein || "Protein"} + ${(meal.plants || []).slice(0, 2).join(", ") || "plants"}</p>
-					${tags ? `<p class="menu-tags">${tags}</p>` : ""}
+				<article class="${cardClass}">
+					${imageMarkup}
+					<div class="menu-card-body">
+						<h3>${meal.name || "Unnamed meal"}</h3>
+						<p class="menu-meta">${buildMealMeta(meal)}</p>
+						<p>${meal.protein || "Protein"} + ${(meal.plants || []).slice(0, 2).join(", ") || "plants"}</p>
+						${tags ? `<p class="menu-tags">${tags}</p>` : ""}
+					</div>
 				</article>
 			`;
 		})
@@ -153,9 +219,13 @@ function renderFullMenu() {
 
 async function loadMenuData() {
 	try {
-		const response = await fetch("assets/data/menu-content.json", { cache: "no-store" });
+		const [response, dishConfig] = await Promise.all([
+			fetch("assets/data/menu-content.json", { cache: "no-store" }),
+			loadDishConfig()
+		]);
 		if (!response.ok) throw new Error(`menu load failed: ${response.status}`);
 		const payload = await response.json();
+		applyDishImages(payload, dishConfig);
 		appState.menuData = payload;
 
 		if (Array.isArray(payload.sproutSayings) && payload.sproutSayings.length) {
