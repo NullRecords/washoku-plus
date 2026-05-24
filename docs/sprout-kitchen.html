@@ -32,14 +32,14 @@
 
 <main class="game-main">
   <div class="game-shell">
-    <section class="game-hero">
+    <section class="game-hero" id="gameHero">
       <p class="eyebrow">Sprout Kitchen Lab</p>
       <h1>Build a recipe and score its washoku fit.</h1>
       <p>Pick ingredients in a simple kitchen game, get nutrition and washoku-alignment scoring, then submit your recipe for local community voting. Top-voted recipes can be exported for app and admin review.</p>
     </section>
 
     <div class="game-layout">
-      <section class="game-card kitchen-stage">
+      <section class="game-card kitchen-stage" id="kitchenStage">
         <canvas id="kitchenCanvas" width="760" height="520" aria-label="Sprout kitchen animation"></canvas>
         <section class="slice-control-panel">
           <div class="slice-control-main">
@@ -88,13 +88,13 @@
         </section>
       </section>
 
-      <section class="game-card recipe-panel">
+      <section class="game-card recipe-panel" id="recipePanel">
         <div class="recipe-title-row">
           <input id="recipeName" type="text" placeholder="Name your recipe">
           <button id="submitRecipeBtn" type="button">Submit</button>
         </div>
 
-        <div class="builder-grid">
+        <div class="builder-grid" id="builderGrid">
           <section class="slot">
             <h3>Protein</h3>
             <div class="item-grid" id="proteinChoices"></div>
@@ -113,7 +113,7 @@
           </section>
         </div>
 
-        <section class="prep-plan-card">
+        <section class="prep-plan-card" id="prepPlanCard">
           <div class="prep-plan-head">
             <h3>Prep Plan (editable)</h3>
             <button id="applyPrepPlanBtn" class="action-btn alt" type="button">Confirm Prep Plan</button>

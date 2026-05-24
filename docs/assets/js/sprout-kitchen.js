@@ -71,6 +71,7 @@ const stepOrder = ["protein", "plants", "starch", "flavor", "prep"];
 const storageKey = "washoku-community-recipes-v2";
 const bestSliceScoreKey = "washoku-slice-best-v1";
 const voteRegistryKey = "washoku-community-votes-v1";
+const mobileBreakpointPx = 980;
 
 const canvas = document.getElementById("kitchenCanvas");
 const ctx = canvas.getContext("2d");
@@ -78,6 +79,11 @@ const ctx = canvas.getContext("2d");
 const dom = {
   status: document.getElementById("stageStatus"),
   activeStation: document.getElementById("activeStationLabel"),
+  gameHero: document.getElementById("gameHero"),
+  kitchenStage: document.getElementById("kitchenStage"),
+  recipePanel: document.getElementById("recipePanel"),
+  builderGrid: document.getElementById("builderGrid"),
+  prepPlanCard: document.getElementById("prepPlanCard"),
   cuisineSelect: document.getElementById("cuisineSelect"),
   recipeName: document.getElementById("recipeName"),
   recipeList: document.getElementById("recipeList"),
@@ -133,6 +139,13 @@ const plateTransfers = [];
 let pointerDown = false;
 let pointerLast = null;
 let spawnAccumulator = 0;
+const mobileGuide = {
+  enabled: false,
+  nameFocused: false,
+  movedToSelection: false,
+  movedToPrep: false,
+  movedBackToGame: false
+};
 
 function hasRequiredBuildSelections() {
   return state.selected.protein.length > 0
@@ -143,6 +156,50 @@ function hasRequiredBuildSelections() {
 
 function canStartSliceRound() {
   return hasRequiredBuildSelections() && state.prepPlan.confirmed && !state.slicing.active && !state.slicing.countdownActive;
+}
+
+function isMobileViewport() {
+  return window.matchMedia(`(max-width: ${mobileBreakpointPx}px)`).matches;
+}
+
+function smoothScrollTo(element) {
+  if (!element) return;
+  element.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function tryFocusRecipeNameForMobile() {
+  if (!mobileGuide.enabled || mobileGuide.nameFocused) return;
+  mobileGuide.nameFocused = true;
+  setTimeout(() => {
+    smoothScrollTo(dom.recipePanel);
+    if (dom.recipeName) {
+      dom.recipeName.focus({ preventScroll: true });
+      dom.recipeName.select();
+    }
+  }, 120);
+}
+
+function updateMobileGuidedFlow() {
+  if (!mobileGuide.enabled) return;
+
+  const hasName = (dom.recipeName.value || "").trim().length > 0;
+  if (hasName && !mobileGuide.movedToSelection) {
+    mobileGuide.movedToSelection = true;
+    setTimeout(() => smoothScrollTo(dom.builderGrid), 120);
+  }
+
+  if (hasRequiredBuildSelections() && !state.prepPlan.confirmed && !mobileGuide.movedToPrep) {
+    mobileGuide.movedToPrep = true;
+    setTimeout(() => smoothScrollTo(dom.prepPlanCard), 120);
+  }
+
+  if (canStartSliceRound() && !mobileGuide.movedBackToGame) {
+    mobileGuide.movedBackToGame = true;
+    setTimeout(() => {
+      smoothScrollTo(dom.kitchenStage);
+      if (dom.sliceBtn) dom.sliceBtn.focus({ preventScroll: true });
+    }, 180);
+  }
 }
 
 function getById(group, id) {
@@ -394,6 +451,7 @@ function bindPrepPlanEditor() {
     state.prepPlan.confirmed = false;
     dom.prepPlanStatus.textContent = "Prep edited. Confirm prep plan again before slicing/submitting.";
     updateScoreUI();
+    updateMobileGuidedFlow();
   });
 
   dom.applyPrepPlanBtn.addEventListener("click", () => {
@@ -409,6 +467,7 @@ function bindPrepPlanEditor() {
     state.prepPlan.confirmed = true;
     dom.prepPlanStatus.textContent = "Prep plan confirmed. Slice game unlocked.";
     updateScoreUI();
+    updateMobileGuidedFlow();
   });
 }
 
@@ -442,6 +501,7 @@ function allIngredientsPlated() {
 }
 
 function updateSliceStatsUI() {
+  canvas.style.touchAction = state.slicing.active ? "none" : "pan-y";
   const now = performance.now();
   const seconds = state.slicing.active ? Math.max(0, Math.ceil(state.slicing.timeLeft)) : 0;
   const countdown = state.slicing.countdownActive ? Math.max(0, Math.ceil((state.slicing.countdownEndsAt - now) / 1000)) : 0;
@@ -1078,6 +1138,7 @@ function bindStationButtons() {
       setStation(group);
       refreshButtonState();
       renderRecipeSummary();
+      updateMobileGuidedFlow();
     });
   });
 
@@ -1168,7 +1229,7 @@ function canvasPointFromEvent(event) {
 }
 
 function bindCanvasSlicing() {
-  canvas.style.touchAction = "none";
+  canvas.style.touchAction = "pan-y";
 
   canvas.addEventListener("pointerdown", (event) => {
     pointerDown = true;
@@ -1379,6 +1440,7 @@ function submitRecipe() {
 }
 
 function initGame() {
+  mobileGuide.enabled = isMobileViewport();
   state.slicing.bestScore = Number(localStorage.getItem(bestSliceScoreKey) || 0);
   loadCommunity();
   bindStationButtons();
@@ -1396,10 +1458,17 @@ function initGame() {
   dom.resetPrepBtn.addEventListener("click", resetPrep);
   dom.recipeName.addEventListener("input", () => {
     state.recipeName = dom.recipeName.value;
+    updateMobileGuidedFlow();
+  });
+
+  window.addEventListener("resize", () => {
+    mobileGuide.enabled = isMobileViewport();
   });
 
   bindPrepPlanEditor();
   bindCanvasSlicing();
+  tryFocusRecipeNameForMobile();
+  updateMobileGuidedFlow();
   drawKitchen();
 }
 
