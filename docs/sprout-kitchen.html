@@ -41,6 +41,11 @@
     <div class="game-layout">
       <section class="game-card kitchen-stage">
         <canvas id="kitchenCanvas" width="700" height="420" aria-label="Sprout kitchen animation"></canvas>
+        <div class="slice-launch-row">
+          <button id="sliceBtn" class="action-btn" type="button">Start Slice Round</button>
+          <span id="sliceTimerBadge" class="slice-badge">Time --</span>
+          <span id="sliceCountdownBadge" class="slice-badge alt">Ready</span>
+        </div>
         <div class="stage-caption">
           <span id="stageStatus">Sprout is ready. Build one balanced recipe.</span>
           <span>Active station: <strong id="activeStationLabel">Protein</strong></span>
@@ -70,7 +75,6 @@
             <p id="sliceHint" class="help-note">Confirm prep plan, then start a timed slice round.</p>
           </div>
           <div class="prep-actions">
-            <button id="sliceBtn" class="action-btn" type="button">Slice</button>
             <button id="resetPrepBtn" class="action-btn alt" type="button">Reset Prep</button>
           </div>
           <div class="score-line prep-line" id="prepBar"><span></span></div>

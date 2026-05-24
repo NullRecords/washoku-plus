@@ -47,6 +47,9 @@ const state = {
   prepPlan: { rows: [], confirmed: false },
   slicing: {
     active: false,
+    countdownActive: false,
+    countdownSeconds: 3,
+    countdownEndsAt: 0,
     misses: 0,
     hitsThisRound: 0,
     score: 0,
@@ -82,6 +85,8 @@ const dom = {
   prepTarget: document.getElementById("prepTarget"),
   sliceStats: document.getElementById("sliceStats"),
   sliceHint: document.getElementById("sliceHint"),
+  sliceTimerBadge: document.getElementById("sliceTimerBadge"),
+  sliceCountdownBadge: document.getElementById("sliceCountdownBadge"),
   prepBar: document.getElementById("prepBar"),
   sliceBtn: document.getElementById("sliceBtn"),
   resetPrepBtn: document.getElementById("resetPrepBtn"),
@@ -368,13 +373,29 @@ function allIngredientsPlated() {
 }
 
 function updateSliceStatsUI() {
+  const now = performance.now();
   const seconds = state.slicing.active ? Math.max(0, Math.ceil(state.slicing.timeLeft)) : 0;
+  const countdown = state.slicing.countdownActive ? Math.max(0, Math.ceil((state.slicing.countdownEndsAt - now) / 1000)) : 0;
   const platedNeed = Math.max(1, state.slicing.requiredIds.length || selectedForSlicing().length);
   const timerText = state.slicing.active ? `${seconds}s` : "--";
   dom.sliceStats.textContent = `Score ${state.slicing.score} | Best ${state.slicing.bestScore} | Time ${timerText} | Plated ${platedUniqueCount()}/${platedNeed}`;
+  dom.sliceTimerBadge.textContent = `Time ${timerText}`;
+
+  if (state.slicing.active) {
+    dom.sliceBtn.textContent = "Quick Chop";
+    dom.sliceCountdownBadge.textContent = "Live";
+  } else if (state.slicing.countdownActive) {
+    dom.sliceBtn.textContent = "Get Ready";
+    dom.sliceCountdownBadge.textContent = `Starts in ${countdown}`;
+  } else {
+    dom.sliceBtn.textContent = "Start Slice Round";
+    dom.sliceCountdownBadge.textContent = "Ready";
+  }
 
   if (state.slicing.active) {
     dom.sliceHint.textContent = "Swipe through flying ingredients. Plate every selected ingredient before time runs out.";
+  } else if (state.slicing.countdownActive) {
+    dom.sliceHint.textContent = "Round begins after countdown. Keep your finger near the canvas.";
   } else if (!state.prepPlan.confirmed) {
     dom.sliceHint.textContent = "Confirm prep plan, then start a timed slice round.";
   } else if (state.prep.currentSlices >= state.prep.targetSlices && allIngredientsPlated()) {
@@ -692,6 +713,20 @@ function drawPlatedMealPreview() {
 }
 
 function advanceSlicingFrame() {
+  if (state.slicing.countdownActive) {
+    const remainingMs = state.slicing.countdownEndsAt - performance.now();
+    if (remainingMs <= 0) {
+      state.slicing.countdownActive = false;
+      state.slicing.active = true;
+      state.slicing.roundStartedAt = performance.now();
+      state.slicing.timeLeft = state.slicing.timerSeconds;
+      for (let i = 0; i < 4; i += 1) spawnIngredientTarget();
+      dom.status.textContent = "Slice mode on: plate every selected ingredient before time ends.";
+    } else {
+      dom.status.textContent = `Slice starts in ${Math.ceil(remainingMs / 1000)}...`;
+    }
+  }
+
   if (state.slicing.active) {
     const elapsed = (performance.now() - state.slicing.roundStartedAt) / 1000;
     state.slicing.timeLeft = Math.max(0, state.slicing.timerSeconds - elapsed);
@@ -948,6 +983,11 @@ function runSliceAction() {
     return;
   }
 
+  if (state.slicing.countdownActive) {
+    dom.status.textContent = "Countdown in progress. Get ready to slice.";
+    return;
+  }
+
   if (!state.slicing.active) {
     state.prep.targetSlices = computePrepTargetSlices();
     state.prep.currentSlices = 0;
@@ -962,11 +1002,9 @@ function runSliceAction() {
     sliceBits.length = 0;
     slashTrail.length = 0;
 
-    state.slicing.active = true;
-    state.slicing.roundStartedAt = performance.now();
-    state.slicing.timeLeft = state.slicing.timerSeconds;
-    for (let i = 0; i < 4; i += 1) spawnIngredientTarget();
-    dom.status.textContent = "Slice mode on: plate every selected ingredient before time ends.";
+    state.slicing.countdownActive = true;
+    state.slicing.countdownEndsAt = performance.now() + state.slicing.countdownSeconds * 1000;
+    dom.status.textContent = `Slice starts in ${state.slicing.countdownSeconds}...`;
     updateScoreUI();
     return;
   }
@@ -979,6 +1017,8 @@ function runSliceAction() {
 
 function resetPrep() {
   state.slicing.active = false;
+  state.slicing.countdownActive = false;
+  state.slicing.countdownEndsAt = 0;
   state.prep.currentSlices = 0;
   state.completedSteps.prep = false;
   state.slicing.score = 0;
