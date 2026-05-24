@@ -105,6 +105,11 @@
   border: 1px solid rgba(29, 107, 70, 0.25);
 }
 
+.slice-meter[hidden],
+.slice-meters [hidden] {
+  display: none !important;
+}
+
 .slice-meter.alt {
   color: #5d3d19;
   background: rgba(212, 155, 69, 0.2);
