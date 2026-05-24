@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Sprout Kitchen Lab - Washoku Plus</title>
+  <meta name="description" content="Build recipes with Sprout, score nutrition and washoku fit, and submit community ideas.">
+  <meta name="theme-color" content="#123B2A">
+  <link rel="icon" href="assets/images/favicon.svg">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/sprout-kitchen.css">
+  <script defer src="assets/js/app.js"></script>
+  <script defer src="assets/js/sprout-kitchen.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <nav class="shell nav">
+    <a class="brand" href="index.html" aria-label="Washoku Plus home">
+      <span class="logo-dot" aria-hidden="true"></span>
+      <span>Washoku <strong>Plus</strong></span>
+    </a>
+    <button class="menu-button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <div class="nav-links" id="nav-links">
+      <a href="index.html#approach">Approach</a>
+      <a href="index.html#guides">Guides</a>
+      <a href="menu.html">Menu</a>
+      <a href="sprout-kitchen.html">Kitchen Game</a>
+      <a href="ios.html" class="nav-cta">App Store</a>
+    </div>
+  </nav>
+</header>
+
+<main class="game-main">
+  <div class="game-shell">
+    <section class="game-hero">
+      <p class="eyebrow">Sprout Kitchen Lab</p>
+      <h1>Build a recipe and score its washoku fit.</h1>
+      <p>Pick ingredients in a simple kitchen game, get nutrition and washoku-alignment scoring, then submit your recipe for local community voting. Top-voted recipes can be exported for app and admin review.</p>
+    </section>
+
+    <div class="game-layout">
+      <section class="game-card kitchen-stage">
+        <canvas id="kitchenCanvas" width="700" height="420" aria-label="Sprout kitchen animation"></canvas>
+        <div class="stage-caption">
+          <span id="stageStatus">Sprout is ready. Build one balanced recipe.</span>
+          <span>Active station: <strong id="activeStationLabel">Protein</strong></span>
+        </div>
+        <div class="cuisine-row">
+          <label for="cuisineSelect">Cuisine direction</label>
+          <select id="cuisineSelect">
+            <option value="japanese">Japanese-inspired</option>
+            <option value="korean">Korean-inspired</option>
+            <option value="thai">Thai-inspired</option>
+            <option value="mediterranean">Mediterranean-inspired</option>
+            <option value="mexican">Mexican-inspired</option>
+            <option value="global">Global fusion</option>
+          </select>
+        </div>
+        <div class="station-strip">
+          <button class="station-pill is-active" data-station="protein">Protein</button>
+          <button class="station-pill" data-station="plants">Plants</button>
+          <button class="station-pill" data-station="starch">Starch</button>
+          <button class="station-pill" data-station="flavor">Flavor</button>
+        </div>
+        <section class="prep-panel">
+          <div>
+            <p class="prep-title">Prep Mini-game</p>
+            <p id="prepTarget" class="help-note">Choose ingredients to prep.</p>
+            <p id="sliceStats" class="slice-stats">Score 0 | Best 0 | Time -- | Plated 0/0</p>
+            <p id="sliceHint" class="help-note">Confirm prep plan, then start a timed slice round.</p>
+          </div>
+          <div class="prep-actions">
+            <button id="sliceBtn" class="action-btn" type="button">Slice</button>
+            <button id="resetPrepBtn" class="action-btn alt" type="button">Reset Prep</button>
+          </div>
+          <div class="score-line prep-line" id="prepBar"><span></span></div>
+        </section>
+      </section>
+
+      <section class="game-card recipe-panel">
+        <div class="recipe-title-row">
+          <input id="recipeName" type="text" placeholder="Name your recipe">
+          <button id="submitRecipeBtn" type="button">Submit</button>
+        </div>
+
+        <div class="builder-grid">
+          <section class="slot">
+            <h3>Protein</h3>
+            <div class="item-grid" id="proteinChoices"></div>
+          </section>
+          <section class="slot">
+            <h3>Plants (pick up to 4)</h3>
+            <div class="item-grid" id="plantsChoices"></div>
+          </section>
+          <section class="slot">
+            <h3>Smart starch</h3>
+            <div class="item-grid" id="starchChoices"></div>
+          </section>
+          <section class="slot">
+            <h3>Flavor</h3>
+            <div class="item-grid" id="flavorChoices"></div>
+          </section>
+        </div>
+
+        <section class="prep-plan-card">
+          <div class="prep-plan-head">
+            <h3>Prep Plan (editable)</h3>
+            <button id="applyPrepPlanBtn" class="action-btn alt" type="button">Confirm Prep Plan</button>
+          </div>
+          <p class="help-note" id="prepPlanStatus">Choose ingredients, adjust sizes and prep actions, then confirm before slicing.</p>
+          <div id="prepPlanList" class="prep-plan-list"></div>
+        </section>
+
+        <section class="recipe-summary">
+          <h3>Your recipe</h3>
+          <div id="stepBadges" class="step-badges"></div>
+          <ul class="recipe-list" id="recipeList"></ul>
+          <p class="help-note" id="totalsLine"></p>
+        </section>
+
+        <div class="score-grid">
+          <article class="score-card">
+            <p>Tastiness</p>
+            <strong id="tastinessScore">0</strong>
+            <div class="score-line" id="tastinessBar"><span></span></div>
+          </article>
+          <article class="score-card">
+            <p>Protein</p>
+            <strong id="proteinScore">0</strong>
+            <div class="score-line" id="proteinBar"><span></span></div>
+          </article>
+          <article class="score-card">
+            <p>Nutrition</p>
+            <strong id="nutritionScore">0</strong>
+            <div class="score-line" id="nutritionBar"><span></span></div>
+          </article>
+          <article class="score-card">
+            <p>Washoku fit</p>
+            <strong id="washokuScore">0</strong>
+            <div class="score-line" id="washokuBar"><span></span></div>
+          </article>
+          <article class="score-card" style="grid-column:1 / -1;">
+            <p>Overall</p>
+            <strong id="totalScore">0</strong>
+            <div class="score-line" id="totalBar"><span></span></div>
+          </article>
+        </div>
+      </section>
+    </div>
+
+    <section class="game-card community-panel">
+      <div class="flex items-center justify-between" style="display:flex;justify-content:space-between;align-items:center;gap:.8rem;flex-wrap:wrap;">
+        <div>
+          <h2 style="margin:0;">Community Board</h2>
+          <p class="help-note" style="margin:0.25rem 0 0;">Recipes with 5+ votes and score 78+ are marked eligible for app/admin review. One vote per device per recipe.</p>
+        </div>
+      </div>
+      <div class="community-list" id="communityList"></div>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="shell footer-grid">
+    <div><strong>Washoku Plus</strong><p>Balanced meals. Better patterns. Calmer health.</p></div>
+    <div>
+      <a href="index.html#approach">Approach</a>
+      <a href="index.html#guides">Guides</a>
+      <a href="menu.html">Menu</a>
+      <a href="sprout-kitchen.html">Kitchen Game</a>
+      <a href="ios.html">App Store</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="user-agreement.html">User Agreement</a>
+      <a href="support.html">Support</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

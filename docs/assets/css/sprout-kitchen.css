@@ -1,0 +1,423 @@
+:root {
+  --game-bg: #fdf7ea;
+  --game-ink: #163629;
+  --game-muted: #4b675a;
+  --game-panel: #fffdf8;
+  --game-line: rgba(22, 54, 41, 0.14);
+  --game-accent: #1d6b46;
+  --game-warm: #d49b45;
+}
+
+.game-main {
+  background: radial-gradient(circle at 10% 10%, rgba(212, 155, 69, 0.14), transparent 30rem),
+    linear-gradient(180deg, var(--game-bg), #fffdfa 56%);
+}
+
+.game-shell {
+  width: min(1180px, calc(100% - 28px));
+  margin: 0 auto;
+  padding: 2rem 0 4rem;
+}
+
+.game-hero {
+  margin-bottom: 1rem;
+}
+
+.game-hero h1 {
+  font-size: clamp(1.9rem, 4.1vw, 3.2rem);
+  margin: 0.2rem 0 0.5rem;
+}
+
+.game-hero p {
+  color: var(--game-muted);
+  max-width: 64ch;
+}
+
+.game-layout {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 1rem;
+}
+
+.game-card {
+  background: var(--game-panel);
+  border: 1px solid var(--game-line);
+  border-radius: 20px;
+  padding: 1rem;
+  box-shadow: 0 12px 24px rgba(28, 45, 33, 0.06);
+}
+
+.kitchen-stage {
+  display: grid;
+  gap: 0.8rem;
+}
+
+#kitchenCanvas {
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+  border: 1px solid rgba(22, 54, 41, 0.18);
+  background: #f8f0de;
+}
+
+.stage-caption {
+  color: var(--game-muted);
+  font-size: 0.92rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.cuisine-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.cuisine-row label {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--game-muted);
+}
+
+.cuisine-row select {
+  min-height: 36px;
+  border: 1px solid var(--game-line);
+  border-radius: 9px;
+  padding: 0 0.55rem;
+  font: inherit;
+  color: var(--game-ink);
+  background: #fff;
+}
+
+.station-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.station-pill {
+  border: 1px solid var(--game-line);
+  border-radius: 999px;
+  padding: 0.45rem 0.55rem;
+  font-size: 0.8rem;
+  text-align: center;
+  color: var(--game-muted);
+  background: #fff;
+}
+
+.station-pill.is-active {
+  background: rgba(29, 107, 70, 0.12);
+  border-color: rgba(29, 107, 70, 0.3);
+  color: #0f5030;
+  font-weight: 700;
+}
+
+.prep-panel {
+  border: 1px solid var(--game-line);
+  background: #fff;
+  border-radius: 12px;
+  padding: 0.65rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.prep-title {
+  margin: 0;
+  font-weight: 800;
+  font-size: 0.88rem;
+  color: var(--game-ink);
+}
+
+.slice-stats {
+  margin: 0.28rem 0 0;
+  font-size: 0.8rem;
+  color: #234838;
+  font-weight: 700;
+}
+
+.prep-actions {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.prep-line {
+  margin-top: 0.1rem;
+}
+
+.builder-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.slot h3 {
+  margin: 0 0 0.45rem;
+  font-size: 1rem;
+}
+
+.item-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.item-btn {
+  border: 1px solid var(--game-line);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--game-ink);
+  padding: 0.5rem;
+  font-size: 0.78rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.item-btn small {
+  display: block;
+  color: var(--game-muted);
+  margin-top: 0.18rem;
+  font-size: 0.72rem;
+}
+
+.item-btn.is-picked {
+  border-color: rgba(29, 107, 70, 0.4);
+  background: rgba(29, 107, 70, 0.1);
+}
+
+.recipe-panel {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.recipe-title-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.recipe-title-row input {
+  flex: 1;
+  min-height: 42px;
+  border: 1px solid var(--game-line);
+  border-radius: 10px;
+  padding: 0 0.7rem;
+  font: inherit;
+}
+
+.recipe-title-row button,
+.action-btn,
+.vote-btn {
+  border: 0;
+  border-radius: 10px;
+  background: var(--game-accent);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0.62rem 0.85rem;
+}
+
+.action-btn.alt {
+  background: #304f43;
+}
+
+.recipe-summary {
+  border: 1px dashed var(--game-line);
+  border-radius: 12px;
+  padding: 0.75rem;
+  background: #fff;
+}
+
+.prep-plan-card {
+  border: 1px solid var(--game-line);
+  border-radius: 12px;
+  background: #fff;
+  padding: 0.75rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.prep-plan-head {
+  display: flex;
+  gap: 0.55rem;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.prep-plan-head h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.prep-plan-list {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.prep-row {
+  display: grid;
+  grid-template-columns: 1.3fr minmax(120px, 1fr) 90px 90px;
+  gap: 0.45rem;
+  align-items: center;
+  border: 1px solid var(--game-line);
+  border-radius: 10px;
+  background: #fffdfa;
+  padding: 0.45rem;
+}
+
+.prep-row strong {
+  display: block;
+  font-size: 0.84rem;
+  color: var(--game-ink);
+}
+
+.prep-row small {
+  color: var(--game-muted);
+  font-size: 0.72rem;
+}
+
+.prep-row select,
+.prep-row input {
+  min-height: 34px;
+  border: 1px solid var(--game-line);
+  border-radius: 8px;
+  padding: 0 0.4rem;
+  font: inherit;
+  color: var(--game-ink);
+  background: #fff;
+}
+
+.prep-row input {
+  width: 100%;
+}
+
+.recipe-summary h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1rem;
+}
+
+.recipe-list {
+  margin: 0;
+  padding-left: 1rem;
+  color: var(--game-muted);
+  font-size: 0.9rem;
+}
+
+.step-badges {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.45rem;
+}
+
+.step-badge {
+  padding: 0.2rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border: 1px solid var(--game-line);
+  color: var(--game-muted);
+  background: #fff;
+}
+
+.step-badge.done {
+  color: #0f5030;
+  border-color: rgba(29, 107, 70, 0.35);
+  background: rgba(29, 107, 70, 0.1);
+}
+
+.score-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.score-card {
+  border: 1px solid var(--game-line);
+  border-radius: 12px;
+  background: #fff;
+  padding: 0.65rem;
+}
+
+.score-card strong {
+  font-size: 1.22rem;
+  color: var(--game-ink);
+}
+
+.score-line {
+  height: 7px;
+  border-radius: 999px;
+  background: #ebefe9;
+  overflow: hidden;
+  margin-top: 0.36rem;
+}
+
+.score-line > span {
+  display: block;
+  height: 100%;
+  width: var(--score, 0%);
+  background: linear-gradient(90deg, var(--game-warm), var(--game-accent));
+}
+
+.community-panel {
+  margin-top: 1rem;
+}
+
+.community-list {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 0.65rem;
+}
+
+.community-item {
+  border: 1px solid var(--game-line);
+  border-radius: 12px;
+  background: #fff;
+  padding: 0.68rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.6rem;
+}
+
+.community-item p {
+  margin: 0.2rem 0 0;
+  color: var(--game-muted);
+  font-size: 0.85rem;
+}
+
+.community-item .badge {
+  display: inline-block;
+  margin-right: 0.35rem;
+  margin-top: 0.35rem;
+  padding: 0.15rem 0.42rem;
+  border-radius: 999px;
+  background: rgba(29, 107, 70, 0.12);
+  color: #0f5030;
+  font-size: 0.73rem;
+  font-weight: 700;
+}
+
+.help-note {
+  margin-top: 0.45rem;
+  color: var(--game-muted);
+  font-size: 0.83rem;
+}
+
+@media (max-width: 980px) {
+  .game-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .builder-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .item-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .prep-row {
+    grid-template-columns: 1fr;
+  }
+}

@@ -14,8 +14,43 @@ const captions = {
 	celebrate: "Small wins count. Consistency beats intensity."
 };
 
+const sproutModeImage = {
+	meditate: "assets/images/sprout/sprout-meditate.png",
+	suggest: "assets/images/sprout/sprout-happy.png",
+	celebrate: "assets/images/sprout/sprout-celebrate.png",
+	default: "assets/images/sprout/sprout-neutral.png"
+};
+
+const dishHints = {
+	"meal-cat-01": ["bowl", "rice", "fish", "salmon", "japanese"],
+	"meal-cat-02": ["soup", "noodle", "ramen", "broth", "japanese"],
+	"meal-cat-03": ["salad", "greens", "bowl"],
+	"meal-cat-04": ["soup", "miso", "broth", "japanese"],
+	"meal-cat-05": ["bowl", "rice", "poke", "fish", "japanese"],
+	"meal-cat-06": ["bowl", "rice", "curry", "stew"],
+	"meal-cat-07": ["wrap", "roll", "burrito"],
+	"meal-cat-08": ["sushi", "plate", "japanese"],
+	"meal-cat-09": ["roll", "hand-roll", "sushi", "japanese"],
+	"meal-cat-10": ["bento", "plate", "rice", "japanese"],
+	"meal-cat-11": ["plate", "stir-fry", "protein"],
+	"meal-cat-12": ["plate", "dumpling"],
+	"meal-cat-13": ["bowl", "grain", "salad"],
+	"meal-cat-14": ["bowl", "mexican", "taco", "corn", "beans"],
+	"meal-cat-15": ["salad", "greens", "mediterranean"],
+	"meal-cat-16": ["wrap", "burrito", "roll"],
+	"meal-cat-17": ["soup", "stew", "broth"],
+	"meal-cat-18": ["pasta", "noodle", "italian"],
+	"meal-cat-19": ["sandwich", "toast", "bread"],
+	"meal-cat-20": ["burger"],
+	"meal-cat-21": ["plate", "breakfast", "eggs"],
+	"meal-cat-22": ["plate", "steak", "potato"],
+	"meal-cat-23": ["pizza"],
+	"meal-cat-24": ["bowl", "rice", "stir-fry", "plate"]
+};
+
 const appState = {
 	menuData: null,
+	dishConfig: null,
 	insights: [...fallbackInsights],
 	activeCategory: "all"
 };
@@ -39,6 +74,72 @@ function pickFromPool(pool, cursors, key) {
 	const value = pool[idx % pool.length];
 	cursors[key] = idx + 1;
 	return value;
+}
+
+function tokenizeMeal(meal) {
+	const text = `${meal?.name || ""} ${meal?.category || ""} ${meal?.cuisine || ""} ${meal?.mealType || ""} ${meal?.flavor || ""}`
+		.toLowerCase()
+		.replace(/[^a-z0-9\s-]/g, " ");
+	return new Set(text.split(/\s+/).filter(Boolean));
+}
+
+function inferMealShape(tokens) {
+	if (["burger"].some((k) => tokens.has(k))) return "burger";
+	if (["sandwich", "toast"].some((k) => tokens.has(k))) return "sandwich";
+	if (["pizza", "flatbread"].some((k) => tokens.has(k))) return "pizza";
+	if (["wrap", "burrito", "roll"].some((k) => tokens.has(k))) return "wrap";
+	if (["salad", "greens"].some((k) => tokens.has(k))) return "salad";
+	if (["soup", "broth", "miso", "pho", "ramen", "udon"].some((k) => tokens.has(k))) return "soup";
+	if (["noodle", "pasta", "soba"].some((k) => tokens.has(k))) return "noodle";
+	if (["plate", "bento", "steak"].some((k) => tokens.has(k))) return "plate";
+	if (["sushi", "onigiri", "maki", "nigiri", "poke"].some((k) => tokens.has(k))) return "sushi";
+	return "bowl";
+}
+
+function scoreAssetForMeal(assetId, meal, usedCountsByCategory) {
+	const hints = dishHints[assetId] || [];
+	const hintSet = new Set(hints);
+	const tokens = tokenizeMeal(meal);
+	const shape = inferMealShape(tokens);
+
+	let score = 0;
+	if (hintSet.has(shape)) score += 8;
+
+	for (const token of tokens) {
+		if (hintSet.has(token)) score += 2;
+	}
+
+	if (tokens.has("japanese") && hintSet.has("japanese")) score += 2;
+	if (tokens.has("korean") && (hintSet.has("japanese") || hintSet.has("bowl"))) score += 1;
+	if (tokens.has("thai") && hintSet.has("bowl")) score += 1;
+	if (tokens.has("mexican") && hintSet.has("mexican")) score += 2;
+	if (tokens.has("mediterranean") && hintSet.has("mediterranean")) score += 2;
+
+	if (shape === "bowl" && ["burger", "sandwich", "pizza", "wrap"].some((k) => hintSet.has(k))) score -= 10;
+	if (shape === "plate" && ["wrap", "burger", "pizza"].some((k) => hintSet.has(k))) score -= 8;
+	if (shape === "soup" && !["soup", "noodle", "broth"].some((k) => hintSet.has(k))) score -= 4;
+
+	const usage = usedCountsByCategory[assetId] || 0;
+	score -= usage * 0.8;
+
+	return score;
+}
+
+function pickBestAssetForMeal(pool, meal, usedCountsByCategory) {
+	if (!Array.isArray(pool) || !pool.length) return "";
+	let bestId = "";
+	let bestScore = -Infinity;
+	for (const assetId of pool) {
+		const currentScore = scoreAssetForMeal(assetId, meal, usedCountsByCategory);
+		if (currentScore > bestScore) {
+			bestScore = currentScore;
+			bestId = assetId;
+		}
+	}
+	if (bestId) {
+		usedCountsByCategory[bestId] = (usedCountsByCategory[bestId] || 0) + 1;
+	}
+	return bestId;
 }
 
 async function loadDishConfig() {
@@ -73,6 +174,7 @@ function applyDishImages(menuData, dishConfig) {
 	const assetById = new Map((dishConfig.assets || []).map((asset) => [asset.id, asset.image]));
 	const pools = dishConfig.categoryPools || {};
 	const overrides = dishConfig.mealImageOverrides || {};
+	const usedByCategory = {};
 	const cursors = {};
 
 	menuData.meals.forEach((meal) => {
@@ -85,11 +187,76 @@ function applyDishImages(menuData, dishConfig) {
 		}
 
 		const pool = pools[meal.category] || pools.default || [];
-		const dishId = pickFromPool(pool, cursors, meal.category || "default");
+		const dishId = pickBestAssetForMeal(pool, meal, usedByCategory) || pickFromPool(pool, cursors, meal.category || "default");
 		if (dishId && assetById.has(dishId)) {
 			meal.image = assetById.get(dishId);
 		}
 	});
+}
+
+function getDishAssetById(assetId) {
+	if (!appState.dishConfig?.assets?.length || !assetId) return null;
+	return appState.dishConfig.assets.find((asset) => asset.id === assetId) || null;
+}
+
+function getCategoryDishAssets(categoryId, limit = 3) {
+	const pool = appState.dishConfig?.categoryPools?.[categoryId] || [];
+	return pool
+		.map((assetId) => getDishAssetById(assetId))
+		.filter(Boolean)
+		.slice(0, limit);
+}
+
+function renderCategoryShowcase() {
+	const wrap = document.querySelector("#menuCategoryShowcase");
+	if (!wrap || !appState.menuData) return;
+
+	const categories = appState.menuData.categories || [];
+	if (!categories.length) {
+		wrap.innerHTML = "<p>No categories available yet.</p>";
+		return;
+	}
+
+	wrap.innerHTML = categories
+		.map((category) => {
+			const assets = getCategoryDishAssets(category.id, 3);
+			const imageMarkup = assets.length
+				? assets
+					.map((asset) => `<img src="${asset.image}" alt="${category.name} dish" loading="lazy">`)
+					.join("")
+				: "<div class=\"menu-category-showcase-empty\">Images sync from dish-map.json</div>";
+			return `
+				<article class="menu-category-showcase-card">
+					<div class="menu-category-showcase-art">${imageMarkup}</div>
+					<div class="menu-category-showcase-copy">
+						<p class="menu-category-showcase-name">${category.name}</p>
+						<p class="menu-category-showcase-meta">${category.mealCount || 0} meals · ${category.id}</p>
+					</div>
+				</article>
+			`;
+		})
+		.join("");
+}
+
+function renderDishStrip() {
+	const wrap = document.querySelector("#menuDishStrip");
+	if (!wrap) return;
+
+	const assets = appState.dishConfig?.assets || [];
+	if (!assets.length) {
+		wrap.innerHTML = "<p>No dish assets published yet.</p>";
+		return;
+	}
+
+	wrap.innerHTML = assets
+		.slice(0, 18)
+		.map((asset) => `
+			<figure class="menu-dish-pill">
+				<img src="${asset.image}" alt="${asset.id}" loading="lazy">
+				<figcaption>${asset.id}</figcaption>
+			</figure>
+		`)
+		.join("");
 }
 
 function updateNextMealCard(meal) {
@@ -114,6 +281,10 @@ function setMascotMode(mode) {
 			mascot.classList.remove("mascot-meditate", "mascot-suggest", "mascot-celebrate");
 			mascot.classList.add(`mascot-${mode}`);
 		});
+
+	document.querySelectorAll("#mascot .mascot-image, #largeMascot .mascot-image").forEach((img) => {
+		img.setAttribute("src", sproutModeImage[mode] || sproutModeImage.default);
+	});
 
 	const caption = document.querySelector("#companionCaption");
 	if (caption) caption.textContent = captions[mode] || captions.meditate;
@@ -153,6 +324,7 @@ function renderMenuCards(targetId, meals, limit = 0) {
 	grid.innerHTML = list
 		.map((meal) => {
 			const tags = Array.isArray(meal.tags) ? meal.tags.slice(0, 3).join(" · ") : "";
+			const cuisine = meal.cuisine || "Global-inspired";
 			const imageMarkup = meal.image
 				? `<figure class="menu-card-media"><img src="${meal.image}" alt="${meal.name || "Meal"} dish"></figure>`
 				: "";
@@ -162,6 +334,7 @@ function renderMenuCards(targetId, meals, limit = 0) {
 					${imageMarkup}
 					<div class="menu-card-body">
 						<h3>${meal.name || "Unnamed meal"}</h3>
+						<p class="menu-cuisine">${cuisine}</p>
 						<p class="menu-meta">${buildMealMeta(meal)}</p>
 						<p>${meal.protein || "Protein"} + ${(meal.plants || []).slice(0, 2).join(", ") || "plants"}</p>
 						${tags ? `<p class="menu-tags">${tags}</p>` : ""}
@@ -225,6 +398,7 @@ async function loadMenuData() {
 		]);
 		if (!response.ok) throw new Error(`menu load failed: ${response.status}`);
 		const payload = await response.json();
+		appState.dishConfig = dishConfig;
 		applyDishImages(payload, dishConfig);
 		appState.menuData = payload;
 
@@ -278,6 +452,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	setupNavigation();
 	setupReveal();
+	setMascotMode("meditate");
 	loadMenuData();
 
 	window.setInterval(nextInsight, 12000);
