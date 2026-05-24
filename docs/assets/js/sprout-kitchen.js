@@ -688,53 +688,103 @@ function ingredientGroupForId(id) {
   return "flavor";
 }
 
-function drawIngredientSprite(x, y, size, item) {
-  const color = colorForItem(item);
-  const group = ingredientGroupForId(item.id);
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.fillStyle = color;
+const mealPhotoPoolsByGroup = {
+  protein: [11, 12, 21, 22, 24],
+  plants: [3, 13, 15],
+  starch: [1, 6, 10, 14, 18],
+  flavor: [2, 4, 5, 17]
+};
+const mealPhotoCache = new Map();
 
+function hashText(input) {
+  let hash = 0;
+  for (let i = 0; i < input.length; i += 1) {
+    hash = ((hash << 5) - hash + input.charCodeAt(i)) | 0;
+  }
+  return Math.abs(hash);
+}
+
+function mealPhotoPathByIndex(index) {
+  const padded = String(index).padStart(2, "0");
+  return `assets/images/dishes/meal-cat-${padded}.png`;
+}
+
+function mealPhotoForItem(item) {
+  const group = ingredientGroupForId(item.id);
+  const pool = mealPhotoPoolsByGroup[group] || [1, 3, 13, 24];
+  const idx = pool[hashText(item.id) % pool.length];
+  const path = mealPhotoPathByIndex(idx);
+  if (!mealPhotoCache.has(path)) {
+    const img = new Image();
+    img.src = path;
+    mealPhotoCache.set(path, img);
+  }
+  return mealPhotoCache.get(path);
+}
+
+function traceIngredientShapePath(group, size) {
   if (group === "protein") {
     ctx.rotate(-0.22);
     ctx.beginPath();
-    ctx.roundRect(-size * 0.8, -size * 0.42, size * 1.6, size * 0.84, size * 0.28);
-    ctx.fill();
-    ctx.fillStyle = "rgba(255,255,255,0.25)";
-    ctx.fillRect(-size * 0.55, -size * 0.12, size * 1.1, size * 0.16);
-  } else if (group === "plants") {
-    ctx.beginPath();
-    ctx.moveTo(0, -size * 0.9);
-    ctx.bezierCurveTo(size * 0.95, -size * 0.5, size * 0.75, size * 0.85, 0, size * 0.95);
-    ctx.bezierCurveTo(-size * 0.75, size * 0.85, -size * 0.95, -size * 0.5, 0, -size * 0.9);
-    ctx.fill();
-    ctx.strokeStyle = "rgba(255,255,255,0.3)";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(0, -size * 0.7);
-    ctx.lineTo(0, size * 0.72);
-    ctx.stroke();
-  } else if (group === "starch") {
-    for (let i = 0; i < 7; i += 1) {
-      const rx = ((i % 3) - 1) * size * 0.34 + ((i * 13) % 7 - 3) * 0.2;
-      const ry = (Math.floor(i / 3) - 1) * size * 0.3;
-      ctx.beginPath();
-      ctx.ellipse(rx, ry, size * 0.34, size * 0.23, 0.25, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  } else {
-    ctx.beginPath();
-    ctx.moveTo(0, -size * 0.9);
-    ctx.bezierCurveTo(size * 0.85, -size * 0.3, size * 0.55, size * 0.9, 0, size * 0.95);
-    ctx.bezierCurveTo(-size * 0.55, size * 0.9, -size * 0.85, -size * 0.3, 0, -size * 0.9);
-    ctx.fill();
-    ctx.fillStyle = "rgba(255,255,255,0.25)";
-    ctx.beginPath();
-    ctx.arc(size * 0.14, -size * 0.2, size * 0.2, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.roundRect(-size * 0.85, -size * 0.46, size * 1.7, size * 0.92, size * 0.26);
+    return;
   }
 
+  if (group === "plants") {
+    ctx.beginPath();
+    ctx.moveTo(0, -size * 0.92);
+    ctx.bezierCurveTo(size * 0.98, -size * 0.5, size * 0.78, size * 0.88, 0, size * 0.98);
+    ctx.bezierCurveTo(-size * 0.78, size * 0.88, -size * 0.98, -size * 0.5, 0, -size * 0.92);
+    return;
+  }
+
+  if (group === "starch") {
+    ctx.beginPath();
+    ctx.ellipse(0, 0, size * 0.95, size * 0.68, 0.12, 0, Math.PI * 2);
+    return;
+  }
+
+  ctx.beginPath();
+  ctx.moveTo(0, -size * 0.92);
+  ctx.bezierCurveTo(size * 0.88, -size * 0.3, size * 0.58, size * 0.92, 0, size * 0.98);
+  ctx.bezierCurveTo(-size * 0.58, size * 0.92, -size * 0.88, -size * 0.3, 0, -size * 0.92);
+}
+
+function drawPhotoFoodPiece(x, y, size, item, options = {}) {
+  const group = ingredientGroupForId(item.id);
+  const color = colorForItem(item);
+  const photo = mealPhotoForItem(item);
+  const opacity = options.opacity ?? 1;
+
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.globalAlpha = opacity;
+
+  traceIngredientShapePath(group, size);
+  ctx.fillStyle = color;
+  ctx.fill();
+
+  if (photo && photo.complete && photo.naturalWidth > 0) {
+    ctx.save();
+    traceIngredientShapePath(group, size);
+    ctx.clip();
+    const sw = size * 2.2;
+    const sh = size * 2.2;
+    ctx.globalAlpha = 0.82;
+    ctx.drawImage(photo, -sw / 2, -sh / 2, sw, sh);
+    ctx.restore();
+  }
+
+  ctx.strokeStyle = "rgba(255,255,255,0.45)";
+  ctx.lineWidth = Math.max(1.4, size * 0.08);
+  traceIngredientShapePath(group, size);
+  ctx.stroke();
+
   ctx.restore();
+}
+
+function drawIngredientSprite(x, y, size, item) {
+  drawPhotoFoodPiece(x, y, size, item);
 }
 
 function spawnIngredientTarget() {
@@ -749,7 +799,7 @@ function spawnIngredientTarget() {
     y: canvas.height - 36,
     vx: (Math.random() - 0.5) * 1.8,
     vy: -(7.4 + Math.random() * 2.6),
-    radius: 16 + Math.random() * 5,
+    radius: 24 + Math.random() * 8,
     sliced: false,
     life: 1
   });
@@ -853,20 +903,12 @@ function drawPlatedMealPreview() {
 
   const starchItem = getById("starch", state.selected.starch[0]);
   if (starchItem && hasIngredientOnPlate(starchItem.id)) {
-    ctx.fillStyle = colorForItem(starchItem);
-    ctx.globalAlpha = 0.45 + progress * 0.45;
-    ctx.beginPath();
-    ctx.arc(plateX, plateY + 8, 52, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.globalAlpha = 1;
+    drawPhotoFoodPiece(plateX, plateY + 8, 56, starchItem, { opacity: 0.56 + progress * 0.35 });
   }
 
   const proteinItem = getById("protein", state.selected.protein[0]);
   if (proteinItem && hasIngredientOnPlate(proteinItem.id)) {
-    ctx.fillStyle = colorForItem(proteinItem);
-    ctx.beginPath();
-    ctx.ellipse(plateX + 21, plateY - 14, 30, 20, -0.2, 0, Math.PI * 2);
-    ctx.fill();
+    drawPhotoFoodPiece(plateX + 24, plateY - 14, 34, proteinItem, { opacity: 0.92 });
   }
 
   const plantItems = state.selected.plants.map((id) => getById("plants", id)).filter(Boolean);
@@ -875,31 +917,27 @@ function drawPlatedMealPreview() {
     const angle = (Math.PI * 2 * index) / Math.max(1, plantItems.length);
     const px = plateX + Math.cos(angle) * 40;
     const py = plateY + Math.sin(angle) * 30;
-    ctx.fillStyle = colorForItem(item);
-    ctx.beginPath();
-    ctx.arc(px, py, 12, 0, Math.PI * 2);
-    ctx.fill();
+    drawPhotoFoodPiece(px, py, 18, item, { opacity: 0.9 });
   });
 
   const flavorItem = getById("flavor", state.selected.flavor[0]);
   if (flavorItem && hasIngredientOnPlate(flavorItem.id)) {
-    ctx.strokeStyle = colorForItem(flavorItem);
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.arc(plateX, plateY + 8, 44, 0.3, 2.6);
-    ctx.stroke();
+    ctx.save();
+    ctx.globalAlpha = 0.75;
+    drawPhotoFoodPiece(plateX - 20, plateY + 2, 16, flavorItem, { opacity: 0.76 });
+    drawPhotoFoodPiece(plateX + 16, plateY + 30, 13, flavorItem, { opacity: 0.7 });
+    ctx.restore();
   }
 
   Object.entries(platedCounts).forEach(([id, count], index) => {
     if (!count) return;
     const item = getById("protein", id) || getById("plants", id) || getById("starch", id) || getById("flavor", id);
     if (!item) return;
-    ctx.fillStyle = colorForItem(item);
     const base = Math.min(4, count);
     for (let i = 0; i < base; i += 1) {
       const px = plateX - 32 + ((index * 13 + i * 11) % 64);
       const py = plateY - 22 + ((index * 9 + i * 13) % 44);
-      ctx.fillRect(px, py, 3, 3);
+      drawPhotoFoodPiece(px, py, 6, item, { opacity: 0.78 });
     }
   });
 
@@ -1018,10 +1056,11 @@ function drawSlicingLayer() {
 
   plateTransfers.forEach((transfer) => {
     ctx.globalAlpha = Math.max(0.35, 1 - transfer.progress * 0.6);
-    ctx.fillStyle = transfer.color;
-    ctx.beginPath();
-    ctx.arc(transfer.x, transfer.y, 8, 0, Math.PI * 2);
-    ctx.fill();
+    const transferItem = getById("protein", transfer.itemId)
+      || getById("plants", transfer.itemId)
+      || getById("starch", transfer.itemId)
+      || getById("flavor", transfer.itemId);
+    if (transferItem) drawPhotoFoodPiece(transfer.x, transfer.y, 11, transferItem, { opacity: Math.max(0.46, 1 - transfer.progress * 0.5) });
     ctx.globalAlpha = 1;
   });
 }
