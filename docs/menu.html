@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Menu Library — Washoku Plus</title>
+  <meta name="description" content="Browse the Washoku Plus meal library by category.">
+  <meta name="theme-color" content="#123B2A">
+  <link rel="icon" href="assets/images/favicon.svg">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <script defer src="assets/js/app.js"></script>
+</head>
+<body>
+<header class="site-header">
+  <nav class="shell nav">
+    <a class="brand" href="index.html" aria-label="Washoku Plus home">
+      <span class="logo-dot" aria-hidden="true"></span>
+      <span>Washoku <strong>Plus</strong></span>
+    </a>
+    <button class="menu-button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <div class="nav-links" id="nav-links">
+      <a href="index.html#approach">Approach</a>
+      <a href="index.html#guides">Guides</a>
+      <a href="menu.html">Menu</a>
+      <a href="index.html#app">App</a>
+      <a href="ios.html" class="nav-cta">App Store</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <section class="section shell menu-page-header">
+    <div class="section-heading reveal">
+      <p class="eyebrow">Menu Library</p>
+      <h1>Browse all seeded meal items.</h1>
+      <p>These meals are seeded from your current data workbook and can be updated in ForgeWeb Admin.</p>
+    </div>
+    <div class="menu-summary" id="menuSummary">Loading menu data...</div>
+  </section>
+
+  <section class="section warm">
+    <div class="shell">
+      <div class="menu-image-gallery reveal">
+        <figure>
+          <img src="assets/images/meal-cats-1-12.png" alt="Meal board featuring bowls, wraps, soup, pasta, sandwich, burger, eggs, steak plate, pizza, and stir fry">
+          <figcaption>Meal board 1</figcaption>
+        </figure>
+        <figure>
+          <img src="assets/images/meal-cats-13-24.png" alt="Meal board featuring salmon bowl, ramen, salad, miso soup, poke bowl, curry rice, wraps, sushi, bento, stir fry, and dumplings">
+          <figcaption>Meal board 2</figcaption>
+        </figure>
+      </div>
+      <div class="menu-categories" id="menuCategoryFilters"></div>
+      <div class="menu-full-grid" id="menuFullGrid"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="shell footer-grid">
+    <div><strong>Washoku Plus</strong><p>Balanced meals. Better patterns. Calmer health.</p></div>
+    <div>
+      <a href="index.html#approach">Approach</a>
+      <a href="index.html#guides">Guides</a>
+      <a href="menu.html">Menu</a>
+      <a href="ios.html">App Store</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="user-agreement.html">User Agreement</a>
+      <a href="support.html">Support</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

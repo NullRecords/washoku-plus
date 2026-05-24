@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Support — Washoku Plus</title>
+  <meta name="description" content="Get help with Washoku Plus. Browse FAQs or submit a support issue.">
+  <meta name="theme-color" content="#123B2A">
+  <link rel="icon" href="assets/images/favicon.svg">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    .support-hero{padding:4rem 0 2.5rem;text-align:center}
+    .support-hero h1{font-size:clamp(2.4rem,5vw,4rem);margin-bottom:.5rem}
+    .support-hero .lead{max-width:52ch;margin-inline:auto}
+    .faq-section{padding:3rem 0 4rem}
+    .faq-grid{display:grid;gap:.75rem;max-width:800px;margin:2rem auto 0}
+    .faq-item{background:rgba(255,255,255,.74);border:1px solid rgba(20,53,40,.1);border-radius:20px;overflow:hidden;box-shadow:0 8px 24px rgba(35,45,32,.06)}
+    .faq-question{width:100%;display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:1.2rem 1.4rem;background:transparent;border:0;text-align:left;font:inherit;font-weight:700;font-size:1rem;color:var(--ink);cursor:pointer}
+    .faq-question:hover{background:rgba(18,59,42,.04)}
+    .faq-icon{width:28px;height:28px;flex-shrink:0;border-radius:50%;background:rgba(18,59,42,.07);display:grid;place-items:center;color:var(--moss);font-size:1.1rem;transition:transform .25s ease,background .2s}
+    .faq-item[open]>.faq-question .faq-icon{transform:rotate(45deg);background:var(--moss);color:#fff}
+    .faq-answer{padding:0 1.4rem 1.4rem;color:var(--ink-2);font-size:.97rem;line-height:1.65}
+    .faq-answer p{margin:0 0 .6rem}
+    .faq-answer p:last-child{margin-bottom:0}
+    .faq-answer a{color:var(--moss);font-weight:700;text-decoration:underline}
+    details.faq-item summary{list-style:none}
+    details.faq-item summary::-webkit-details-marker{display:none}
+    .submit-section{padding:3rem 0 5rem}
+    .support-form-card{max-width:700px;margin:0 auto;background:radial-gradient(circle at top right,rgba(220,166,74,.12),transparent 18rem),var(--paper);border:1px solid rgba(20,53,40,.1);border-radius:var(--radius);padding:clamp(1.5rem,4vw,3rem);box-shadow:0 12px 36px rgba(35,45,32,.08)}
+    .support-form-card h2{font-size:clamp(1.6rem,3vw,2.4rem);margin-bottom:.4rem}
+    .support-form-card>.lead{font-size:.97rem;color:var(--ink-2);margin-bottom:1.8rem}
+    .form-group{margin-bottom:1.25rem}
+    .form-group label{display:block;font-weight:700;font-size:.93rem;margin-bottom:.45rem}
+    .form-group input,
+    .form-group select,
+    .form-group textarea{width:100%;padding:.75rem 1rem;border:1px solid rgba(20,53,40,.16);border-radius:14px;font:inherit;font-size:.97rem;background:#fff;color:var(--ink);transition:border-color .2s,box-shadow .2s}
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus{outline:none;border-color:var(--moss);box-shadow:0 0 0 3px rgba(18,59,42,.12)}
+    .form-group textarea{resize:vertical;min-height:130px}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+    .submit-row{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:1.6rem}
+    .submit-row .button{min-width:160px}
+    #submitStatus{font-size:.93rem;color:var(--ink-2)}
+    #submitStatus.success{color:#1a6b3a;font-weight:700}
+    #submitStatus.error{color:#b7423a;font-weight:700}
+    @media(max-width:600px){.form-row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <nav class="nav shell">
+    <a class="brand" href="index.html" aria-label="Washoku Plus home">
+      <span class="logo-dot" aria-hidden="true"></span>
+      <span>Washoku <strong>Plus</strong></span>
+    </a>
+    <button class="menu-button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <div class="nav-links" id="nav-links">
+      <a href="index.html#approach">Approach</a>
+      <a href="index.html#guides">Guides</a>
+      <a href="index.html#app">App</a>
+      <a href="ios.html" class="nav-cta">App Store</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+
+  <section class="support-hero shell reveal">
+    <p class="eyebrow">Help &amp; Support</p>
+    <h1>How can we help?</h1>
+    <p class="lead">Browse common questions below. If you don't find an answer, you can submit an issue and we'll get back to you.</p>
+  </section>
+
+  <!-- FAQ ---------------------------------------------------------------->
+  <section class="faq-section">
+    <div class="shell">
+      <div class="section-heading reveal">
+        <p class="eyebrow">Frequently Asked Questions</p>
+        <h2>Common questions</h2>
+      </div>
+
+      <div class="faq-grid">
+
+        <details class="faq-item reveal">
+          <summary class="faq-question">
+            Why isn't the app loading on my iPhone?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </summary>
+          <div class="faq-answer">
+            <p>First, force-quit the app and reopen it. If the issue persists, go to <strong>Settings → General → iPhone Storage → Washoku Plus</strong> and tap <em>Offload App</em>, then reinstall from the App Store. Make sure you're running iOS 16 or later.</p>
+            <p>Still stuck? Check your internet connection — some features require a live connection on first launch.</p>
+          </div>
+        </details>
+
+        <details class="faq-item reveal">
+          <summary class="faq-question">
+            My dietary restrictions aren't being saved. What do I do?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </summary>
+          <div class="faq-answer">
+            <p>Go to <strong>Profile → Dietary Preferences</strong> and tap <em>Save</em> after making any changes. If preferences reset after closing the app, sign out and sign back in to re-sync your profile from the server.</p>
+            <p>If you're using the app offline, changes will sync automatically the next time a connection is available.</p>
+          </div>
+        </details>
+
+        <details class="faq-item reveal">
+          <summary class="faq-question">
+            How do I reset my meal plan?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </summary>
+          <div class="faq-answer">
+            <p>Navigate to <strong>Meal Plan → Week View</strong> and tap the three-dot menu in the top-right corner. Select <em>Reset Week</em> or <em>Start Fresh</em>. This will clear the current week's plan but preserve your meal history and saved recipes.</p>
+          </div>
+        </details>
+
+        <details class="faq-item reveal">
+          <summary class="faq-question">
+            I can't log in — I keep getting an error.
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </summary>
+          <div class="faq-answer">
+            <p>Double-check that caps lock is off and your email matches the one you registered with. Use <em>Forgot password</em> on the sign-in screen to receive a reset link.</p>
+            <p>If you signed up via Apple or Google, tap the corresponding button on the sign-in screen — these accounts don't use a separate password.</p>
+            <p>If the reset email doesn't arrive within 5 minutes, check your spam folder or <a href="#submit-issue">submit a support issue</a> below.</p>
+          </div>
+        </details>
+
+        <details class="faq-item reveal">
+          <summary class="faq-question">
+            My data isn't syncing between devices.
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </summary>
+          <div class="faq-answer">
+            <p>Make sure you're signed in with the same account on both devices. Open the app on each device while connected to Wi-Fi — sync happens automatically within a few seconds.</p>
+            <p>If data is still out of date, pull down on the main screen to force a manual refresh. If the problem continues, <a href="#submit-issue">let us know</a>.</p>
+          </div>
+        </details>
+
+        <details class="faq-item reveal">
+          <summary class="faq-question">
+            How do I delete my account and data?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </summary>
+          <div class="faq-answer">
+            <p>Go to <strong>Profile → Settings → Delete Account</strong>. This will permanently remove your account, meal history, and all personal data within 30 days as required by applicable privacy laws.</p>
+            <p>You can also request deletion by emailing <a href="mailto:hello@washoku.plus">hello@washoku.plus</a> with the subject line <em>Delete My Account</em>.</p>
+          </div>
+        </details>
+
+        <details class="faq-item reveal">
+          <summary class="faq-question">
+            How do I manage or cancel my subscription?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </summary>
+          <div class="faq-answer">
+            <p>Subscriptions are managed through the App Store. On your iPhone go to <strong>Settings → [your name] → Subscriptions</strong>, find Washoku Plus, and tap to modify or cancel.</p>
+            <p>We do not have the ability to manage App Store subscriptions directly — Apple handles all billing for iOS purchases.</p>
+          </div>
+        </details>
+
+        <details class="faq-item reveal">
+          <summary class="faq-question">
+            The Companion (Sprout) isn't responding to taps.
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </summary>
+          <div class="faq-answer">
+            <p>The Companion feature requires an active connection to generate new insights. Verify you have internet access, then pull-to-refresh the Home screen. If the issue persists after a force-quit, <a href="#submit-issue">submit a report</a> and include your device model and iOS version.</p>
+          </div>
+        </details>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Submit Issue -------------------------------------------------------->
+  <section id="submit-issue" class="submit-section section warm">
+    <div class="shell">
+      <div class="support-form-card reveal">
+        <p class="eyebrow">Still need help?</p>
+        <h2>Submit a support issue</h2>
+        <p class="lead">Describe what's happening and we'll look into it. We typically respond within 1–2 business days.</p>
+
+        <form id="supportForm" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="supportName">Your name</label>
+              <input type="text" id="supportName" name="name" placeholder="Alex" autocomplete="name" required>
+            </div>
+            <div class="form-group">
+              <label for="supportEmail">Email address</label>
+              <input type="email" id="supportEmail" name="email" placeholder="you@example.com" autocomplete="email" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="supportCategory">Issue category</label>
+            <select id="supportCategory" name="category" required>
+              <option value="" disabled selected>Select a category…</option>
+              <option value="account">Account &amp; sign-in</option>
+              <option value="sync">Data sync</option>
+              <option value="meal-plan">Meal planning</option>
+              <option value="dietary">Dietary preferences</option>
+              <option value="subscription">Subscription &amp; billing</option>
+              <option value="companion">Companion (Sprout)</option>
+              <option value="performance">App performance or crashes</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="supportDevice">Device &amp; OS (optional)</label>
+            <input type="text" id="supportDevice" name="device" placeholder="e.g. iPhone 15, iOS 17.4">
+          </div>
+
+          <div class="form-group">
+            <label for="supportDescription">Describe the issue</label>
+            <textarea id="supportDescription" name="description" placeholder="What were you doing when the issue occurred? What did you expect to happen?" required></textarea>
+          </div>
+
+          <div class="submit-row">
+            <button type="submit" class="button primary" id="submitBtn">Send report</button>
+            <span id="submitStatus" role="live" aria-live="polite"></span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="shell footer-grid">
+    <div><strong>Washoku Plus</strong><p>Balanced meals. Better patterns. Calmer health.</p></div>
+    <div>
+      <a href="index.html#approach">Approach</a>
+      <a href="index.html#guides">Guides</a>
+      <a href="ios.html">App Store</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="user-agreement.html">User Agreement</a>
+      <a href="ios.html">iOS App</a>
+      <a href="support.html">Support</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── FAQ accordion: keyboard & mouse ──────────────────────────────────
+  document.querySelectorAll("details.faq-item").forEach(detail => {
+    detail.addEventListener("toggle", () => {
+      if (detail.open) {
+        document.querySelectorAll("details.faq-item").forEach(other => {
+          if (other !== detail) other.removeAttribute("open");
+        });
+      }
+    });
+  });
+
+  // ── Nav menu toggle ───────────────────────────────────────────────────
+  const menu = document.querySelector(".menu-button");
+  const navLinks = document.querySelector("#nav-links");
+  menu?.addEventListener("click", () => {
+    const open = navLinks.classList.toggle("open");
+    menu.setAttribute("aria-expanded", String(open));
+  });
+
+  // ── Scroll reveal ─────────────────────────────────────────────────────
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("is-visible"); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+
+  // ── Support form submission ───────────────────────────────────────────
+  const LABS_API_ENDPOINT = "https://api.washoku.plus/labs/support";
+
+  const form = document.getElementById("supportForm");
+  const submitBtn = document.getElementById("submitBtn");
+  const submitStatus = document.getElementById("submitStatus");
+
+  form?.addEventListener("submit", async e => {
+    e.preventDefault();
+
+    const name = document.getElementById("supportName").value.trim();
+    const email = document.getElementById("supportEmail").value.trim();
+    const category = document.getElementById("supportCategory").value;
+    const device = document.getElementById("supportDevice").value.trim();
+    const description = document.getElementById("supportDescription").value.trim();
+
+    if (!name || !email || !category || !description) {
+      submitStatus.className = "error";
+      submitStatus.textContent = "Please fill in all required fields.";
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      submitStatus.className = "error";
+      submitStatus.textContent = "Please enter a valid email address.";
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Sending…";
+    submitStatus.className = "";
+    submitStatus.textContent = "";
+
+    const payload = { name, email, category, device, description };
+
+    try {
+      const res = await fetch(LABS_API_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) throw new Error(`Server responded with ${res.status}`);
+
+      form.reset();
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Send report";
+      submitStatus.className = "success";
+      submitStatus.textContent = "Report sent — thanks! We'll follow up by email within 1–2 business days.";
+    } catch (err) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Send report";
+      submitStatus.className = "error";
+      submitStatus.textContent = "Something went wrong. Please try again or email hello@washoku.plus directly.";
+      console.error("Support submission error:", err);
+    }
+  });
+</script>
+</body>
+</html>

@@ -24,9 +24,10 @@
     <div class="nav-links" id="nav-links">
       <a href="#approach">Approach</a>
       <a href="#guides">Guides</a>
+      <a href="#menu-library">Menu</a>
       <a href="#app">App</a>
       <a href="#companion">Companion</a>
-      <a href="#waitlist" class="nav-cta">Get updates</a>
+      <a href="ios.html" class="nav-cta">App Store</a>
     </div>
   </nav>
 </header>
@@ -38,7 +39,7 @@
       <h1>Balanced meals. Global flavors. Gentle health insights.</h1>
       <p class="lead">Washoku Plus is a global meal-planning approach inspired by the balanced structure of Washoku and thoughtful garden design: balance, seasonality, simplicity, reflection, and care.</p>
       <div class="hero-actions">
-        <a class="button primary" href="#waitlist">Join the early list</a>
+        <a class="button primary" href="ios.html">Open App Store</a>
         <a class="button secondary" href="#approach">Explore the method</a>
       </div>
       <p class="microcopy">No fad claims. No shame. No cultural shortcuts. Just balanced meal patterns and gentle health insight.</p>
@@ -64,7 +65,7 @@
           </div>
 
           <div class="next-meal-card">
-            <div><p class="card-label">Next meal</p><h3>Salmon Rice Bowl</h3><p>High protein · Wheat-aware · 25 min</p></div>
+            <div><p class="card-label">Next meal</p><h3 id="nextMealName">Salmon Rice Bowl</h3><p id="nextMealMeta">High protein · Wheat-aware · 25 min</p></div>
             <div class="meal-icon" aria-hidden="true">◒</div>
           </div>
         </div>
@@ -118,6 +119,22 @@
         <article class="guide-card reveal"><h3>What is Washoku?</h3><p>A plain-language intro to the food culture, the balanced-meal pattern, and respectful adaptation.</p><a href="guides/what-is-washoku.html">Read guide</a></article>
         <article class="guide-card reveal"><h3>Wheat-aware Asian meals</h3><p>Soy sauce, ramen, udon, panko, curry roux, and safer alternatives like tamari and rice noodles.</p><a href="guides/wheat-aware-asian-meals.html">Read guide</a></article>
         <article class="guide-card reveal"><h3>Protein-forward bowls</h3><p>Build meals that support satiety, fitness, vegetarian days, and pescatarian weeks.</p><a href="guides/protein-forward-bowls.html">Read guide</a></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="menu-library" class="section shell">
+    <div class="section-heading reveal">
+      <p class="eyebrow">Meal Library</p>
+      <h2>Explore menu items by category.</h2>
+      <p>Browse the current meal catalog and let Sprout recommend rotating options instead of repeating the same dishes.</p>
+    </div>
+    <div class="menu-library-panel reveal">
+      <div class="menu-summary" id="menuSummary">Loading menu data...</div>
+      <div class="menu-categories" id="menuCategoryChips"></div>
+      <div class="menu-preview-grid" id="menuPreviewGrid"></div>
+      <div class="menu-library-actions">
+        <a class="button secondary" href="menu.html">View full menu list</a>
       </div>
     </div>
   </section>
@@ -180,18 +197,6 @@
     </section>
   </section>
 
-  <section id="waitlist" class="section shell">
-    <div class="waitlist-card reveal">
-      <p class="eyebrow">Early access</p>
-      <h2>Follow the build and get the first guides.</h2>
-      <p>Connect this form to Buttondown, Mailchimp, ConvertKit, or a small API later.</p>
-      <form class="signup-form" action="#" method="post">
-        <label for="email">Email address</label>
-        <div><input id="email" name="email" type="email" placeholder="you@example.com"><button class="button primary" type="submit">Notify me</button></div>
-        <small>This demo form is static. Wire it to your email provider before launch.</small>
-      </form>
-    </div>
-  </section>
 </main>
 
 <footer class="site-footer">
@@ -200,10 +205,12 @@
     <div>
       <a href="#approach">Approach</a>
       <a href="#guides">Guides</a>
-      <a href="#waitlist">Early access</a>
+      <a href="menu.html">Menu</a>
+      <a href="ios.html">App Store</a>
       <a href="privacy.html">Privacy</a>
       <a href="user-agreement.html">User Agreement</a>
       <a href="ios.html">iOS App</a>
+      <a href="support.html">Support</a>
     </div>
   </div>
 </footer>

@@ -1,0 +1,3681 @@
+{
+  "version": "1.0.0",
+  "seed": {
+    "source": "washoku_plus_100_meals_seed.xlsx",
+    "importedAt": "2026-05-23T15:36:52Z",
+    "mealCount": 100
+  },
+  "categories": [
+    {
+      "id": "bowls",
+      "name": "Bowls",
+      "description": "Bowls meal ideas",
+      "image": "",
+      "mealCount": 75
+    },
+    {
+      "id": "burgers",
+      "name": "Burgers",
+      "description": "Burgers meal ideas",
+      "image": "",
+      "mealCount": 1
+    },
+    {
+      "id": "global-favorites",
+      "name": "Global Favorites",
+      "description": "Global Favorites meal ideas",
+      "image": "",
+      "mealCount": 4
+    },
+    {
+      "id": "plates-and-bento",
+      "name": "Plates & Bento",
+      "description": "Plates & Bento meal ideas",
+      "image": "",
+      "mealCount": 8
+    },
+    {
+      "id": "salads",
+      "name": "Salads",
+      "description": "Salads meal ideas",
+      "image": "",
+      "mealCount": 3
+    },
+    {
+      "id": "soups-and-noodles",
+      "name": "Soups & Noodles",
+      "description": "Soups & Noodles meal ideas",
+      "image": "",
+      "mealCount": 7
+    },
+    {
+      "id": "wraps-and-rolls",
+      "name": "Wraps & Rolls",
+      "description": "Wraps & Rolls meal ideas",
+      "image": "",
+      "mealCount": 2
+    }
+  ],
+  "meals": [
+    {
+      "id": "meal_salmon-tamari-rice-bowl",
+      "name": "Salmon Tamari Rice Bowl",
+      "category": "bowls",
+      "cuisine": "Japanese-inspired",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": false,
+      "isPescatarian": true,
+      "protein": "salmon",
+      "plants": [
+        "cucumber",
+        "cabbage",
+        "seaweed"
+      ],
+      "smartStarch": "brown rice",
+      "flavor": "certified wheat-free tamari, ginger, rice vinegar",
+      "prepMinutes": 25,
+      "estimatedCalories": 560,
+      "estimatedProteinG": 38,
+      "allergens": [
+        "fish",
+        "soy"
+      ],
+      "wheatWarning": "Use certified wheat-free tamari; regular soy sauce/shoyu may contain wheat.",
+      "nutWarning": "",
+      "alternatives": "Use coconut aminos if soy-sensitive; use rice noodles or potato if avoiding rice.",
+      "tags": [
+        "Omega-3",
+        "High protein",
+        "Pescatarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "salmon rice bowl",
+        "poke bowl",
+        "sushi bowl"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_chicken-cabbage-ginger-bowl",
+      "name": "Chicken Cabbage Ginger Bowl",
+      "category": "bowls",
+      "cuisine": "Japanese-inspired",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "chicken breast",
+      "plants": [
+        "cabbage",
+        "carrots",
+        "scallions"
+      ],
+      "smartStarch": "white rice",
+      "flavor": "ginger garlic tamari",
+      "prepMinutes": 22,
+      "estimatedCalories": 510,
+      "estimatedProteinG": 42,
+      "allergens": [
+        "soy"
+      ],
+      "wheatWarning": "Use wheat-free tamari; bottled teriyaki may contain wheat.",
+      "nutWarning": "",
+      "alternatives": "Use coconut aminos; add edamame for more protein.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "chicken rice bowl",
+        "Japanese chicken bowl"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_egg-spinach-mushroom-rice-bowl",
+      "name": "Egg Spinach Mushroom Rice Bowl",
+      "category": "bowls",
+      "cuisine": "Japanese-inspired",
+      "mealType": "Breakfast/Lunch",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "eggs",
+      "plants": [
+        "spinach",
+        "mushrooms"
+      ],
+      "smartStarch": "rice",
+      "flavor": "sesame-free tamari broth",
+      "prepMinutes": 15,
+      "estimatedCalories": 430,
+      "estimatedProteinG": 24,
+      "allergens": [
+        "egg",
+        "soy"
+      ],
+      "wheatWarning": "Use wheat-free tamari.",
+      "nutWarning": "Avoid sesame topping if sesame/nut-sensitive.",
+      "alternatives": "Swap eggs for tofu; add edamame to boost protein.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware",
+        "Nut-aware"
+      ],
+      "mapsSearchTerms": [
+        "Egg Spinach Mushroom Rice Bowl",
+        "Japanese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_tofu-miso-vegetable-soup-bowl",
+      "name": "Tofu Miso Vegetable Soup Bowl",
+      "category": "bowls",
+      "cuisine": "Japanese-inspired",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "firm tofu",
+      "plants": [
+        "bok choy",
+        "mushrooms",
+        "carrots"
+      ],
+      "smartStarch": "rice",
+      "flavor": "miso broth",
+      "prepMinutes": 20,
+      "estimatedCalories": 400,
+      "estimatedProteinG": 24,
+      "allergens": [
+        "soy"
+      ],
+      "wheatWarning": "Check miso and broth labels for barley/wheat; use gluten-free miso.",
+      "nutWarning": "",
+      "alternatives": "Use chickpea miso if soy-sensitive.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Tofu Miso Vegetable Soup Bowl",
+        "Japanese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_shrimp-rice-noodle-broth-bowl",
+      "name": "Shrimp Rice Noodle Broth Bowl",
+      "category": "bowls",
+      "cuisine": "Japanese-inspired",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": false,
+      "isPescatarian": true,
+      "protein": "shrimp",
+      "plants": [
+        "bok choy",
+        "mushrooms",
+        "cabbage"
+      ],
+      "smartStarch": "rice noodles",
+      "flavor": "ginger scallion broth",
+      "prepMinutes": 20,
+      "estimatedCalories": 455,
+      "estimatedProteinG": 34,
+      "allergens": [
+        "shellfish"
+      ],
+      "wheatWarning": "Choose rice noodles; avoid ramen/udon/somen unless wheat-free.",
+      "nutWarning": "",
+      "alternatives": "Swap shrimp for tofu or chicken.",
+      "tags": [
+        "High protein",
+        "Pescatarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Shrimp Rice Noodle Broth Bowl",
+        "Japanese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_tuna-cucumber-avocado-rice-bowl",
+      "name": "Tuna Cucumber Avocado Rice Bowl",
+      "category": "bowls",
+      "cuisine": "Japanese-inspired",
+      "mealType": "Lunch",
+      "isVegetarian": false,
+      "isPescatarian": true,
+      "protein": "tuna",
+      "plants": [
+        "cucumber",
+        "seaweed",
+        "carrots"
+      ],
+      "smartStarch": "rice",
+      "flavor": "tamari lime dressing",
+      "prepMinutes": 12,
+      "estimatedCalories": 535,
+      "estimatedProteinG": 36,
+      "allergens": [
+        "fish",
+        "soy"
+      ],
+      "wheatWarning": "Use wheat-free tamari.",
+      "nutWarning": "",
+      "alternatives": "Swap tuna for salmon, tofu, or edamame.",
+      "tags": [
+        "High protein",
+        "Pescatarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Tuna Cucumber Avocado Rice Bowl",
+        "Japanese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_beef-lettuce-tamari-wraps-with-rice",
+      "name": "Beef Lettuce Tamari Wraps with Rice",
+      "category": "wraps-and-rolls",
+      "cuisine": "Japanese-inspired",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "lean beef",
+      "plants": [
+        "lettuce",
+        "cucumber",
+        "carrots"
+      ],
+      "smartStarch": "rice",
+      "flavor": "ginger tamari sauce",
+      "prepMinutes": 25,
+      "estimatedCalories": 525,
+      "estimatedProteinG": 36,
+      "allergens": [
+        "soy"
+      ],
+      "wheatWarning": "Use wheat-free tamari; check marinades.",
+      "nutWarning": "",
+      "alternatives": "Swap beef for tofu or chicken.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Beef Lettuce Tamari Wraps with Rice",
+        "Japanese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_grilled-mackerel-potato-greens-plate",
+      "name": "Grilled Mackerel Potato Greens Plate",
+      "category": "plates-and-bento",
+      "cuisine": "Japanese-inspired",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": true,
+      "protein": "mackerel",
+      "plants": [
+        "spinach",
+        "cucumber salad"
+      ],
+      "smartStarch": "roasted potato",
+      "flavor": "rice vinegar, lemon, herbs",
+      "prepMinutes": 30,
+      "estimatedCalories": 575,
+      "estimatedProteinG": 34,
+      "allergens": [
+        "fish"
+      ],
+      "wheatWarning": "Naturally wheat-free if sauces are checked.",
+      "nutWarning": "",
+      "alternatives": "Swap potato for rice; use salmon if mackerel unavailable.",
+      "tags": [
+        "Omega-3",
+        "High protein",
+        "Pescatarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Grilled Mackerel Potato Greens Plate",
+        "Japanese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_edamame-egg-breakfast-bowl",
+      "name": "Edamame Egg Breakfast Bowl",
+      "category": "bowls",
+      "cuisine": "Japanese-inspired",
+      "mealType": "Breakfast",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "eggs and edamame",
+      "plants": [
+        "spinach",
+        "mushrooms"
+      ],
+      "smartStarch": "rice",
+      "flavor": "tamari garlic",
+      "prepMinutes": 16,
+      "estimatedCalories": 455,
+      "estimatedProteinG": 31,
+      "allergens": [
+        "egg",
+        "soy"
+      ],
+      "wheatWarning": "Use wheat-free tamari.",
+      "nutWarning": "",
+      "alternatives": "Use tofu instead of egg for vegan version.",
+      "tags": [
+        "High protein",
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Edamame Egg Breakfast Bowl",
+        "Japanese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_certified-buckwheat-soba-tofu-bowl",
+      "name": "Certified Buckwheat Soba Tofu Bowl",
+      "category": "bowls",
+      "cuisine": "Japanese-inspired",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "tofu",
+      "plants": [
+        "cabbage",
+        "cucumber",
+        "carrots"
+      ],
+      "smartStarch": "100% buckwheat soba",
+      "flavor": "tamari ginger dressing",
+      "prepMinutes": 20,
+      "estimatedCalories": 505,
+      "estimatedProteinG": 28,
+      "allergens": [
+        "soy"
+      ],
+      "wheatWarning": "Only use certified 100% buckwheat soba; many soba noodles contain wheat.",
+      "nutWarning": "",
+      "alternatives": "Use rice noodles if certified soba unavailable.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Certified Buckwheat Soba Tofu Bowl",
+        "Japanese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_chicken-zucchini-rice-skillet",
+      "name": "Chicken Zucchini Rice Skillet",
+      "category": "global-favorites",
+      "cuisine": "Japanese-inspired",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "chicken thigh",
+      "plants": [
+        "zucchini",
+        "cabbage",
+        "mushrooms"
+      ],
+      "smartStarch": "rice",
+      "flavor": "ginger garlic broth",
+      "prepMinutes": 28,
+      "estimatedCalories": 540,
+      "estimatedProteinG": 39,
+      "allergens": [],
+      "wheatWarning": "Use wheat-free broth and tamari if used.",
+      "nutWarning": "",
+      "alternatives": "Use chicken breast to lower fat; add edamame.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Chicken Zucchini Rice Skillet",
+        "Japanese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_sardine-cucumber-rice-plate",
+      "name": "Sardine Cucumber Rice Plate",
+      "category": "plates-and-bento",
+      "cuisine": "Japanese-inspired",
+      "mealType": "Lunch",
+      "isVegetarian": false,
+      "isPescatarian": true,
+      "protein": "sardines",
+      "plants": [
+        "cucumber",
+        "greens",
+        "pickled carrots"
+      ],
+      "smartStarch": "rice",
+      "flavor": "lemon, rice vinegar",
+      "prepMinutes": 10,
+      "estimatedCalories": 500,
+      "estimatedProteinG": 32,
+      "allergens": [
+        "fish"
+      ],
+      "wheatWarning": "Check packaged sardines for sauces containing wheat.",
+      "nutWarning": "",
+      "alternatives": "Swap sardines for tuna or grilled tofu.",
+      "tags": [
+        "Omega-3",
+        "High protein",
+        "Pescatarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Sardine Cucumber Rice Plate",
+        "Japanese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_turkey-tamari-meatball-rice-bowl",
+      "name": "Turkey Tamari Meatball Rice Bowl",
+      "category": "bowls",
+      "cuisine": "Japanese-inspired",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "turkey meatballs",
+      "plants": [
+        "cabbage",
+        "mushrooms"
+      ],
+      "smartStarch": "rice",
+      "flavor": "tamari ginger glaze",
+      "prepMinutes": 30,
+      "estimatedCalories": 560,
+      "estimatedProteinG": 41,
+      "allergens": [
+        "soy",
+        "egg"
+      ],
+      "wheatWarning": "Use rice crumbs/oats instead of breadcrumbs; use wheat-free tamari.",
+      "nutWarning": "",
+      "alternatives": "Use flax binder instead of egg.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Turkey Tamari Meatball Rice Bowl",
+        "Japanese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_tofu-cucumber-nori-snack-bowl",
+      "name": "Tofu Cucumber Nori Snack Bowl",
+      "category": "bowls",
+      "cuisine": "Japanese-inspired",
+      "mealType": "Snack/Lunch",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "tofu and edamame",
+      "plants": [
+        "cucumber",
+        "nori",
+        "carrots"
+      ],
+      "smartStarch": "rice crackers",
+      "flavor": "tamari lime dip",
+      "prepMinutes": 10,
+      "estimatedCalories": 350,
+      "estimatedProteinG": 23,
+      "allergens": [
+        "soy"
+      ],
+      "wheatWarning": "Use wheat-free rice crackers and tamari.",
+      "nutWarning": "",
+      "alternatives": "Swap rice crackers for potatoes or rice cakes.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Tofu Cucumber Nori Snack Bowl",
+        "Japanese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_chicken-miso-rice-soup",
+      "name": "Chicken Miso Rice Soup",
+      "category": "soups-and-noodles",
+      "cuisine": "Japanese-inspired",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "chicken breast",
+      "plants": [
+        "bok choy",
+        "carrots",
+        "mushrooms"
+      ],
+      "smartStarch": "rice",
+      "flavor": "gluten-free miso broth",
+      "prepMinutes": 25,
+      "estimatedCalories": 460,
+      "estimatedProteinG": 37,
+      "allergens": [
+        "soy"
+      ],
+      "wheatWarning": "Use gluten-free miso; some miso includes barley/wheat.",
+      "nutWarning": "",
+      "alternatives": "Use tofu instead of chicken.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Chicken Miso Rice Soup",
+        "Japanese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_chicken-taco-rice-bowl",
+      "name": "Chicken Taco Rice Bowl",
+      "category": "bowls",
+      "cuisine": "Mexican",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "chicken breast",
+      "plants": [
+        "cabbage",
+        "peppers",
+        "pico de gallo"
+      ],
+      "smartStarch": "brown rice",
+      "flavor": "salsa, lime, avocado",
+      "prepMinutes": 25,
+      "estimatedCalories": 560,
+      "estimatedProteinG": 42,
+      "allergens": [],
+      "wheatWarning": "Naturally wheat-free if seasonings are checked.",
+      "nutWarning": "",
+      "alternatives": "Use corn tortillas; check spice blends for wheat fillers.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "chicken taco bowl",
+        "burrito bowl"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_fish-tacos-on-corn-tortillas",
+      "name": "Fish Tacos on Corn Tortillas",
+      "category": "global-favorites",
+      "cuisine": "Mexican",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": false,
+      "isPescatarian": true,
+      "protein": "white fish",
+      "plants": [
+        "cabbage slaw",
+        "pico"
+      ],
+      "smartStarch": "corn tortillas",
+      "flavor": "lime yogurt sauce",
+      "prepMinutes": 25,
+      "estimatedCalories": 515,
+      "estimatedProteinG": 35,
+      "allergens": [
+        "fish",
+        "dairy"
+      ],
+      "wheatWarning": "Use corn tortillas only; avoid flour tortillas.",
+      "nutWarning": "",
+      "alternatives": "Use dairy-free avocado lime sauce.",
+      "tags": [
+        "High protein",
+        "Pescatarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Fish Tacos on Corn Tortillas",
+        "Mexican restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_egg-black-bean-breakfast-bowl",
+      "name": "Egg Black Bean Breakfast Bowl",
+      "category": "bowls",
+      "cuisine": "Mexican",
+      "mealType": "Breakfast",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "eggs, black beans",
+      "plants": [
+        "spinach",
+        "salsa",
+        "peppers"
+      ],
+      "smartStarch": "sweet potato",
+      "flavor": "lime, cilantro",
+      "prepMinutes": 18,
+      "estimatedCalories": 480,
+      "estimatedProteinG": 25,
+      "allergens": [
+        "egg"
+      ],
+      "wheatWarning": "Naturally wheat-free if salsa/seasoning checked.",
+      "nutWarning": "",
+      "alternatives": "Swap eggs for tofu scramble.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Egg Black Bean Breakfast Bowl",
+        "Mexican restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_lentil-taco-bowl",
+      "name": "Lentil Taco Bowl",
+      "category": "bowls",
+      "cuisine": "Mexican",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "lentils",
+      "plants": [
+        "lettuce",
+        "tomato",
+        "peppers"
+      ],
+      "smartStarch": "brown rice",
+      "flavor": "salsa verde",
+      "prepMinutes": 28,
+      "estimatedCalories": 470,
+      "estimatedProteinG": 27,
+      "allergens": [],
+      "wheatWarning": "Naturally wheat-free if spices checked.",
+      "nutWarning": "",
+      "alternatives": "Add Greek yogurt or tofu for more protein.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Lentil Taco Bowl",
+        "Mexican restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_shrimp-fajita-rice-bowl",
+      "name": "Shrimp Fajita Rice Bowl",
+      "category": "bowls",
+      "cuisine": "Mexican",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": true,
+      "protein": "shrimp",
+      "plants": [
+        "peppers",
+        "onions",
+        "lettuce"
+      ],
+      "smartStarch": "rice",
+      "flavor": "lime, chili, avocado",
+      "prepMinutes": 22,
+      "estimatedCalories": 520,
+      "estimatedProteinG": 38,
+      "allergens": [
+        "shellfish"
+      ],
+      "wheatWarning": "Use rice/corn tortillas, not flour tortillas.",
+      "nutWarning": "",
+      "alternatives": "Swap shrimp for chicken or tofu.",
+      "tags": [
+        "High protein",
+        "Pescatarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Shrimp Fajita Rice Bowl",
+        "Mexican restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_turkey-taco-lettuce-cups",
+      "name": "Turkey Taco Lettuce Cups",
+      "category": "global-favorites",
+      "cuisine": "Mexican",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "lean turkey",
+      "plants": [
+        "lettuce",
+        "tomato",
+        "cabbage"
+      ],
+      "smartStarch": "black beans",
+      "flavor": "salsa, lime",
+      "prepMinutes": 20,
+      "estimatedCalories": 430,
+      "estimatedProteinG": 39,
+      "allergens": [],
+      "wheatWarning": "Check taco seasoning for wheat fillers.",
+      "nutWarning": "",
+      "alternatives": "Use lentils or tofu for vegetarian version.",
+      "tags": [
+        "Lower carb",
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Turkey Taco Lettuce Cups",
+        "Mexican restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_bean-sweet-potato-bowl",
+      "name": "Bean Sweet Potato Bowl",
+      "category": "bowls",
+      "cuisine": "Mexican",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "black beans",
+      "plants": [
+        "kale",
+        "tomato",
+        "peppers"
+      ],
+      "smartStarch": "sweet potato",
+      "flavor": "salsa, cilantro",
+      "prepMinutes": 30,
+      "estimatedCalories": 455,
+      "estimatedProteinG": 20,
+      "allergens": [],
+      "wheatWarning": "Naturally wheat-free if seasoning checked.",
+      "nutWarning": "",
+      "alternatives": "Add eggs, tofu, or chicken for higher protein.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Bean Sweet Potato Bowl",
+        "Mexican restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_chicken-enchilada-style-bowl",
+      "name": "Chicken Enchilada-Style Bowl",
+      "category": "bowls",
+      "cuisine": "Mexican",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "chicken breast",
+      "plants": [
+        "zucchini",
+        "peppers",
+        "spinach"
+      ],
+      "smartStarch": "rice",
+      "flavor": "red chile sauce",
+      "prepMinutes": 30,
+      "estimatedCalories": 575,
+      "estimatedProteinG": 43,
+      "allergens": [],
+      "wheatWarning": "Use tortilla-free bowl; verify sauce is wheat-free.",
+      "nutWarning": "",
+      "alternatives": "Use corn tortilla strips if desired.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Chicken Enchilada-Style Bowl",
+        "Mexican restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_carne-asada-quinoa-bowl",
+      "name": "Carne Asada Quinoa Bowl",
+      "category": "bowls",
+      "cuisine": "Mexican",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "lean steak",
+      "plants": [
+        "lettuce",
+        "pico",
+        "peppers"
+      ],
+      "smartStarch": "quinoa",
+      "flavor": "lime, salsa roja",
+      "prepMinutes": 28,
+      "estimatedCalories": 590,
+      "estimatedProteinG": 42,
+      "allergens": [],
+      "wheatWarning": "Check marinades for wheat/soy sauce.",
+      "nutWarning": "",
+      "alternatives": "Use citrus-garlic marinade.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Carne Asada Quinoa Bowl",
+        "Mexican restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_tofu-sofritas-bowl",
+      "name": "Tofu Sofritas Bowl",
+      "category": "bowls",
+      "cuisine": "Mexican",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "tofu",
+      "plants": [
+        "lettuce",
+        "peppers",
+        "tomato"
+      ],
+      "smartStarch": "brown rice and beans",
+      "flavor": "chipotle salsa",
+      "prepMinutes": 25,
+      "estimatedCalories": 520,
+      "estimatedProteinG": 30,
+      "allergens": [
+        "soy"
+      ],
+      "wheatWarning": "Naturally wheat-free if chipotle sauce checked.",
+      "nutWarning": "",
+      "alternatives": "Use tempeh only if gluten-free; use beans if soy-free.",
+      "tags": [
+        "High protein",
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Tofu Sofritas Bowl",
+        "Mexican restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_chicken-pozole-inspired-bowl",
+      "name": "Chicken Pozole-Inspired Bowl",
+      "category": "bowls",
+      "cuisine": "Mexican",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "chicken breast",
+      "plants": [
+        "cabbage",
+        "radish",
+        "lettuce"
+      ],
+      "smartStarch": "hominy",
+      "flavor": "chile broth, lime",
+      "prepMinutes": 35,
+      "estimatedCalories": 455,
+      "estimatedProteinG": 36,
+      "allergens": [],
+      "wheatWarning": "Naturally wheat-free if broth checked.",
+      "nutWarning": "",
+      "alternatives": "Use beans for vegetarian version.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Chicken Pozole-Inspired Bowl",
+        "Mexican restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_breakfast-migas-style-corn-bowl",
+      "name": "Breakfast Migas-Style Corn Bowl",
+      "category": "bowls",
+      "cuisine": "Mexican",
+      "mealType": "Breakfast",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "eggs and beans",
+      "plants": [
+        "peppers",
+        "spinach",
+        "salsa"
+      ],
+      "smartStarch": "corn tortilla strips",
+      "flavor": "lime, cilantro",
+      "prepMinutes": 18,
+      "estimatedCalories": 500,
+      "estimatedProteinG": 27,
+      "allergens": [
+        "egg"
+      ],
+      "wheatWarning": "Use corn tortillas; avoid flour tortillas.",
+      "nutWarning": "",
+      "alternatives": "Use tofu scramble instead of eggs.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Breakfast Migas-Style Corn Bowl",
+        "Mexican restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_grilled-chicken-corn-salad-bowl",
+      "name": "Grilled Chicken Corn Salad Bowl",
+      "category": "bowls",
+      "cuisine": "Mexican",
+      "mealType": "Lunch",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "chicken breast",
+      "plants": [
+        "romaine",
+        "corn",
+        "tomato",
+        "cabbage"
+      ],
+      "smartStarch": "black beans",
+      "flavor": "lime vinaigrette",
+      "prepMinutes": 20,
+      "estimatedCalories": 485,
+      "estimatedProteinG": 40,
+      "allergens": [],
+      "wheatWarning": "Naturally wheat-free if dressing checked.",
+      "nutWarning": "",
+      "alternatives": "Add avocado if more calories needed.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Grilled Chicken Corn Salad Bowl",
+        "Mexican restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_salmon-salsa-verde-rice-bowl",
+      "name": "Salmon Salsa Verde Rice Bowl",
+      "category": "bowls",
+      "cuisine": "Mexican",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": true,
+      "protein": "salmon",
+      "plants": [
+        "zucchini",
+        "cabbage",
+        "tomatillo salsa"
+      ],
+      "smartStarch": "rice",
+      "flavor": "salsa verde",
+      "prepMinutes": 25,
+      "estimatedCalories": 590,
+      "estimatedProteinG": 38,
+      "allergens": [
+        "fish"
+      ],
+      "wheatWarning": "Naturally wheat-free if salsa checked.",
+      "nutWarning": "",
+      "alternatives": "Swap salmon for shrimp or chicken.",
+      "tags": [
+        "Omega-3",
+        "High protein",
+        "Pescatarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Salmon Salsa Verde Rice Bowl",
+        "Mexican restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_tempeh-taco-bowl-gluten-free",
+      "name": "Tempeh Taco Bowl Gluten-Free",
+      "category": "bowls",
+      "cuisine": "Mexican",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "gluten-free tempeh",
+      "plants": [
+        "lettuce",
+        "peppers",
+        "tomato"
+      ],
+      "smartStarch": "rice",
+      "flavor": "salsa, lime",
+      "prepMinutes": 22,
+      "estimatedCalories": 520,
+      "estimatedProteinG": 32,
+      "allergens": [
+        "soy"
+      ],
+      "wheatWarning": "Only use certified gluten-free tempeh; some tempeh grains contain wheat/barley.",
+      "nutWarning": "",
+      "alternatives": "Swap for tofu or beans.",
+      "tags": [
+        "High protein",
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Tempeh Taco Bowl Gluten-Free",
+        "Mexican restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_chicken-cucumber-tomato-rice-bowl",
+      "name": "Chicken Cucumber Tomato Rice Bowl",
+      "category": "bowls",
+      "cuisine": "Mediterranean",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "chicken breast",
+      "plants": [
+        "cucumber",
+        "tomato",
+        "greens"
+      ],
+      "smartStarch": "rice",
+      "flavor": "lemon oregano yogurt",
+      "prepMinutes": 25,
+      "estimatedCalories": 545,
+      "estimatedProteinG": 43,
+      "allergens": [
+        "dairy"
+      ],
+      "wheatWarning": "Naturally wheat-free if served without pita.",
+      "nutWarning": "",
+      "alternatives": "Use dairy-free tahini-free lemon sauce if needed.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Chicken Cucumber Tomato Rice Bowl",
+        "Mediterranean restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_salmon-potato-greens-plate",
+      "name": "Salmon Potato Greens Plate",
+      "category": "plates-and-bento",
+      "cuisine": "Mediterranean",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": true,
+      "protein": "salmon",
+      "plants": [
+        "greens",
+        "cucumber",
+        "tomato"
+      ],
+      "smartStarch": "roasted potatoes",
+      "flavor": "lemon olive oil",
+      "prepMinutes": 30,
+      "estimatedCalories": 610,
+      "estimatedProteinG": 38,
+      "allergens": [
+        "fish"
+      ],
+      "wheatWarning": "Naturally wheat-free.",
+      "nutWarning": "",
+      "alternatives": "Swap potato for rice or quinoa.",
+      "tags": [
+        "Omega-3",
+        "High protein",
+        "Pescatarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Salmon Potato Greens Plate",
+        "Mediterranean restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_greek-yogurt-berry-protein-bowl",
+      "name": "Greek Yogurt Berry Protein Bowl",
+      "category": "bowls",
+      "cuisine": "Mediterranean",
+      "mealType": "Breakfast",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "Greek yogurt",
+      "plants": [
+        "berries"
+      ],
+      "smartStarch": "oats or puffed rice",
+      "flavor": "honey, cinnamon",
+      "prepMinutes": 5,
+      "estimatedCalories": 410,
+      "estimatedProteinG": 32,
+      "allergens": [
+        "dairy"
+      ],
+      "wheatWarning": "Use certified gluten-free oats or puffed rice.",
+      "nutWarning": "Add seeds only if tolerated; avoid nuts.",
+      "alternatives": "Use soy/coconut yogurt plus protein if dairy-free.",
+      "tags": [
+        "High protein",
+        "Vegetarian",
+        "Wheat-aware",
+        "Nut-aware"
+      ],
+      "mapsSearchTerms": [
+        "Greek Yogurt Berry Protein Bowl",
+        "Mediterranean restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_lentil-chickpea-salad-bowl",
+      "name": "Lentil Chickpea Salad Bowl",
+      "category": "bowls",
+      "cuisine": "Mediterranean",
+      "mealType": "Lunch",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "lentils and chickpeas",
+      "plants": [
+        "cucumber",
+        "tomato",
+        "greens"
+      ],
+      "smartStarch": "quinoa",
+      "flavor": "lemon herb vinaigrette",
+      "prepMinutes": 20,
+      "estimatedCalories": 520,
+      "estimatedProteinG": 28,
+      "allergens": [],
+      "wheatWarning": "Naturally wheat-free.",
+      "nutWarning": "",
+      "alternatives": "Add feta or chicken for more protein.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Lentil Chickpea Salad Bowl",
+        "Mediterranean restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_turkey-meatball-rice-bowl",
+      "name": "Turkey Meatball Rice Bowl",
+      "category": "bowls",
+      "cuisine": "Mediterranean",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "turkey meatballs",
+      "plants": [
+        "zucchini",
+        "tomato",
+        "greens"
+      ],
+      "smartStarch": "rice",
+      "flavor": "garlic yogurt sauce",
+      "prepMinutes": 30,
+      "estimatedCalories": 565,
+      "estimatedProteinG": 42,
+      "allergens": [
+        "dairy",
+        "egg"
+      ],
+      "wheatWarning": "Use rice crumbs/oats instead of breadcrumbs.",
+      "nutWarning": "",
+      "alternatives": "Use dairy-free cucumber sauce.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Turkey Meatball Rice Bowl",
+        "Mediterranean restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_white-bean-tuna-salad-plate",
+      "name": "White Bean Tuna Salad Plate",
+      "category": "salads",
+      "cuisine": "Mediterranean",
+      "mealType": "Lunch",
+      "isVegetarian": false,
+      "isPescatarian": true,
+      "protein": "tuna and white beans",
+      "plants": [
+        "greens",
+        "cucumber",
+        "tomato"
+      ],
+      "smartStarch": "potatoes",
+      "flavor": "lemon caper dressing",
+      "prepMinutes": 12,
+      "estimatedCalories": 540,
+      "estimatedProteinG": 39,
+      "allergens": [
+        "fish"
+      ],
+      "wheatWarning": "Naturally wheat-free.",
+      "nutWarning": "",
+      "alternatives": "Swap tuna for chickpeas or chicken.",
+      "tags": [
+        "High protein",
+        "Pescatarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "White Bean Tuna Salad Plate",
+        "Mediterranean restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_egg-potato-herb-bowl",
+      "name": "Egg Potato Herb Bowl",
+      "category": "bowls",
+      "cuisine": "Mediterranean",
+      "mealType": "Breakfast/Lunch",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "eggs",
+      "plants": [
+        "spinach",
+        "tomato"
+      ],
+      "smartStarch": "potatoes",
+      "flavor": "herb vinaigrette",
+      "prepMinutes": 20,
+      "estimatedCalories": 465,
+      "estimatedProteinG": 24,
+      "allergens": [
+        "egg"
+      ],
+      "wheatWarning": "Naturally wheat-free.",
+      "nutWarning": "",
+      "alternatives": "Add beans or Greek yogurt for higher protein.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Egg Potato Herb Bowl",
+        "Mediterranean restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_chickpea-cucumber-feta-bowl",
+      "name": "Chickpea Cucumber Feta Bowl",
+      "category": "bowls",
+      "cuisine": "Mediterranean",
+      "mealType": "Lunch",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "chickpeas and feta",
+      "plants": [
+        "cucumber",
+        "tomato",
+        "greens"
+      ],
+      "smartStarch": "rice",
+      "flavor": "lemon dill",
+      "prepMinutes": 12,
+      "estimatedCalories": 505,
+      "estimatedProteinG": 24,
+      "allergens": [
+        "dairy"
+      ],
+      "wheatWarning": "Naturally wheat-free if no pita.",
+      "nutWarning": "",
+      "alternatives": "Use tofu feta if dairy-free.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Chickpea Cucumber Feta Bowl",
+        "Mediterranean restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_chicken-shawarma-rice-bowl-wheat-free",
+      "name": "Chicken Shawarma Rice Bowl Wheat-Free",
+      "category": "bowls",
+      "cuisine": "Mediterranean",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "chicken thigh",
+      "plants": [
+        "cabbage",
+        "cucumber",
+        "tomato"
+      ],
+      "smartStarch": "rice",
+      "flavor": "shawarma spices, yogurt sauce",
+      "prepMinutes": 30,
+      "estimatedCalories": 610,
+      "estimatedProteinG": 42,
+      "allergens": [
+        "dairy"
+      ],
+      "wheatWarning": "Serve without pita; check spice blend and sauces.",
+      "nutWarning": "",
+      "alternatives": "Use lettuce wrap or rice bowl format.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Chicken Shawarma Rice Bowl Wheat-Free",
+        "Mediterranean restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_falafel-style-chickpea-patty-bowl",
+      "name": "Falafel-Style Chickpea Patty Bowl",
+      "category": "bowls",
+      "cuisine": "Mediterranean",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "chickpea patties",
+      "plants": [
+        "greens",
+        "cucumber",
+        "tomato"
+      ],
+      "smartStarch": "quinoa",
+      "flavor": "lemon tahini-style sauce",
+      "prepMinutes": 30,
+      "estimatedCalories": 560,
+      "estimatedProteinG": 25,
+      "allergens": [
+        "sesame"
+      ],
+      "wheatWarning": "Use chickpea/rice flour, not wheat flour.",
+      "nutWarning": "Tahini contains sesame; flag if sesame/nut-sensitive.",
+      "alternatives": "Use yogurt lemon sauce instead of tahini if needed.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware",
+        "Nut-aware"
+      ],
+      "mapsSearchTerms": [
+        "Falafel-Style Chickpea Patty Bowl",
+        "Mediterranean restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_shrimp-greek-rice-plate",
+      "name": "Shrimp Greek Rice Plate",
+      "category": "plates-and-bento",
+      "cuisine": "Mediterranean",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": true,
+      "protein": "shrimp",
+      "plants": [
+        "zucchini",
+        "tomato",
+        "greens"
+      ],
+      "smartStarch": "rice",
+      "flavor": "lemon garlic",
+      "prepMinutes": 22,
+      "estimatedCalories": 500,
+      "estimatedProteinG": 38,
+      "allergens": [
+        "shellfish"
+      ],
+      "wheatWarning": "Naturally wheat-free.",
+      "nutWarning": "",
+      "alternatives": "Swap shrimp for salmon or chicken.",
+      "tags": [
+        "High protein",
+        "Pescatarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Shrimp Greek Rice Plate",
+        "Mediterranean restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_tofu-herb-quinoa-bowl",
+      "name": "Tofu Herb Quinoa Bowl",
+      "category": "bowls",
+      "cuisine": "Mediterranean",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "tofu",
+      "plants": [
+        "greens",
+        "cucumber",
+        "roasted peppers"
+      ],
+      "smartStarch": "quinoa",
+      "flavor": "lemon herb dressing",
+      "prepMinutes": 22,
+      "estimatedCalories": 510,
+      "estimatedProteinG": 31,
+      "allergens": [
+        "soy"
+      ],
+      "wheatWarning": "Naturally wheat-free.",
+      "nutWarning": "",
+      "alternatives": "Use chickpeas if soy-free.",
+      "tags": [
+        "High protein",
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Tofu Herb Quinoa Bowl",
+        "Mediterranean restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_turkey-stuffed-pepper-bowl",
+      "name": "Turkey Stuffed Pepper Bowl",
+      "category": "bowls",
+      "cuisine": "Mediterranean",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "ground turkey",
+      "plants": [
+        "bell peppers",
+        "tomato",
+        "spinach"
+      ],
+      "smartStarch": "rice",
+      "flavor": "oregano tomato sauce",
+      "prepMinutes": 35,
+      "estimatedCalories": 520,
+      "estimatedProteinG": 39,
+      "allergens": [],
+      "wheatWarning": "Naturally wheat-free if sauce checked.",
+      "nutWarning": "",
+      "alternatives": "Use lentils for vegetarian version.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Turkey Stuffed Pepper Bowl",
+        "Mediterranean restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_sardine-lemon-potato-salad",
+      "name": "Sardine Lemon Potato Salad",
+      "category": "salads",
+      "cuisine": "Mediterranean",
+      "mealType": "Lunch",
+      "isVegetarian": false,
+      "isPescatarian": true,
+      "protein": "sardines",
+      "plants": [
+        "greens",
+        "cucumber",
+        "tomato"
+      ],
+      "smartStarch": "potatoes",
+      "flavor": "lemon olive oil",
+      "prepMinutes": 15,
+      "estimatedCalories": 525,
+      "estimatedProteinG": 31,
+      "allergens": [
+        "fish"
+      ],
+      "wheatWarning": "Naturally wheat-free.",
+      "nutWarning": "",
+      "alternatives": "Use tuna or white beans.",
+      "tags": [
+        "Omega-3",
+        "High protein",
+        "Pescatarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Sardine Lemon Potato Salad",
+        "Mediterranean restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_chicken-lentil-vegetable-soup",
+      "name": "Chicken Lentil Vegetable Soup",
+      "category": "soups-and-noodles",
+      "cuisine": "Mediterranean",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "chicken and lentils",
+      "plants": [
+        "carrots",
+        "spinach",
+        "tomato"
+      ],
+      "smartStarch": "lentils",
+      "flavor": "lemon herb broth",
+      "prepMinutes": 35,
+      "estimatedCalories": 480,
+      "estimatedProteinG": 42,
+      "allergens": [],
+      "wheatWarning": "Naturally wheat-free if broth checked.",
+      "nutWarning": "",
+      "alternatives": "Use vegetable broth and extra lentils for vegetarian.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Chicken Lentil Vegetable Soup",
+        "Mediterranean restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_bibimbap-style-egg-rice-bowl",
+      "name": "Bibimbap-Style Egg Rice Bowl",
+      "category": "bowls",
+      "cuisine": "Korean-inspired",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "egg",
+      "plants": [
+        "spinach",
+        "carrots",
+        "mushrooms",
+        "cucumber"
+      ],
+      "smartStarch": "rice",
+      "flavor": "tamari gochujang-style sauce",
+      "prepMinutes": 25,
+      "estimatedCalories": 520,
+      "estimatedProteinG": 25,
+      "allergens": [
+        "egg",
+        "soy"
+      ],
+      "wheatWarning": "Use wheat-free tamari; verify gochujang is gluten-free.",
+      "nutWarning": "",
+      "alternatives": "Use chili-garlic tamari sauce if gochujang not safe.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Bibimbap-Style Egg Rice Bowl",
+        "Korean-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_chicken-cucumber-rice-bowl",
+      "name": "Chicken Cucumber Rice Bowl",
+      "category": "bowls",
+      "cuisine": "Korean-inspired",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "chicken breast",
+      "plants": [
+        "cucumber",
+        "cabbage",
+        "spinach"
+      ],
+      "smartStarch": "rice",
+      "flavor": "garlic tamari chili sauce",
+      "prepMinutes": 22,
+      "estimatedCalories": 505,
+      "estimatedProteinG": 42,
+      "allergens": [
+        "soy"
+      ],
+      "wheatWarning": "Use wheat-free tamari; check chili paste.",
+      "nutWarning": "",
+      "alternatives": "Use coconut aminos.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Chicken Cucumber Rice Bowl",
+        "Korean-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_beef-lettuce-wrap-rice-plate",
+      "name": "Beef Lettuce Wrap Rice Plate",
+      "category": "wraps-and-rolls",
+      "cuisine": "Korean-inspired",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "lean beef",
+      "plants": [
+        "lettuce",
+        "cucumber",
+        "carrots"
+      ],
+      "smartStarch": "rice",
+      "flavor": "garlic ginger tamari",
+      "prepMinutes": 25,
+      "estimatedCalories": 560,
+      "estimatedProteinG": 39,
+      "allergens": [
+        "soy"
+      ],
+      "wheatWarning": "Use wheat-free tamari; avoid soy-based marinades unless verified.",
+      "nutWarning": "",
+      "alternatives": "Swap beef for tofu.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Beef Lettuce Wrap Rice Plate",
+        "Korean-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_tofu-spinach-mushroom-bowl",
+      "name": "Tofu Spinach Mushroom Bowl",
+      "category": "bowls",
+      "cuisine": "Korean-inspired",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "tofu",
+      "plants": [
+        "spinach",
+        "mushrooms",
+        "carrots"
+      ],
+      "smartStarch": "rice",
+      "flavor": "sesame-free tamari garlic",
+      "prepMinutes": 20,
+      "estimatedCalories": 485,
+      "estimatedProteinG": 29,
+      "allergens": [
+        "soy"
+      ],
+      "wheatWarning": "Use wheat-free tamari.",
+      "nutWarning": "Avoid sesame oil/seeds if sesame-sensitive.",
+      "alternatives": "Use avocado oil instead of sesame oil.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware",
+        "Nut-aware"
+      ],
+      "mapsSearchTerms": [
+        "Tofu Spinach Mushroom Bowl",
+        "Korean-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_edamame-tofu-green-bowl",
+      "name": "Edamame Tofu Green Bowl",
+      "category": "bowls",
+      "cuisine": "Korean-inspired",
+      "mealType": "Lunch",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "tofu and edamame",
+      "plants": [
+        "spinach",
+        "cucumber",
+        "cabbage"
+      ],
+      "smartStarch": "rice",
+      "flavor": "rice vinegar tamari",
+      "prepMinutes": 18,
+      "estimatedCalories": 500,
+      "estimatedProteinG": 34,
+      "allergens": [
+        "soy"
+      ],
+      "wheatWarning": "Use wheat-free tamari.",
+      "nutWarning": "",
+      "alternatives": "Swap edamame for beans if soy-free.",
+      "tags": [
+        "High protein",
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Edamame Tofu Green Bowl",
+        "Korean-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_salmon-kimchi-style-rice-bowl",
+      "name": "Salmon Kimchi-Style Rice Bowl",
+      "category": "bowls",
+      "cuisine": "Korean-inspired",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": true,
+      "protein": "salmon",
+      "plants": [
+        "cucumber",
+        "cabbage",
+        "spinach"
+      ],
+      "smartStarch": "rice",
+      "flavor": "kimchi-style pickled veg",
+      "prepMinutes": 25,
+      "estimatedCalories": 585,
+      "estimatedProteinG": 38,
+      "allergens": [
+        "fish"
+      ],
+      "wheatWarning": "Verify kimchi and sauces are gluten-free.",
+      "nutWarning": "",
+      "alternatives": "Use quick vinegar cabbage if kimchi not safe.",
+      "tags": [
+        "Omega-3",
+        "High protein",
+        "Pescatarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Salmon Kimchi-Style Rice Bowl",
+        "Korean-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_turkey-gochujang-style-bowl",
+      "name": "Turkey Gochujang-Style Bowl",
+      "category": "bowls",
+      "cuisine": "Korean-inspired",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "ground turkey",
+      "plants": [
+        "cabbage",
+        "carrots",
+        "spinach"
+      ],
+      "smartStarch": "rice",
+      "flavor": "gluten-free chili garlic sauce",
+      "prepMinutes": 24,
+      "estimatedCalories": 545,
+      "estimatedProteinG": 40,
+      "allergens": [],
+      "wheatWarning": "Use gluten-free gochujang alternative; many contain wheat/barley.",
+      "nutWarning": "",
+      "alternatives": "Use chili flakes, garlic, tamari, and pear.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Turkey Gochujang-Style Bowl",
+        "Korean-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_shrimp-cabbage-rice-bowl",
+      "name": "Shrimp Cabbage Rice Bowl",
+      "category": "bowls",
+      "cuisine": "Korean-inspired",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": false,
+      "isPescatarian": true,
+      "protein": "shrimp",
+      "plants": [
+        "cabbage",
+        "cucumber",
+        "spinach"
+      ],
+      "smartStarch": "rice",
+      "flavor": "garlic lime tamari",
+      "prepMinutes": 18,
+      "estimatedCalories": 485,
+      "estimatedProteinG": 36,
+      "allergens": [
+        "shellfish",
+        "soy"
+      ],
+      "wheatWarning": "Use wheat-free tamari.",
+      "nutWarning": "",
+      "alternatives": "Swap shrimp for chicken or tofu.",
+      "tags": [
+        "High protein",
+        "Pescatarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Shrimp Cabbage Rice Bowl",
+        "Korean-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_chicken-seaweed-soup-with-rice",
+      "name": "Chicken Seaweed Soup with Rice",
+      "category": "soups-and-noodles",
+      "cuisine": "Korean-inspired",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "chicken breast",
+      "plants": [
+        "seaweed",
+        "mushrooms",
+        "spinach"
+      ],
+      "smartStarch": "rice",
+      "flavor": "garlic broth",
+      "prepMinutes": 30,
+      "estimatedCalories": 430,
+      "estimatedProteinG": 36,
+      "allergens": [],
+      "wheatWarning": "Use wheat-free broth/tamari if included.",
+      "nutWarning": "",
+      "alternatives": "Use tofu for vegetarian version.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Chicken Seaweed Soup with Rice",
+        "Korean-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_egg-mushroom-breakfast-rice-bowl",
+      "name": "Egg Mushroom Breakfast Rice Bowl",
+      "category": "bowls",
+      "cuisine": "Korean-inspired",
+      "mealType": "Breakfast",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "eggs",
+      "plants": [
+        "mushrooms",
+        "spinach",
+        "cucumber"
+      ],
+      "smartStarch": "rice",
+      "flavor": "tamari vinegar",
+      "prepMinutes": 15,
+      "estimatedCalories": 430,
+      "estimatedProteinG": 24,
+      "allergens": [
+        "egg",
+        "soy"
+      ],
+      "wheatWarning": "Use wheat-free tamari.",
+      "nutWarning": "",
+      "alternatives": "Swap egg for tofu.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Egg Mushroom Breakfast Rice Bowl",
+        "Korean-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_chicken-sweet-potato-japchae-inspired-bowl",
+      "name": "Chicken Sweet Potato Japchae-Inspired Bowl",
+      "category": "bowls",
+      "cuisine": "Korean-inspired",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "chicken breast",
+      "plants": [
+        "spinach",
+        "carrots",
+        "mushrooms"
+      ],
+      "smartStarch": "sweet potato glass noodles",
+      "flavor": "tamari garlic sauce",
+      "prepMinutes": 28,
+      "estimatedCalories": 560,
+      "estimatedProteinG": 39,
+      "allergens": [
+        "soy"
+      ],
+      "wheatWarning": "Use sweet potato glass noodles; use wheat-free tamari.",
+      "nutWarning": "",
+      "alternatives": "Swap chicken for tofu.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Chicken Sweet Potato Japchae-Inspired Bowl",
+        "Korean-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_tofu-sweet-potato-noodle-bowl",
+      "name": "Tofu Sweet Potato Noodle Bowl",
+      "category": "bowls",
+      "cuisine": "Korean-inspired",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "tofu",
+      "plants": [
+        "spinach",
+        "carrots",
+        "mushrooms"
+      ],
+      "smartStarch": "sweet potato glass noodles",
+      "flavor": "tamari garlic",
+      "prepMinutes": 25,
+      "estimatedCalories": 525,
+      "estimatedProteinG": 27,
+      "allergens": [
+        "soy"
+      ],
+      "wheatWarning": "Use sweet potato glass noodles; avoid wheat noodles.",
+      "nutWarning": "",
+      "alternatives": "Add edamame for protein.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Tofu Sweet Potato Noodle Bowl",
+        "Korean-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_beef-zucchini-rice-bowl",
+      "name": "Beef Zucchini Rice Bowl",
+      "category": "bowls",
+      "cuisine": "Korean-inspired",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "lean beef",
+      "plants": [
+        "zucchini",
+        "spinach",
+        "carrots"
+      ],
+      "smartStarch": "rice",
+      "flavor": "ginger garlic sauce",
+      "prepMinutes": 24,
+      "estimatedCalories": 535,
+      "estimatedProteinG": 37,
+      "allergens": [],
+      "wheatWarning": "Use wheat-free sauce; avoid bottled marinades unless checked.",
+      "nutWarning": "",
+      "alternatives": "Swap beef for turkey or tofu.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Beef Zucchini Rice Bowl",
+        "Korean-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_spicy-chickpea-cabbage-bowl",
+      "name": "Spicy Chickpea Cabbage Bowl",
+      "category": "bowls",
+      "cuisine": "Korean-inspired",
+      "mealType": "Lunch",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "chickpeas",
+      "plants": [
+        "cabbage",
+        "spinach",
+        "cucumber"
+      ],
+      "smartStarch": "rice",
+      "flavor": "gluten-free chili garlic sauce",
+      "prepMinutes": 20,
+      "estimatedCalories": 490,
+      "estimatedProteinG": 22,
+      "allergens": [],
+      "wheatWarning": "Use gluten-free chili sauce; avoid gochujang unless certified.",
+      "nutWarning": "",
+      "alternatives": "Add tofu or egg for more protein.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Spicy Chickpea Cabbage Bowl",
+        "Korean-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_mackerel-cucumber-rice-bowl",
+      "name": "Mackerel Cucumber Rice Bowl",
+      "category": "bowls",
+      "cuisine": "Korean-inspired",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": true,
+      "protein": "mackerel",
+      "plants": [
+        "cucumber",
+        "spinach",
+        "cabbage"
+      ],
+      "smartStarch": "rice",
+      "flavor": "vinegar chili tamari",
+      "prepMinutes": 20,
+      "estimatedCalories": 575,
+      "estimatedProteinG": 34,
+      "allergens": [
+        "fish",
+        "soy"
+      ],
+      "wheatWarning": "Use wheat-free tamari.",
+      "nutWarning": "",
+      "alternatives": "Swap mackerel for salmon.",
+      "tags": [
+        "Omega-3",
+        "High protein",
+        "Pescatarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Mackerel Cucumber Rice Bowl",
+        "Korean-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_shrimp-rice-noodle-herb-bowl",
+      "name": "Shrimp Rice Noodle Herb Bowl",
+      "category": "bowls",
+      "cuisine": "Thai/Vietnamese-inspired",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": false,
+      "isPescatarian": true,
+      "protein": "shrimp",
+      "plants": [
+        "cucumber",
+        "herbs",
+        "carrots",
+        "lettuce"
+      ],
+      "smartStarch": "rice noodles",
+      "flavor": "lime fish-sauce style dressing",
+      "prepMinutes": 20,
+      "estimatedCalories": 500,
+      "estimatedProteinG": 36,
+      "allergens": [
+        "shellfish",
+        "fish"
+      ],
+      "wheatWarning": "Use rice noodles; check fish sauce and dressing for wheat.",
+      "nutWarning": "",
+      "alternatives": "Use tamari-lime or coconut aminos if avoiding fish sauce.",
+      "tags": [
+        "High protein",
+        "Pescatarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Shrimp Rice Noodle Herb Bowl",
+        "Thai/Vietnamese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_chicken-lettuce-herb-rice-bowl",
+      "name": "Chicken Lettuce Herb Rice Bowl",
+      "category": "bowls",
+      "cuisine": "Thai/Vietnamese-inspired",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "chicken breast",
+      "plants": [
+        "lettuce",
+        "cucumber",
+        "herbs",
+        "carrots"
+      ],
+      "smartStarch": "rice",
+      "flavor": "lime chili dressing",
+      "prepMinutes": 20,
+      "estimatedCalories": 485,
+      "estimatedProteinG": 41,
+      "allergens": [],
+      "wheatWarning": "Naturally wheat-free if sauces checked.",
+      "nutWarning": "",
+      "alternatives": "Use tofu for vegetarian version.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Chicken Lettuce Herb Rice Bowl",
+        "Thai/Vietnamese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_tofu-rice-noodle-bowl",
+      "name": "Tofu Rice Noodle Bowl",
+      "category": "bowls",
+      "cuisine": "Thai/Vietnamese-inspired",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "tofu",
+      "plants": [
+        "cucumber",
+        "carrots",
+        "herbs",
+        "cabbage"
+      ],
+      "smartStarch": "rice noodles",
+      "flavor": "lime tamari dressing",
+      "prepMinutes": 20,
+      "estimatedCalories": 520,
+      "estimatedProteinG": 28,
+      "allergens": [
+        "soy"
+      ],
+      "wheatWarning": "Use rice noodles and wheat-free tamari.",
+      "nutWarning": "",
+      "alternatives": "Use chickpeas if soy-free.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Tofu Rice Noodle Bowl",
+        "Thai/Vietnamese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_lemongrass-style-chicken-rice-bowl",
+      "name": "Lemongrass-Style Chicken Rice Bowl",
+      "category": "bowls",
+      "cuisine": "Thai/Vietnamese-inspired",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "chicken thigh",
+      "plants": [
+        "cabbage",
+        "cucumber",
+        "herbs"
+      ],
+      "smartStarch": "rice",
+      "flavor": "lemongrass lime sauce",
+      "prepMinutes": 30,
+      "estimatedCalories": 560,
+      "estimatedProteinG": 39,
+      "allergens": [],
+      "wheatWarning": "Check marinade for soy/wheat; use wheat-free tamari if needed.",
+      "nutWarning": "",
+      "alternatives": "Use chicken breast to lower fat.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Lemongrass-Style Chicken Rice Bowl",
+        "Thai/Vietnamese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_salmon-coconut-lime-rice-bowl",
+      "name": "Salmon Coconut Lime Rice Bowl",
+      "category": "bowls",
+      "cuisine": "Thai/Vietnamese-inspired",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": true,
+      "protein": "salmon",
+      "plants": [
+        "bok choy",
+        "cucumber",
+        "herbs"
+      ],
+      "smartStarch": "rice",
+      "flavor": "coconut lime broth",
+      "prepMinutes": 25,
+      "estimatedCalories": 620,
+      "estimatedProteinG": 37,
+      "allergens": [
+        "fish"
+      ],
+      "wheatWarning": "Naturally wheat-free if broth checked.",
+      "nutWarning": "",
+      "alternatives": "Use light coconut milk to lower calories.",
+      "tags": [
+        "Omega-3",
+        "High protein",
+        "Pescatarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Salmon Coconut Lime Rice Bowl",
+        "Thai/Vietnamese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_turkey-thai-basil-rice-bowl",
+      "name": "Turkey Thai Basil Rice Bowl",
+      "category": "bowls",
+      "cuisine": "Thai/Vietnamese-inspired",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "ground turkey",
+      "plants": [
+        "green beans",
+        "peppers",
+        "basil"
+      ],
+      "smartStarch": "rice",
+      "flavor": "lime garlic tamari",
+      "prepMinutes": 22,
+      "estimatedCalories": 540,
+      "estimatedProteinG": 40,
+      "allergens": [
+        "soy"
+      ],
+      "wheatWarning": "Use wheat-free tamari; many oyster sauces contain wheat.",
+      "nutWarning": "",
+      "alternatives": "Use coconut aminos.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Turkey Thai Basil Rice Bowl",
+        "Thai/Vietnamese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_chicken-pho-inspired-rice-noodle-soup",
+      "name": "Chicken Pho-Inspired Rice Noodle Soup",
+      "category": "soups-and-noodles",
+      "cuisine": "Thai/Vietnamese-inspired",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "chicken breast",
+      "plants": [
+        "bok choy",
+        "herbs",
+        "mushrooms"
+      ],
+      "smartStarch": "rice noodles",
+      "flavor": "spiced broth, lime",
+      "prepMinutes": 35,
+      "estimatedCalories": 455,
+      "estimatedProteinG": 38,
+      "allergens": [],
+      "wheatWarning": "Use rice noodles; verify broth/sauces are wheat-free.",
+      "nutWarning": "",
+      "alternatives": "Use tofu for vegetarian.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Chicken Pho-Inspired Rice Noodle Soup",
+        "Thai/Vietnamese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_tofu-coconut-vegetable-curry-bowl",
+      "name": "Tofu Coconut Vegetable Curry Bowl",
+      "category": "bowls",
+      "cuisine": "Thai/Vietnamese-inspired",
+      "mealType": "Dinner",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "tofu",
+      "plants": [
+        "broccoli",
+        "peppers",
+        "carrots"
+      ],
+      "smartStarch": "rice",
+      "flavor": "coconut curry sauce",
+      "prepMinutes": 30,
+      "estimatedCalories": 575,
+      "estimatedProteinG": 27,
+      "allergens": [
+        "soy"
+      ],
+      "wheatWarning": "Use gluten-free curry paste; check labels.",
+      "nutWarning": "",
+      "alternatives": "Use chickpeas if soy-free; use light coconut milk.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Tofu Coconut Vegetable Curry Bowl",
+        "Thai/Vietnamese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_shrimp-mango-cucumber-rice-bowl",
+      "name": "Shrimp Mango Cucumber Rice Bowl",
+      "category": "bowls",
+      "cuisine": "Thai/Vietnamese-inspired",
+      "mealType": "Lunch",
+      "isVegetarian": false,
+      "isPescatarian": true,
+      "protein": "shrimp",
+      "plants": [
+        "mango",
+        "cucumber",
+        "herbs",
+        "greens"
+      ],
+      "smartStarch": "rice",
+      "flavor": "lime chili dressing",
+      "prepMinutes": 18,
+      "estimatedCalories": 515,
+      "estimatedProteinG": 35,
+      "allergens": [
+        "shellfish"
+      ],
+      "wheatWarning": "Naturally wheat-free if sauce checked.",
+      "nutWarning": "",
+      "alternatives": "Swap shrimp for chicken or tofu.",
+      "tags": [
+        "High protein",
+        "Pescatarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Shrimp Mango Cucumber Rice Bowl",
+        "Thai/Vietnamese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_egg-rice-noodle-breakfast-bowl",
+      "name": "Egg Rice Noodle Breakfast Bowl",
+      "category": "bowls",
+      "cuisine": "Thai/Vietnamese-inspired",
+      "mealType": "Breakfast/Lunch",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "eggs",
+      "plants": [
+        "spinach",
+        "herbs",
+        "carrots"
+      ],
+      "smartStarch": "rice noodles",
+      "flavor": "lime tamari",
+      "prepMinutes": 15,
+      "estimatedCalories": 450,
+      "estimatedProteinG": 24,
+      "allergens": [
+        "egg",
+        "soy"
+      ],
+      "wheatWarning": "Use rice noodles and wheat-free tamari.",
+      "nutWarning": "",
+      "alternatives": "Swap eggs for tofu.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Egg Rice Noodle Breakfast Bowl",
+        "Thai/Vietnamese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_chicken-cabbage-rice-paper-rolls-bowl",
+      "name": "Chicken Cabbage Rice Paper Rolls Bowl",
+      "category": "bowls",
+      "cuisine": "Thai/Vietnamese-inspired",
+      "mealType": "Lunch",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "chicken breast",
+      "plants": [
+        "cabbage",
+        "cucumber",
+        "carrots",
+        "herbs"
+      ],
+      "smartStarch": "rice paper/rice",
+      "flavor": "lime dipping sauce",
+      "prepMinutes": 25,
+      "estimatedCalories": 480,
+      "estimatedProteinG": 38,
+      "allergens": [],
+      "wheatWarning": "Use rice paper; avoid wheat wrappers.",
+      "nutWarning": "Avoid peanut sauce for nut allergy.",
+      "alternatives": "Use sunflower seed or yogurt-lime dip if tolerated.",
+      "tags": [
+        "High protein",
+        "Wheat-aware",
+        "Nut-aware"
+      ],
+      "mapsSearchTerms": [
+        "Chicken Cabbage Rice Paper Rolls Bowl",
+        "Thai/Vietnamese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_tofu-fresh-roll-bowl-nut-free",
+      "name": "Tofu Fresh Roll Bowl Nut-Free",
+      "category": "bowls",
+      "cuisine": "Thai/Vietnamese-inspired",
+      "mealType": "Lunch",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "tofu",
+      "plants": [
+        "lettuce",
+        "cucumber",
+        "carrots",
+        "herbs"
+      ],
+      "smartStarch": "rice noodles",
+      "flavor": "sunflower-lime dip",
+      "prepMinutes": 20,
+      "estimatedCalories": 500,
+      "estimatedProteinG": 27,
+      "allergens": [
+        "soy"
+      ],
+      "wheatWarning": "Use rice noodles; avoid wheat wrappers.",
+      "nutWarning": "Avoid peanut sauce; use sunflower or lime herb sauce if safe.",
+      "alternatives": "Use coconut aminos if soy-sensitive.",
+      "tags": [
+        "Nut-aware",
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Tofu Fresh Roll Bowl Nut-Free",
+        "Thai/Vietnamese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_beef-rice-noodle-salad",
+      "name": "Beef Rice Noodle Salad",
+      "category": "soups-and-noodles",
+      "cuisine": "Thai/Vietnamese-inspired",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "lean beef",
+      "plants": [
+        "lettuce",
+        "cucumber",
+        "herbs",
+        "carrots"
+      ],
+      "smartStarch": "rice noodles",
+      "flavor": "lime garlic dressing",
+      "prepMinutes": 25,
+      "estimatedCalories": 555,
+      "estimatedProteinG": 38,
+      "allergens": [],
+      "wheatWarning": "Use rice noodles; check sauces for wheat.",
+      "nutWarning": "",
+      "alternatives": "Swap beef for tofu or chicken.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Beef Rice Noodle Salad",
+        "Thai/Vietnamese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_chickpea-coconut-curry-rice-bowl",
+      "name": "Chickpea Coconut Curry Rice Bowl",
+      "category": "bowls",
+      "cuisine": "Thai/Vietnamese-inspired",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "chickpeas",
+      "plants": [
+        "broccoli",
+        "peppers",
+        "spinach"
+      ],
+      "smartStarch": "rice",
+      "flavor": "coconut curry sauce",
+      "prepMinutes": 28,
+      "estimatedCalories": 560,
+      "estimatedProteinG": 22,
+      "allergens": [],
+      "wheatWarning": "Use gluten-free curry paste.",
+      "nutWarning": "",
+      "alternatives": "Add tofu for more protein.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Chickpea Coconut Curry Rice Bowl",
+        "Thai/Vietnamese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_mackerel-herb-rice-bowl",
+      "name": "Mackerel Herb Rice Bowl",
+      "category": "bowls",
+      "cuisine": "Thai/Vietnamese-inspired",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": true,
+      "protein": "mackerel",
+      "plants": [
+        "cucumber",
+        "herbs",
+        "greens"
+      ],
+      "smartStarch": "rice",
+      "flavor": "lime chili dressing",
+      "prepMinutes": 18,
+      "estimatedCalories": 570,
+      "estimatedProteinG": 34,
+      "allergens": [
+        "fish"
+      ],
+      "wheatWarning": "Naturally wheat-free if sauce checked.",
+      "nutWarning": "",
+      "alternatives": "Swap mackerel for salmon.",
+      "tags": [
+        "Omega-3",
+        "High protein",
+        "Pescatarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Mackerel Herb Rice Bowl",
+        "Thai/Vietnamese-inspired restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_turkey-sweet-potato-greens-plate",
+      "name": "Turkey Sweet Potato Greens Plate",
+      "category": "plates-and-bento",
+      "cuisine": "Simple American",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "turkey patty",
+      "plants": [
+        "greens",
+        "green beans"
+      ],
+      "smartStarch": "sweet potato",
+      "flavor": "mustard herb sauce",
+      "prepMinutes": 30,
+      "estimatedCalories": 540,
+      "estimatedProteinG": 42,
+      "allergens": [],
+      "wheatWarning": "Use gluten-free seasonings; avoid breadcrumbs.",
+      "nutWarning": "",
+      "alternatives": "Use rice crumbs or egg binder.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Turkey Sweet Potato Greens Plate",
+        "Simple American restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_chicken-quinoa-power-bowl",
+      "name": "Chicken Quinoa Power Bowl",
+      "category": "bowls",
+      "cuisine": "Simple American",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "chicken breast",
+      "plants": [
+        "broccoli",
+        "greens",
+        "carrots"
+      ],
+      "smartStarch": "quinoa",
+      "flavor": "lemon herb dressing",
+      "prepMinutes": 25,
+      "estimatedCalories": 555,
+      "estimatedProteinG": 44,
+      "allergens": [],
+      "wheatWarning": "Naturally wheat-free.",
+      "nutWarning": "",
+      "alternatives": "Swap quinoa for rice or potato.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Chicken Quinoa Power Bowl",
+        "Simple American restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_egg-cottage-cheese-potato-breakfast",
+      "name": "Egg Cottage Cheese Potato Breakfast",
+      "category": "global-favorites",
+      "cuisine": "Simple American",
+      "mealType": "Breakfast",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "eggs and cottage cheese",
+      "plants": [
+        "spinach",
+        "tomato"
+      ],
+      "smartStarch": "potatoes",
+      "flavor": "pepper herb sauce",
+      "prepMinutes": 20,
+      "estimatedCalories": 480,
+      "estimatedProteinG": 34,
+      "allergens": [
+        "egg",
+        "dairy"
+      ],
+      "wheatWarning": "Naturally wheat-free if cottage cheese checked.",
+      "nutWarning": "",
+      "alternatives": "Use tofu scramble and dairy-free yogurt.",
+      "tags": [
+        "High protein",
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Egg Cottage Cheese Potato Breakfast",
+        "Simple American restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_tuna-avocado-rice-cake-plate",
+      "name": "Tuna Avocado Rice Cake Plate",
+      "category": "plates-and-bento",
+      "cuisine": "Simple American",
+      "mealType": "Lunch/Snack",
+      "isVegetarian": false,
+      "isPescatarian": true,
+      "protein": "tuna",
+      "plants": [
+        "cucumber",
+        "greens"
+      ],
+      "smartStarch": "rice cakes",
+      "flavor": "lemon mustard",
+      "prepMinutes": 8,
+      "estimatedCalories": 395,
+      "estimatedProteinG": 32,
+      "allergens": [
+        "fish"
+      ],
+      "wheatWarning": "Use gluten-free rice cakes.",
+      "nutWarning": "",
+      "alternatives": "Swap tuna for chicken or white beans.",
+      "tags": [
+        "High protein",
+        "Pescatarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Tuna Avocado Rice Cake Plate",
+        "Simple American restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_chicken-vegetable-soup-with-rice",
+      "name": "Chicken Vegetable Soup with Rice",
+      "category": "soups-and-noodles",
+      "cuisine": "Simple American",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "chicken breast",
+      "plants": [
+        "carrots",
+        "celery",
+        "spinach"
+      ],
+      "smartStarch": "rice",
+      "flavor": "herb broth",
+      "prepMinutes": 35,
+      "estimatedCalories": 430,
+      "estimatedProteinG": 38,
+      "allergens": [],
+      "wheatWarning": "Use wheat-free broth; avoid noodles unless rice noodles.",
+      "nutWarning": "",
+      "alternatives": "Use beans for vegetarian.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Chicken Vegetable Soup with Rice",
+        "Simple American restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_beef-bean-chili-bowl",
+      "name": "Beef Bean Chili Bowl",
+      "category": "bowls",
+      "cuisine": "Simple American",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "lean beef and beans",
+      "plants": [
+        "tomato",
+        "peppers"
+      ],
+      "smartStarch": "beans/sweet potato",
+      "flavor": "chili spices",
+      "prepMinutes": 35,
+      "estimatedCalories": 590,
+      "estimatedProteinG": 43,
+      "allergens": [],
+      "wheatWarning": "Check chili spice mixes and broth for wheat.",
+      "nutWarning": "",
+      "alternatives": "Use turkey or lentils.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Beef Bean Chili Bowl",
+        "Simple American restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_greek-yogurt-apple-cinnamon-bowl",
+      "name": "Greek Yogurt Apple Cinnamon Bowl",
+      "category": "bowls",
+      "cuisine": "Simple American",
+      "mealType": "Breakfast/Snack",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "Greek yogurt",
+      "plants": [
+        "apple"
+      ],
+      "smartStarch": "certified gluten-free oats",
+      "flavor": "cinnamon",
+      "prepMinutes": 5,
+      "estimatedCalories": 390,
+      "estimatedProteinG": 30,
+      "allergens": [
+        "dairy"
+      ],
+      "wheatWarning": "Use certified gluten-free oats.",
+      "nutWarning": "Avoid nuts/granola with nuts.",
+      "alternatives": "Use puffed rice or seeds if tolerated.",
+      "tags": [
+        "High protein",
+        "Vegetarian",
+        "Wheat-aware",
+        "Nut-aware"
+      ],
+      "mapsSearchTerms": [
+        "Greek Yogurt Apple Cinnamon Bowl",
+        "Simple American restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_chicken-burger-lettuce-plate",
+      "name": "Chicken Burger Lettuce Plate",
+      "category": "burgers",
+      "cuisine": "Simple American",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": false,
+      "isPescatarian": false,
+      "protein": "chicken patty",
+      "plants": [
+        "lettuce",
+        "tomato",
+        "pickles"
+      ],
+      "smartStarch": "roasted potatoes",
+      "flavor": "yogurt mustard sauce",
+      "prepMinutes": 25,
+      "estimatedCalories": 520,
+      "estimatedProteinG": 41,
+      "allergens": [
+        "dairy",
+        "egg"
+      ],
+      "wheatWarning": "No bun or use gluten-free bun; avoid breadcrumbs.",
+      "nutWarning": "",
+      "alternatives": "Use lettuce wrap and rice crumbs.",
+      "tags": [
+        "High protein",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Chicken Burger Lettuce Plate",
+        "Simple American restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_lentil-vegetable-shepherds-bowl",
+      "name": "Lentil Vegetable Shepherds Bowl",
+      "category": "bowls",
+      "cuisine": "Simple American",
+      "mealType": "Dinner",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "lentils",
+      "plants": [
+        "peas",
+        "carrots",
+        "mushrooms"
+      ],
+      "smartStarch": "mashed potatoes",
+      "flavor": "herb gravy",
+      "prepMinutes": 40,
+      "estimatedCalories": 510,
+      "estimatedProteinG": 25,
+      "allergens": [],
+      "wheatWarning": "Use cornstarch/rice flour for gravy, not wheat flour.",
+      "nutWarning": "",
+      "alternatives": "Add Greek yogurt or tofu for protein.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Lentil Vegetable Shepherds Bowl",
+        "Simple American restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_salmon-green-bean-potato-plate",
+      "name": "Salmon Green Bean Potato Plate",
+      "category": "plates-and-bento",
+      "cuisine": "Simple American",
+      "mealType": "Dinner",
+      "isVegetarian": false,
+      "isPescatarian": true,
+      "protein": "salmon",
+      "plants": [
+        "green beans",
+        "greens"
+      ],
+      "smartStarch": "potatoes",
+      "flavor": "lemon dill",
+      "prepMinutes": 25,
+      "estimatedCalories": 610,
+      "estimatedProteinG": 38,
+      "allergens": [
+        "fish"
+      ],
+      "wheatWarning": "Naturally wheat-free.",
+      "nutWarning": "",
+      "alternatives": "Swap salmon for chicken or tofu.",
+      "tags": [
+        "Omega-3",
+        "High protein",
+        "Pescatarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Salmon Green Bean Potato Plate",
+        "Simple American restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_high-protein-tofu-quinoa-garden-bowl",
+      "name": "High-Protein Tofu Quinoa Garden Bowl",
+      "category": "bowls",
+      "cuisine": "Vegetarian / Global",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "tofu",
+      "plants": [
+        "broccoli",
+        "cucumber",
+        "greens"
+      ],
+      "smartStarch": "quinoa",
+      "flavor": "lemon herb dressing",
+      "prepMinutes": 25,
+      "estimatedCalories": 540,
+      "estimatedProteinG": 34,
+      "allergens": [
+        "soy"
+      ],
+      "wheatWarning": "Naturally wheat-free.",
+      "nutWarning": "",
+      "alternatives": "Use chickpeas if soy-free.",
+      "tags": [
+        "High protein",
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "High-Protein Tofu Quinoa Garden Bowl",
+        "Vegetarian / Global restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_edamame-chickpea-rice-bowl",
+      "name": "Edamame Chickpea Rice Bowl",
+      "category": "bowls",
+      "cuisine": "Vegetarian / Global",
+      "mealType": "Lunch",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "edamame and chickpeas",
+      "plants": [
+        "cabbage",
+        "cucumber",
+        "carrots"
+      ],
+      "smartStarch": "rice",
+      "flavor": "lime tamari",
+      "prepMinutes": 18,
+      "estimatedCalories": 555,
+      "estimatedProteinG": 31,
+      "allergens": [
+        "soy"
+      ],
+      "wheatWarning": "Use wheat-free tamari.",
+      "nutWarning": "",
+      "alternatives": "Use beans if soy-free.",
+      "tags": [
+        "High protein",
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Edamame Chickpea Rice Bowl",
+        "Vegetarian / Global restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_paneer-style-tofu-spinach-bowl",
+      "name": "Paneer-Style Tofu Spinach Bowl",
+      "category": "bowls",
+      "cuisine": "Vegetarian / Global",
+      "mealType": "Dinner",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "tofu",
+      "plants": [
+        "spinach",
+        "tomato"
+      ],
+      "smartStarch": "rice",
+      "flavor": "ginger tomato sauce",
+      "prepMinutes": 30,
+      "estimatedCalories": 520,
+      "estimatedProteinG": 30,
+      "allergens": [
+        "soy"
+      ],
+      "wheatWarning": "Naturally wheat-free if spices checked.",
+      "nutWarning": "",
+      "alternatives": "Use paneer if dairy tolerated, chickpeas if soy-free.",
+      "tags": [
+        "High protein",
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Paneer-Style Tofu Spinach Bowl",
+        "Vegetarian / Global restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_black-bean-quinoa-avocado-bowl",
+      "name": "Black Bean Quinoa Avocado Bowl",
+      "category": "bowls",
+      "cuisine": "Vegetarian / Global",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "black beans",
+      "plants": [
+        "lettuce",
+        "tomato",
+        "peppers"
+      ],
+      "smartStarch": "quinoa",
+      "flavor": "lime salsa",
+      "prepMinutes": 20,
+      "estimatedCalories": 540,
+      "estimatedProteinG": 25,
+      "allergens": [],
+      "wheatWarning": "Naturally wheat-free.",
+      "nutWarning": "",
+      "alternatives": "Add tofu, eggs, or yogurt for more protein.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Black Bean Quinoa Avocado Bowl",
+        "Vegetarian / Global restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_lentil-rice-vegetable-soup",
+      "name": "Lentil Rice Vegetable Soup",
+      "category": "soups-and-noodles",
+      "cuisine": "Vegetarian / Global",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "lentils",
+      "plants": [
+        "carrots",
+        "spinach",
+        "celery"
+      ],
+      "smartStarch": "rice",
+      "flavor": "herb broth",
+      "prepMinutes": 35,
+      "estimatedCalories": 430,
+      "estimatedProteinG": 24,
+      "allergens": [],
+      "wheatWarning": "Use wheat-free broth.",
+      "nutWarning": "",
+      "alternatives": "Add tofu cubes for higher protein.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Lentil Rice Vegetable Soup",
+        "Vegetarian / Global restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_greek-yogurt-savory-cucumber-bowl",
+      "name": "Greek Yogurt Savory Cucumber Bowl",
+      "category": "bowls",
+      "cuisine": "Vegetarian / Global",
+      "mealType": "Breakfast/Lunch",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "Greek yogurt",
+      "plants": [
+        "cucumber",
+        "tomato",
+        "herbs"
+      ],
+      "smartStarch": "potatoes",
+      "flavor": "lemon pepper",
+      "prepMinutes": 10,
+      "estimatedCalories": 420,
+      "estimatedProteinG": 31,
+      "allergens": [
+        "dairy"
+      ],
+      "wheatWarning": "Naturally wheat-free.",
+      "nutWarning": "",
+      "alternatives": "Use dairy-free high-protein yogurt if needed.",
+      "tags": [
+        "High protein",
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Greek Yogurt Savory Cucumber Bowl",
+        "Vegetarian / Global restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_egg-bean-rice-breakfast-bowl",
+      "name": "Egg Bean Rice Breakfast Bowl",
+      "category": "bowls",
+      "cuisine": "Vegetarian / Global",
+      "mealType": "Breakfast",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "eggs and beans",
+      "plants": [
+        "spinach",
+        "salsa"
+      ],
+      "smartStarch": "rice",
+      "flavor": "lime salsa",
+      "prepMinutes": 15,
+      "estimatedCalories": 500,
+      "estimatedProteinG": 29,
+      "allergens": [
+        "egg"
+      ],
+      "wheatWarning": "Naturally wheat-free if salsa checked.",
+      "nutWarning": "",
+      "alternatives": "Use tofu scramble.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Egg Bean Rice Breakfast Bowl",
+        "Vegetarian / Global restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_tempeh-potato-greens-bowl",
+      "name": "Tempeh Potato Greens Bowl",
+      "category": "bowls",
+      "cuisine": "Vegetarian / Global",
+      "mealType": "Dinner",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "certified gluten-free tempeh",
+      "plants": [
+        "greens",
+        "mushrooms"
+      ],
+      "smartStarch": "potatoes",
+      "flavor": "mustard herb sauce",
+      "prepMinutes": 28,
+      "estimatedCalories": 550,
+      "estimatedProteinG": 33,
+      "allergens": [
+        "soy"
+      ],
+      "wheatWarning": "Use certified gluten-free tempeh only.",
+      "nutWarning": "",
+      "alternatives": "Use tofu or beans if tempeh not safe.",
+      "tags": [
+        "High protein",
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Tempeh Potato Greens Bowl",
+        "Vegetarian / Global restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_cottage-cheese-berry-oat-bowl",
+      "name": "Cottage Cheese Berry Oat Bowl",
+      "category": "bowls",
+      "cuisine": "Vegetarian / Global",
+      "mealType": "Breakfast",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "cottage cheese",
+      "plants": [
+        "berries"
+      ],
+      "smartStarch": "certified gluten-free oats",
+      "flavor": "cinnamon",
+      "prepMinutes": 5,
+      "estimatedCalories": 410,
+      "estimatedProteinG": 35,
+      "allergens": [
+        "dairy"
+      ],
+      "wheatWarning": "Use certified gluten-free oats.",
+      "nutWarning": "Avoid nut granola.",
+      "alternatives": "Use puffed rice if avoiding oats.",
+      "tags": [
+        "High protein",
+        "Vegetarian",
+        "Wheat-aware",
+        "Nut-aware"
+      ],
+      "mapsSearchTerms": [
+        "Cottage Cheese Berry Oat Bowl",
+        "Vegetarian / Global restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_chickpea-sweet-potato-greens-bowl",
+      "name": "Chickpea Sweet Potato Greens Bowl",
+      "category": "bowls",
+      "cuisine": "Vegetarian / Global",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "chickpeas",
+      "plants": [
+        "kale",
+        "cucumber"
+      ],
+      "smartStarch": "sweet potato",
+      "flavor": "lemon tahini-style or yogurt sauce",
+      "prepMinutes": 30,
+      "estimatedCalories": 535,
+      "estimatedProteinG": 22,
+      "allergens": [
+        "sesame",
+        "dairy"
+      ],
+      "wheatWarning": "Naturally wheat-free.",
+      "nutWarning": "Tahini is sesame; avoid if sesame/nut-sensitive.",
+      "alternatives": "Use yogurt lemon or avocado lime sauce.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware",
+        "Nut-aware"
+      ],
+      "mapsSearchTerms": [
+        "Chickpea Sweet Potato Greens Bowl",
+        "Vegetarian / Global restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_tofu-scramble-corn-tortilla-plate",
+      "name": "Tofu Scramble Corn Tortilla Plate",
+      "category": "plates-and-bento",
+      "cuisine": "Vegetarian / Global",
+      "mealType": "Breakfast",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "tofu",
+      "plants": [
+        "peppers",
+        "spinach",
+        "salsa"
+      ],
+      "smartStarch": "corn tortillas",
+      "flavor": "lime cilantro",
+      "prepMinutes": 20,
+      "estimatedCalories": 480,
+      "estimatedProteinG": 30,
+      "allergens": [
+        "soy"
+      ],
+      "wheatWarning": "Use corn tortillas; avoid flour tortillas.",
+      "nutWarning": "",
+      "alternatives": "Use eggs if soy-free.",
+      "tags": [
+        "High protein",
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Tofu Scramble Corn Tortilla Plate",
+        "Vegetarian / Global restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_white-bean-tomato-rice-bowl",
+      "name": "White Bean Tomato Rice Bowl",
+      "category": "bowls",
+      "cuisine": "Vegetarian / Global",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "white beans",
+      "plants": [
+        "tomato",
+        "spinach",
+        "zucchini"
+      ],
+      "smartStarch": "rice",
+      "flavor": "garlic basil sauce",
+      "prepMinutes": 25,
+      "estimatedCalories": 500,
+      "estimatedProteinG": 24,
+      "allergens": [],
+      "wheatWarning": "Naturally wheat-free.",
+      "nutWarning": "",
+      "alternatives": "Add tofu or cottage cheese for more protein.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "White Bean Tomato Rice Bowl",
+        "Vegetarian / Global restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_edamame-potato-herb-salad",
+      "name": "Edamame Potato Herb Salad",
+      "category": "salads",
+      "cuisine": "Vegetarian / Global",
+      "mealType": "Lunch",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "edamame",
+      "plants": [
+        "greens",
+        "cucumber",
+        "herbs"
+      ],
+      "smartStarch": "potatoes",
+      "flavor": "lemon mustard dressing",
+      "prepMinutes": 18,
+      "estimatedCalories": 470,
+      "estimatedProteinG": 25,
+      "allergens": [
+        "soy"
+      ],
+      "wheatWarning": "Naturally wheat-free if mustard checked.",
+      "nutWarning": "",
+      "alternatives": "Use chickpeas if soy-free.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Edamame Potato Herb Salad",
+        "Vegetarian / Global restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_mushroom-egg-quinoa-bowl",
+      "name": "Mushroom Egg Quinoa Bowl",
+      "category": "bowls",
+      "cuisine": "Vegetarian / Global",
+      "mealType": "Breakfast/Lunch",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "eggs",
+      "plants": [
+        "mushrooms",
+        "spinach"
+      ],
+      "smartStarch": "quinoa",
+      "flavor": "herb vinaigrette",
+      "prepMinutes": 18,
+      "estimatedCalories": 485,
+      "estimatedProteinG": 28,
+      "allergens": [
+        "egg"
+      ],
+      "wheatWarning": "Naturally wheat-free.",
+      "nutWarning": "",
+      "alternatives": "Use tofu for egg-free version.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Mushroom Egg Quinoa Bowl",
+        "Vegetarian / Global restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    },
+    {
+      "id": "meal_lentil-taco-lettuce-rice-bowl",
+      "name": "Lentil Taco Lettuce Rice Bowl",
+      "category": "bowls",
+      "cuisine": "Vegetarian / Global",
+      "mealType": "Lunch/Dinner",
+      "isVegetarian": true,
+      "isPescatarian": true,
+      "protein": "lentils",
+      "plants": [
+        "lettuce",
+        "tomato",
+        "cabbage"
+      ],
+      "smartStarch": "rice",
+      "flavor": "salsa lime",
+      "prepMinutes": 25,
+      "estimatedCalories": 475,
+      "estimatedProteinG": 25,
+      "allergens": [],
+      "wheatWarning": "Naturally wheat-free if seasonings checked.",
+      "nutWarning": "",
+      "alternatives": "Add Greek yogurt or tofu for higher protein.",
+      "tags": [
+        "Vegetarian",
+        "Wheat-aware"
+      ],
+      "mapsSearchTerms": [
+        "Lentil Taco Lettuce Rice Bowl",
+        "Vegetarian / Global restaurant"
+      ],
+      "portionNote": "1 balanced adult serving; nutrition is an MVP estimate to validate against a food database.",
+      "image": ""
+    }
+  ],
+  "sproutSayings": [
+    "One balanced meal can reset your whole day.",
+    "Keep it simple: protein, plants, smart starch, and flavor.",
+    "Good meals are repeatable, not perfect.",
+    "Choose one color to add to your plate today.",
+    "Small prep today makes tomorrow easier.",
+    "Consistency beats intensity every time.",
+    "A calm meal plan is still a strong plan.",
+    "When in doubt, build a bowl and breathe.",
+    "Progress is made of tiny meal decisions.",
+    "You do not need novelty; you need rhythm.",
+    "Let your plate do one kind thing for future-you.",
+    "Satisfaction matters. Build meals you can sustain."
+  ],
+  "welcomeMessages": [
+    "Welcome back. Let us build one balanced meal together.",
+    "Hi, I am Sprout. Want a quick meal idea for today?",
+    "Great to see you. Ready for a calm, protein-forward plan?",
+    "Welcome in. We can keep this simple and tasty.",
+    "Your next good meal is only four parts away."
+  ]
+}
