@@ -54,31 +54,40 @@
 
 #kitchenCanvas {
   width: 100%;
-  height: auto;
+  height: clamp(460px, 64vh, 620px);
   border-radius: 16px;
   border: 1px solid rgba(22, 54, 41, 0.18);
   background: #f8f0de;
 }
 
-.slice-launch-row {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  flex-wrap: wrap;
-  position: sticky;
-  top: 0.35rem;
-  z-index: 6;
-  background: rgba(255, 253, 248, 0.94);
+.slice-control-panel {
   border: 1px solid var(--game-line);
-  border-radius: 10px;
-  padding: 0.45rem;
+  border-radius: 12px;
+  background: #fff;
+  padding: 0.55rem;
+  display: grid;
+  grid-template-columns: 1fr 108px;
+  gap: 0.6rem;
+  align-items: stretch;
 }
 
-.slice-badge {
+.slice-control-main {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.slice-meters {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.slice-meter {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 34px;
+  min-height: 30px;
   padding: 0 0.6rem;
   border-radius: 999px;
   font-size: 0.78rem;
@@ -88,10 +97,39 @@
   border: 1px solid rgba(29, 107, 70, 0.25);
 }
 
-.slice-badge.alt {
+.slice-meter.alt {
   color: #5d3d19;
   background: rgba(212, 155, 69, 0.2);
   border-color: rgba(212, 155, 69, 0.35);
+}
+
+.slice-controls {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.sprout-dock {
+  border: 1px solid var(--game-line);
+  border-radius: 10px;
+  background: #f8f3e6;
+  display: grid;
+  place-items: center;
+  padding: 0.35rem;
+  text-align: center;
+}
+
+.sprout-dock img {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+}
+
+.sprout-dock p {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--game-muted);
 }
 
 .stage-caption {
@@ -453,5 +491,22 @@
 
   .prep-row {
     grid-template-columns: 1fr;
+  }
+
+  .slice-control-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .sprout-dock {
+    grid-template-columns: auto 1fr;
+    display: grid;
+    place-items: center start;
+    gap: 0.45rem;
+    text-align: left;
+  }
+
+  .sprout-dock img {
+    width: 62px;
+    height: 62px;
   }
 }

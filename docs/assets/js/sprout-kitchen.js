@@ -85,8 +85,12 @@ const dom = {
   prepTarget: document.getElementById("prepTarget"),
   sliceStats: document.getElementById("sliceStats"),
   sliceHint: document.getElementById("sliceHint"),
-  sliceTimerBadge: document.getElementById("sliceTimerBadge"),
+  liveTimer: document.getElementById("liveTimer"),
+  liveScore: document.getElementById("liveScore"),
+  livePlated: document.getElementById("livePlated"),
   sliceCountdownBadge: document.getElementById("sliceCountdownBadge"),
+  panelStatus: document.getElementById("panelStatus"),
+  panelSproutAvatar: document.getElementById("panelSproutAvatar"),
   prepBar: document.getElementById("prepBar"),
   sliceBtn: document.getElementById("sliceBtn"),
   resetPrepBtn: document.getElementById("resetPrepBtn"),
@@ -379,17 +383,22 @@ function updateSliceStatsUI() {
   const platedNeed = Math.max(1, state.slicing.requiredIds.length || selectedForSlicing().length);
   const timerText = state.slicing.active ? `${seconds}s` : "--";
   dom.sliceStats.textContent = `Score ${state.slicing.score} | Best ${state.slicing.bestScore} | Time ${timerText} | Plated ${platedUniqueCount()}/${platedNeed}`;
-  dom.sliceTimerBadge.textContent = `Time ${timerText}`;
+  dom.liveTimer.textContent = `Time ${timerText}`;
+  dom.liveScore.textContent = `Score ${state.slicing.score}`;
+  dom.livePlated.textContent = `Plated ${platedUniqueCount()}/${platedNeed}`;
 
   if (state.slicing.active) {
     dom.sliceBtn.textContent = "Quick Chop";
     dom.sliceCountdownBadge.textContent = "Live";
+    dom.panelStatus.textContent = "Swipe and slice. Every hit should land on the plate.";
   } else if (state.slicing.countdownActive) {
     dom.sliceBtn.textContent = "Get Ready";
     dom.sliceCountdownBadge.textContent = `Starts in ${countdown}`;
+    dom.panelStatus.textContent = `Round starts in ${countdown}...`;
   } else {
     dom.sliceBtn.textContent = "Start Slice Round";
     dom.sliceCountdownBadge.textContent = "Ready";
+    dom.panelStatus.textContent = "Confirm prep plan, then start a timed slice round.";
   }
 
   if (state.slicing.active) {
@@ -461,6 +470,7 @@ function updateScoreUI() {
   if (state.slicing.active) {
     currentSproutMood = Date.now() < state.celebrateUntil ? "happy" : "neutral";
     dom.status.textContent = `Slice mode: ${state.prep.currentSlices}/${state.prep.targetSlices} cuts | score ${state.slicing.score}`;
+    dom.panelSproutAvatar.src = sproutExpressions[currentSproutMood].src;
     return;
   }
 
@@ -486,6 +496,8 @@ function updateScoreUI() {
     currentSproutMood = "neutral";
     dom.status.textContent = "Sprout is ready. Build one balanced recipe.";
   }
+
+  dom.panelSproutAvatar.src = sproutExpressions[currentSproutMood].src;
 }
 
 function setStation(station) {
@@ -539,6 +551,62 @@ function drawIngredientDot(x, y, color) {
   ctx.beginPath();
   ctx.arc(x, y, 9, 0, Math.PI * 2);
   ctx.fill();
+}
+
+function ingredientGroupForId(id) {
+  if (getById("protein", id)) return "protein";
+  if (getById("plants", id)) return "plants";
+  if (getById("starch", id)) return "starch";
+  return "flavor";
+}
+
+function drawIngredientSprite(x, y, size, item) {
+  const color = colorForItem(item);
+  const group = ingredientGroupForId(item.id);
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = color;
+
+  if (group === "protein") {
+    ctx.rotate(-0.22);
+    ctx.beginPath();
+    ctx.roundRect(-size * 0.8, -size * 0.42, size * 1.6, size * 0.84, size * 0.28);
+    ctx.fill();
+    ctx.fillStyle = "rgba(255,255,255,0.25)";
+    ctx.fillRect(-size * 0.55, -size * 0.12, size * 1.1, size * 0.16);
+  } else if (group === "plants") {
+    ctx.beginPath();
+    ctx.moveTo(0, -size * 0.9);
+    ctx.bezierCurveTo(size * 0.95, -size * 0.5, size * 0.75, size * 0.85, 0, size * 0.95);
+    ctx.bezierCurveTo(-size * 0.75, size * 0.85, -size * 0.95, -size * 0.5, 0, -size * 0.9);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.3)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, -size * 0.7);
+    ctx.lineTo(0, size * 0.72);
+    ctx.stroke();
+  } else if (group === "starch") {
+    for (let i = 0; i < 7; i += 1) {
+      const rx = ((i % 3) - 1) * size * 0.34 + ((i * 13) % 7 - 3) * 0.2;
+      const ry = (Math.floor(i / 3) - 1) * size * 0.3;
+      ctx.beginPath();
+      ctx.ellipse(rx, ry, size * 0.34, size * 0.23, 0.25, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  } else {
+    ctx.beginPath();
+    ctx.moveTo(0, -size * 0.9);
+    ctx.bezierCurveTo(size * 0.85, -size * 0.3, size * 0.55, size * 0.9, 0, size * 0.95);
+    ctx.bezierCurveTo(-size * 0.55, size * 0.9, -size * 0.85, -size * 0.3, 0, -size * 0.9);
+    ctx.fill();
+    ctx.fillStyle = "rgba(255,255,255,0.25)";
+    ctx.beginPath();
+    ctx.arc(size * 0.14, -size * 0.2, size * 0.2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.restore();
 }
 
 function spawnIngredientTarget() {
@@ -797,17 +865,8 @@ function advanceSlicingFrame() {
 
 function drawSlicingLayer() {
   flyingIngredients.forEach((target) => {
-    const color = colorForItem(target.item);
     ctx.globalAlpha = Math.max(0.22, target.life);
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.arc(target.x, target.y, target.radius, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.fillStyle = "rgba(255,255,255,0.35)";
-    ctx.beginPath();
-    ctx.arc(target.x - target.radius * 0.3, target.y - target.radius * 0.3, target.radius * 0.36, 0, Math.PI * 2);
-    ctx.fill();
+    drawIngredientSprite(target.x, target.y, target.radius, target.item);
     ctx.globalAlpha = 1;
   });
 

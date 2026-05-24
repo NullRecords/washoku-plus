@@ -40,12 +40,26 @@
 
     <div class="game-layout">
       <section class="game-card kitchen-stage">
-        <canvas id="kitchenCanvas" width="700" height="420" aria-label="Sprout kitchen animation"></canvas>
-        <div class="slice-launch-row">
-          <button id="sliceBtn" class="action-btn" type="button">Start Slice Round</button>
-          <span id="sliceTimerBadge" class="slice-badge">Time --</span>
-          <span id="sliceCountdownBadge" class="slice-badge alt">Ready</span>
-        </div>
+        <canvas id="kitchenCanvas" width="760" height="520" aria-label="Sprout kitchen animation"></canvas>
+        <section class="slice-control-panel">
+          <div class="slice-control-main">
+            <div class="slice-meters">
+              <span id="liveTimer" class="slice-meter">Time --</span>
+              <span id="liveScore" class="slice-meter">Score 0</span>
+              <span id="livePlated" class="slice-meter">Plated 0/0</span>
+              <span id="sliceCountdownBadge" class="slice-meter alt">Ready</span>
+            </div>
+            <div class="slice-controls">
+              <button id="sliceBtn" class="action-btn" type="button">Start Slice Round</button>
+              <button id="resetPrepBtn" class="action-btn alt" type="button">Reset Prep</button>
+            </div>
+            <p id="panelStatus" class="help-note">Confirm prep plan, then start a timed slice round.</p>
+          </div>
+          <aside class="sprout-dock" aria-label="Sprout game companion">
+            <img id="panelSproutAvatar" src="assets/images/sprout/sprout-neutral.png" alt="Sprout expression">
+            <p>Sprout Coach</p>
+          </aside>
+        </section>
         <div class="stage-caption">
           <span id="stageStatus">Sprout is ready. Build one balanced recipe.</span>
           <span>Active station: <strong id="activeStationLabel">Protein</strong></span>
@@ -73,9 +87,6 @@
             <p id="prepTarget" class="help-note">Choose ingredients to prep.</p>
             <p id="sliceStats" class="slice-stats">Score 0 | Best 0 | Time -- | Plated 0/0</p>
             <p id="sliceHint" class="help-note">Confirm prep plan, then start a timed slice round.</p>
-          </div>
-          <div class="prep-actions">
-            <button id="resetPrepBtn" class="action-btn alt" type="button">Reset Prep</button>
           </div>
           <div class="score-line prep-line" id="prepBar"><span></span></div>
         </section>
