@@ -74,6 +74,9 @@ const bestSliceScoreKey = "washoku-slice-best-v1";
 const voteRegistryKey = "washoku-community-votes-v1";
 const mobileBreakpointPx = 980;
 const landingIntroSpeech = "Hi chef. Build your bowl, balance the score, then slice and serve your best idea.";
+const musicEnabledKey = "washoku-audio-music-enabled-v1";
+const sfxEnabledKey = "washoku-audio-sfx-enabled-v1";
+const muteAllEnabledKey = "washoku-audio-mute-all-enabled-v1";
 
 const canvas = document.getElementById("kitchenCanvas");
 const ctx = canvas.getContext("2d");
@@ -106,6 +109,9 @@ const dom = {
   prepBar: document.getElementById("prepBar"),
   sliceBtn: document.getElementById("sliceBtn"),
   resetPrepBtn: document.getElementById("resetPrepBtn"),
+  musicToggleBtn: document.getElementById("musicToggleBtn"),
+  sfxToggleBtn: document.getElementById("sfxToggleBtn"),
+  muteAllAudioBtn: document.getElementById("muteAllAudioBtn"),
   prepPlanList: document.getElementById("prepPlanList"),
   prepPlanStatus: document.getElementById("prepPlanStatus"),
   applyPrepPlanBtn: document.getElementById("applyPrepPlanBtn"),
@@ -153,6 +159,178 @@ const mobileGuide = {
   movedToPrep: false,
   movedBackToGame: false
 };
+const audioState = {
+  initialized: false,
+  audioCtx: null,
+  dreamTrack: new Audio("assets/audio/Dream State.mp3"),
+  dustTrack: new Audio("assets/audio/Dust Bunnies.mp3"),
+  currentMusic: "none",
+  lastSliceAt: 0,
+  musicEnabled: true,
+  sfxEnabled: true,
+  muteAll: false
+};
+
+function updateAudioToggleButtons() {
+  if (dom.musicToggleBtn) {
+    dom.musicToggleBtn.textContent = audioState.musicEnabled ? "Music On" : "Music Off";
+    dom.musicToggleBtn.setAttribute("aria-pressed", String(audioState.musicEnabled));
+  }
+  if (dom.sfxToggleBtn) {
+    dom.sfxToggleBtn.textContent = audioState.sfxEnabled ? "SFX On" : "SFX Off";
+    dom.sfxToggleBtn.setAttribute("aria-pressed", String(audioState.sfxEnabled));
+  }
+  if (dom.muteAllAudioBtn) {
+    dom.muteAllAudioBtn.textContent = audioState.muteAll ? "Unmute" : "Mute All";
+    dom.muteAllAudioBtn.setAttribute("aria-pressed", String(audioState.muteAll));
+  }
+}
+
+function loadAudioPreferences() {
+  const musicPref = localStorage.getItem(musicEnabledKey);
+  const sfxPref = localStorage.getItem(sfxEnabledKey);
+  const muteAllPref = localStorage.getItem(muteAllEnabledKey);
+  if (musicPref !== null) audioState.musicEnabled = musicPref === "1";
+  if (sfxPref !== null) audioState.sfxEnabled = sfxPref === "1";
+  if (muteAllPref !== null) audioState.muteAll = muteAllPref === "1";
+  updateAudioToggleButtons();
+}
+
+function setMusicEnabled(enabled) {
+  audioState.musicEnabled = Boolean(enabled);
+  localStorage.setItem(musicEnabledKey, audioState.musicEnabled ? "1" : "0");
+  if (!audioState.musicEnabled) {
+    audioState.dreamTrack.pause();
+    audioState.dustTrack.pause();
+    audioState.currentMusic = "none";
+  } else {
+    syncMusicForGameState();
+  }
+  updateAudioToggleButtons();
+}
+
+function setSfxEnabled(enabled) {
+  audioState.sfxEnabled = Boolean(enabled);
+  localStorage.setItem(sfxEnabledKey, audioState.sfxEnabled ? "1" : "0");
+  updateAudioToggleButtons();
+}
+
+function setMuteAllEnabled(enabled) {
+  audioState.muteAll = Boolean(enabled);
+  localStorage.setItem(muteAllEnabledKey, audioState.muteAll ? "1" : "0");
+  if (audioState.muteAll) {
+    audioState.dreamTrack.pause();
+    audioState.dustTrack.pause();
+    audioState.currentMusic = "none";
+  } else {
+    syncMusicForGameState();
+  }
+  updateAudioToggleButtons();
+}
+
+function hasAnySelection() {
+  return state.selected.protein.length
+    || state.selected.plants.length
+    || state.selected.starch.length
+    || state.selected.flavor.length;
+}
+
+function playMusicTrack(name) {
+  if (!audioState.initialized) return;
+  if (audioState.muteAll) name = "none";
+  if (!audioState.musicEnabled) name = "none";
+  if (audioState.currentMusic === name) return;
+
+  const dream = audioState.dreamTrack;
+  const dust = audioState.dustTrack;
+  dream.pause();
+  dust.pause();
+
+  if (name === "dream") {
+    dream.volume = 0.14;
+    dream.play().catch(() => {});
+  } else if (name === "dust") {
+    dust.volume = 0.2;
+    dust.play().catch(() => {});
+  }
+
+  audioState.currentMusic = name;
+}
+
+function syncMusicForGameState() {
+  if (!audioState.initialized) return;
+  if (audioState.muteAll) {
+    playMusicTrack("none");
+    return;
+  }
+  if (!audioState.musicEnabled) {
+    playMusicTrack("none");
+    return;
+  }
+  if (state.slicing.active) {
+    playMusicTrack("dust");
+    return;
+  }
+  if (hasAnySelection()) {
+    playMusicTrack("dream");
+    return;
+  }
+  playMusicTrack("none");
+}
+
+function initAudioFromUserGesture() {
+  if (audioState.initialized) return;
+  audioState.initialized = true;
+
+  [audioState.dreamTrack, audioState.dustTrack].forEach((track) => {
+    track.preload = "auto";
+    track.loop = true;
+  });
+
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (AudioContextClass) {
+    try {
+      audioState.audioCtx = new AudioContextClass();
+    } catch {
+      audioState.audioCtx = null;
+    }
+  }
+
+  syncMusicForGameState();
+}
+
+function playTone(freq, duration, type, peakGain) {
+  if (audioState.muteAll) return;
+  if (!audioState.sfxEnabled) return;
+  const ctxAudio = audioState.audioCtx;
+  if (!ctxAudio) return;
+  if (ctxAudio.state === "suspended") ctxAudio.resume().catch(() => {});
+  const now = ctxAudio.currentTime;
+  const osc = ctxAudio.createOscillator();
+  const gainNode = ctxAudio.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, now);
+  gainNode.gain.setValueAtTime(0.0001, now);
+  gainNode.gain.linearRampToValueAtTime(peakGain, now + 0.006);
+  gainNode.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+  osc.connect(gainNode);
+  gainNode.connect(ctxAudio.destination);
+  osc.start(now);
+  osc.stop(now + duration + 0.02);
+}
+
+function playSliceSfx() {
+  const now = performance.now();
+  if (now - audioState.lastSliceAt < 48) return;
+  audioState.lastSliceAt = now;
+  playTone(620, 0.065, "triangle", 0.05);
+  playTone(840, 0.055, "triangle", 0.028);
+}
+
+function playPlateSfx() {
+  playTone(190, 0.09, "sine", 0.045);
+  playTone(120, 0.12, "triangle", 0.024);
+}
 
 function hasRequiredBuildSelections() {
   return state.selected.protein.length > 0
@@ -509,6 +687,7 @@ function allIngredientsPlated() {
 
 function updateSliceStatsUI() {
   canvas.style.touchAction = state.slicing.active ? "none" : "pan-y";
+  syncMusicForGameState();
   const now = performance.now();
   const seconds = state.slicing.active ? Math.max(0, Math.ceil(state.slicing.timeLeft)) : 0;
   const countdown = state.slicing.countdownActive ? Math.max(0, Math.ceil((state.slicing.countdownEndsAt - now) / 1000)) : 0;
@@ -958,6 +1137,7 @@ function distanceToSegment(px, py, ax, ay, bx, by) {
 function registerSliceHit(target) {
   target.sliced = true;
   target.life = 0.15;
+  playSliceSfx();
   state.prep.currentSlices = Math.min(state.prep.targetSlices, state.prep.currentSlices + 1);
   state.slicing.hitsThisRound += 1;
   state.slicing.score = Math.max(0, state.slicing.score + 12);
@@ -1188,6 +1368,7 @@ function advanceSlicingFrame() {
     if (transfer.progress >= 1 && !transfer.done) {
       transfer.done = true;
       state.slicing.platedCounts[transfer.itemId] = (state.slicing.platedCounts[transfer.itemId] || 0) + 1;
+      playPlateSfx();
     }
     if (transfer.progress >= 1.1) plateTransfers.splice(i, 1);
   }
@@ -1358,6 +1539,7 @@ function bindStationButtons() {
 
   document.querySelectorAll(".item-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
+      initAudioFromUserGesture();
       const group = btn.dataset.group;
       const id = btn.dataset.id;
       const has = state.selected[group].includes(id);
@@ -1385,6 +1567,7 @@ function refreshButtonState() {
 }
 
 function runSliceAction() {
+  initAudioFromUserGesture();
   if (!state.selected.protein.length && !state.selected.starch.length && !state.selected.flavor.length && !state.selected.plants.length) {
     dom.status.textContent = "Pick your ingredients first, then we slice like ninjas.";
     return;
@@ -1677,6 +1860,7 @@ function submitRecipe() {
 function initGame() {
   mobileGuide.enabled = isMobileViewport();
   dom.status.textContent = landingIntroSpeech;
+  loadAudioPreferences();
   state.slicing.bestScore = Number(localStorage.getItem(bestSliceScoreKey) || 0);
   loadCommunity();
   bindStationButtons();
@@ -1692,6 +1876,24 @@ function initGame() {
   dom.submitBtn.addEventListener("click", submitRecipe);
   dom.sliceBtn.addEventListener("click", runSliceAction);
   dom.resetPrepBtn.addEventListener("click", resetPrep);
+  if (dom.musicToggleBtn) {
+    dom.musicToggleBtn.addEventListener("click", () => {
+      initAudioFromUserGesture();
+      setMusicEnabled(!audioState.musicEnabled);
+    });
+  }
+  if (dom.sfxToggleBtn) {
+    dom.sfxToggleBtn.addEventListener("click", () => {
+      initAudioFromUserGesture();
+      setSfxEnabled(!audioState.sfxEnabled);
+    });
+  }
+  if (dom.muteAllAudioBtn) {
+    dom.muteAllAudioBtn.addEventListener("click", () => {
+      initAudioFromUserGesture();
+      setMuteAllEnabled(!audioState.muteAll);
+    });
+  }
   dom.recipeName.addEventListener("input", () => {
     state.recipeName = dom.recipeName.value;
     updateMobileGuidedFlow();
@@ -1700,6 +1902,16 @@ function initGame() {
   window.addEventListener("resize", () => {
     mobileGuide.enabled = isMobileViewport();
   });
+
+  const primeAudio = () => {
+    initAudioFromUserGesture();
+    document.removeEventListener("pointerdown", primeAudio);
+    document.removeEventListener("touchstart", primeAudio);
+    document.removeEventListener("keydown", primeAudio);
+  };
+  document.addEventListener("pointerdown", primeAudio, { passive: true });
+  document.addEventListener("touchstart", primeAudio, { passive: true });
+  document.addEventListener("keydown", primeAudio);
 
   bindPrepPlanEditor();
   bindCanvasSlicing();

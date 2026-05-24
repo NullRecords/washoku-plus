@@ -134,10 +134,32 @@
   }
 }
 
+.mute-all-btn {
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.mute-all-btn[aria-pressed="true"] {
+  background: rgba(64, 72, 78, 0.88);
+  color: #f4f7f8;
+  border-color: rgba(46, 53, 58, 0.95);
+}
+
 .slice-controls {
   display: flex;
   gap: 0.45rem;
   flex-wrap: wrap;
+}
+
+.audio-toggle {
+  min-width: 92px;
+  padding: 0.48rem 0.62rem;
+  font-size: 0.78rem;
+}
+
+.audio-toggle[aria-pressed="false"] {
+  opacity: 0.82;
+  filter: grayscale(0.2);
 }
 
 .stage-caption {
@@ -536,6 +558,11 @@
   .slice-meter {
     min-height: 40px;
     font-size: 0.94rem;
+  }
+
+  .audio-toggle {
+    min-width: 84px;
+    font-size: 0.75rem;
   }
 
   .mobile-sprout-coach {
