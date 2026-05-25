@@ -38,12 +38,22 @@
         <canvas id="kitchenCanvas" width="760" height="520" aria-label="Sprout's kitchen animation"></canvas>
         <section class="slice-control-panel">
           <div class="slice-control-main">
+            <section id="sproutStartGuide" class="sprout-start-guide" aria-live="polite" aria-label="How to start slice game">
+              <img id="panelSproutAvatar" src="assets/images/sprout/sprout-wave.png" alt="Sprout explains game rules">
+              <div class="sprout-start-copy">
+                <p id="panelSproutText" class="sprout-start-title">Sprout's quick start</p>
+                <ol class="start-steps" id="startStepsList">
+                  <li id="startStepBuild">Pick 1 protein, 2 plants, 1 starch, and 1 flavor.</li>
+                  <li id="startStepPrep">Tap Confirm Prep Plan.</li>
+                  <li id="startStepSlice">Tap Start Slice Round, then swipe ingredients onto the plate.</li>
+                </ol>
+              </div>
+            </section>
             <div class="slice-meters">
               <span id="liveTimer" class="slice-meter">Time --</span>
               <span id="liveScore" class="slice-meter">Score 0</span>
               <span id="livePlated" class="slice-meter">Plated 0/0</span>
               <span id="sliceCountdownBadge" class="slice-meter alt">Ready</span>
-              <span id="topScorePulse" class="slice-meter top-score-pulse" hidden>TOP SCORE!</span>
               <button id="muteAllAudioBtn" class="slice-meter alt mute-all-btn" type="button" aria-pressed="false">Mute All</button>
             </div>
             <div class="slice-controls">
@@ -52,7 +62,7 @@
               <button id="musicToggleBtn" class="action-btn alt audio-toggle" type="button" aria-pressed="true">Music On</button>
               <button id="sfxToggleBtn" class="action-btn alt audio-toggle" type="button" aria-pressed="true">SFX On</button>
             </div>
-            <p id="panelStatus" class="help-note">Confirm prep plan, then start a timed slice round.</p>
+            <p id="panelStatus" class="help-note panel-status-strong">Step 1 of 3: Pick your ingredients to unlock slicing.</p>
           </div>
         </section>
         <div class="stage-caption">
@@ -80,8 +90,8 @@
           <div>
             <p class="prep-title">Prep Mini-game</p>
             <p id="prepTarget" class="help-note">Choose ingredients to prep.</p>
-            <p id="sliceStats" class="slice-stats">Score 0 | Best 0 | Time -- | Plated 0/0</p>
-            <p id="sliceHint" class="help-note">Confirm prep plan, then start a timed slice round.</p>
+            <p id="sliceStats" class="slice-stats">Score 0 | Time -- | Plated 0/0</p>
+            <p id="sliceHint" class="help-note">Step 1 of 3: Pick your ingredients, then confirm prep plan.</p>
           </div>
           <div class="score-line prep-line" id="prepBar"><span></span></div>
         </section>
@@ -160,7 +170,7 @@
 
     <aside id="mobileSproutCoach" class="mobile-sprout-coach" aria-live="polite" aria-label="Sprout coach">
       <img id="mobileSproutAvatar" src="assets/images/sprout/sprout-neutral.png" alt="Sprout coach expression">
-      <p id="mobileSproutText">Let's build something delicious.</p>
+      <p id="mobileSproutText">Step 1: pick ingredients. Step 2: confirm prep. Step 3: start slicing.</p>
     </aside>
 
     <section class="game-card community-panel">

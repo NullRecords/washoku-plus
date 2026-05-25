@@ -58,8 +58,7 @@ const state = {
     timeLeft: 0,
     roundStartedAt: 0,
     requiredIds: [],
-    platedCounts: {},
-    topScoreFlashUntil: 0
+    platedCounts: {}
   },
   completedSteps: { protein: false, plants: false, starch: false, flavor: false, prep: false },
   community: [],
@@ -73,7 +72,7 @@ const storageKey = "washoku-community-recipes-v2";
 const bestSliceScoreKey = "washoku-slice-best-v1";
 const voteRegistryKey = "washoku-community-votes-v1";
 const mobileBreakpointPx = 980;
-const landingIntroSpeech = "Hi chef. Build your bowl, balance the score, then slice and serve your best idea.";
+const landingIntroSpeech = "Three quick steps: pick your bowl ingredients, confirm prep plan, then start slicing and plate every pick.";
 const musicEnabledKey = "washoku-audio-music-enabled-v1";
 const sfxEnabledKey = "washoku-audio-sfx-enabled-v1";
 const muteAllEnabledKey = "washoku-audio-mute-all-enabled-v1";
@@ -86,6 +85,7 @@ const dom = {
   activeStation: document.getElementById("activeStationLabel"),
   gameHero: document.getElementById("gameHero"),
   kitchenStage: document.getElementById("kitchenStage"),
+  sliceControlPanel: document.querySelector(".slice-control-panel"),
   recipePanel: document.getElementById("recipePanel"),
   builderGrid: document.getElementById("builderGrid"),
   prepPlanCard: document.getElementById("prepPlanCard"),
@@ -103,9 +103,12 @@ const dom = {
   liveScore: document.getElementById("liveScore"),
   livePlated: document.getElementById("livePlated"),
   sliceCountdownBadge: document.getElementById("sliceCountdownBadge"),
-  topScorePulse: document.getElementById("topScorePulse"),
   panelStatus: document.getElementById("panelStatus"),
+  panelSproutText: document.getElementById("panelSproutText"),
   panelSproutAvatar: document.getElementById("panelSproutAvatar"),
+  startStepBuild: document.getElementById("startStepBuild"),
+  startStepPrep: document.getElementById("startStepPrep"),
+  startStepSlice: document.getElementById("startStepSlice"),
   prepBar: document.getElementById("prepBar"),
   sliceBtn: document.getElementById("sliceBtn"),
   resetPrepBtn: document.getElementById("resetPrepBtn"),
@@ -341,6 +344,44 @@ function hasRequiredBuildSelections() {
 
 function canStartSliceRound() {
   return hasRequiredBuildSelections() && state.prepPlan.confirmed && !state.slicing.active && !state.slicing.countdownActive;
+}
+
+function updateStartStepState(element, done) {
+  if (!element) return;
+  element.classList.toggle("is-done", done);
+}
+
+function updateStartGuideUI(countdown = 0) {
+  const hasBuild = hasRequiredBuildSelections();
+  const prepConfirmed = state.prepPlan.confirmed;
+  const readyToStart = canStartSliceRound();
+  const onboardingActive = !state.slicing.active && !state.slicing.countdownActive && !readyToStart;
+
+  if (dom.sliceControlPanel) {
+    dom.sliceControlPanel.classList.toggle("is-onboarding", onboardingActive);
+  }
+
+  updateStartStepState(dom.startStepBuild, hasBuild);
+  updateStartStepState(dom.startStepPrep, prepConfirmed);
+  updateStartStepState(dom.startStepSlice, state.slicing.active || readyToStart || state.completedSteps.prep);
+
+  if (dom.sliceBtn) {
+    dom.sliceBtn.classList.toggle("start-attention", readyToStart && !state.slicing.active && !state.slicing.countdownActive);
+  }
+
+  if (dom.panelSproutText) {
+    if (state.slicing.active) {
+      dom.panelSproutText.textContent = "Sprout says: keep swiping and plate every selected ingredient.";
+    } else if (state.slicing.countdownActive) {
+      dom.panelSproutText.textContent = `Sprout says: get ready, slicing starts in ${countdown}.`;
+    } else if (!hasBuild) {
+      dom.panelSproutText.textContent = "Sprout's quick start";
+    } else if (!prepConfirmed) {
+      dom.panelSproutText.textContent = "Step 2 is next: tap Confirm Prep Plan to unlock slicing.";
+    } else {
+      dom.panelSproutText.textContent = "Step 3 unlocked: hit Start Slice Round and swipe fast.";
+    }
+  }
 }
 
 function isMobileViewport() {
@@ -693,25 +734,29 @@ function updateSliceStatsUI() {
   const countdown = state.slicing.countdownActive ? Math.max(0, Math.ceil((state.slicing.countdownEndsAt - now) / 1000)) : 0;
   const platedNeed = Math.max(1, state.slicing.requiredIds.length || selectedForSlicing().length);
   const timerText = state.slicing.active ? `${seconds}s` : "--";
-  dom.sliceStats.textContent = `Score ${state.slicing.score} | Best ${state.slicing.bestScore} | Time ${timerText} | Plated ${platedUniqueCount()}/${platedNeed}`;
+  dom.sliceStats.textContent = `Score ${state.slicing.score} | Time ${timerText} | Plated ${platedUniqueCount()}/${platedNeed}`;
   dom.liveTimer.textContent = `Time ${timerText}`;
   dom.liveScore.textContent = `Score ${state.slicing.score}`;
   dom.livePlated.textContent = `Plated ${platedUniqueCount()}/${platedNeed}`;
-  const topScoreActive = Date.now() < state.slicing.topScoreFlashUntil;
-  if (dom.topScorePulse) dom.topScorePulse.hidden = !topScoreActive;
 
   if (state.slicing.active) {
     dom.sliceBtn.textContent = "Quick Chop";
     dom.sliceCountdownBadge.textContent = "Live";
-    dom.panelStatus.textContent = "Swipe and slice. Every hit should land on the plate.";
+    dom.panelStatus.textContent = "Step 3 of 3: Swipe to slice and plate every selected ingredient.";
   } else if (state.slicing.countdownActive) {
     dom.sliceBtn.textContent = "Get Ready";
     dom.sliceCountdownBadge.textContent = `Starts in ${countdown}`;
-    dom.panelStatus.textContent = `Round starts in ${countdown}...`;
+    dom.panelStatus.textContent = `Step 3 of 3: Round starts in ${countdown}...`;
   } else {
     dom.sliceBtn.textContent = "Start Slice Round";
     dom.sliceCountdownBadge.textContent = "Ready";
-    dom.panelStatus.textContent = "Confirm prep plan, then start a timed slice round.";
+    if (!hasRequiredBuildSelections()) {
+      dom.panelStatus.textContent = "Step 1 of 3: Pick 1 protein, 2 plants, 1 starch, and 1 flavor.";
+    } else if (!state.prepPlan.confirmed) {
+      dom.panelStatus.textContent = "Step 2 of 3: Tap Confirm Prep Plan to unlock Start Slice Round.";
+    } else {
+      dom.panelStatus.textContent = "Step 3 of 3: Tap Start Slice Round, then swipe ingredients onto the plate.";
+    }
   }
 
   if (state.slicing.active) {
@@ -719,13 +764,16 @@ function updateSliceStatsUI() {
   } else if (state.slicing.countdownActive) {
     dom.sliceHint.textContent = "Round begins after countdown. Keep your finger near the canvas.";
   } else if (!state.prepPlan.confirmed) {
-    dom.sliceHint.textContent = "Confirm prep plan, then start a timed slice round.";
+    dom.sliceHint.textContent = hasRequiredBuildSelections()
+      ? "Nice picks. Next tap Confirm Prep Plan."
+      : "Start with your ingredient picks to unlock prep.";
   } else if (state.prep.currentSlices >= state.prep.targetSlices && allIngredientsPlated()) {
     dom.sliceHint.textContent = "Prep cleared. You can submit your dish now.";
   } else {
-    dom.sliceHint.textContent = "Press Slice to start a timed prep round.";
+    dom.sliceHint.textContent = "Tap Start Slice Round, then slice and plate each selected ingredient.";
   }
 
+  updateStartGuideUI(countdown);
   dom.sliceBtn.disabled = !canStartSliceRound() && !state.slicing.active;
 }
 
@@ -957,6 +1005,7 @@ function syncSproutCoachUI() {
       && canvasRect.bottom > 120;
     dom.mobileSproutCoach.classList.toggle("is-hidden", originalSproutVisible);
     dom.mobileSproutCoach.classList.toggle("is-ready", canStartSliceRound());
+    dom.mobileSproutCoach.classList.toggle("is-onboarding", !state.slicing.active && !state.slicing.countdownActive && !canStartSliceRound());
   }
 }
 
@@ -1213,8 +1262,7 @@ function finishSliceRound(reason) {
     if (newTopScore) {
       currentSproutMood = "celebrate";
       triggerTopScoreCelebration();
-      state.slicing.topScoreFlashUntil = Date.now() + 3200;
-      dom.status.textContent = `Wow good job, your meal is complete! NEW TOP SCORE ${state.slicing.score}!`;
+      dom.status.textContent = `Wow good job, your meal is complete! Personal best score: ${state.slicing.score}.`;
     } else if (state.slicing.score >= 170) {
       currentSproutMood = "celebrate";
       dom.status.textContent = `Wow good job, your meal is complete! Incredible score ${state.slicing.score}!`;
@@ -1498,7 +1546,8 @@ function drawKitchen() {
   const bob = Math.sin(sprout.t) * 4;
   sprout.x += (sprout.targetX - sprout.x) * 0.08;
 
-  const sproutSize = state.slicing.active ? 136 : 118;
+  const introCoachVisible = !state.slicing.active && !state.slicing.countdownActive && !canStartSliceRound();
+  const sproutSize = state.slicing.active ? 136 : (introCoachVisible ? 152 : 126);
 
   const activeSprout = sproutExpressions[currentSproutMood] || sproutExpressions.neutral;
   if (activeSprout && activeSprout.complete) {
