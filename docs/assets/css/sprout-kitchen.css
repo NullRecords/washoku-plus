@@ -137,6 +137,18 @@
   font-weight: 900;
 }
 
+.prep-step-title {
+  margin: 0;
+  padding: 0.42rem 0.56rem;
+  border-radius: 10px;
+  border: 1px dashed rgba(22, 54, 41, 0.25);
+  background: rgba(255, 255, 255, 0.92);
+  color: #1c3c2d;
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
 .slice-control-panel.is-onboarding .sprout-start-guide {
   animation: intro-guide-glow 1.15s ease-in-out infinite;
 }

@@ -50,15 +50,24 @@ const state = {
     countdownActive: false,
     countdownSeconds: 3,
     countdownEndsAt: 0,
+    breakUntil: 0,
     misses: 0,
     hitsThisRound: 0,
     score: 0,
     bestScore: 0,
-    timerSeconds: 26,
+    timerSeconds: 90,
     timeLeft: 0,
     roundStartedAt: 0,
     requiredIds: [],
-    platedCounts: {}
+    platedCounts: {},
+    prepQueue: [],
+    prepIndex: -1,
+    stepHits: 0,
+    stepHitsRequired: 0,
+    stepActionMode: "slice",
+    stepTitle: "",
+    stirAngleProgress: 0,
+    stirLastAngle: null
   },
   completedSteps: { protein: false, plants: false, starch: false, flavor: false, prep: false },
   community: [],
@@ -76,6 +85,7 @@ const landingIntroSpeech = "Three quick steps: pick your bowl ingredients, confi
 const musicEnabledKey = "washoku-audio-music-enabled-v1";
 const sfxEnabledKey = "washoku-audio-sfx-enabled-v1";
 const muteAllEnabledKey = "washoku-audio-mute-all-enabled-v1";
+const managedMenuFile = "assets/data/menu-content.json";
 
 const canvas = document.getElementById("kitchenCanvas");
 const ctx = canvas.getContext("2d");
@@ -106,6 +116,7 @@ const dom = {
   panelStatus: document.getElementById("panelStatus"),
   panelSproutText: document.getElementById("panelSproutText"),
   panelSproutAvatar: document.getElementById("panelSproutAvatar"),
+  prepStepTitle: document.getElementById("prepStepTitle"),
   startStepBuild: document.getElementById("startStepBuild"),
   startStepPrep: document.getElementById("startStepPrep"),
   startStepSlice: document.getElementById("startStepSlice"),
@@ -173,6 +184,145 @@ const audioState = {
   sfxEnabled: true,
   muteAll: false
 };
+
+const menuSyncState = {
+  source: "defaults",
+  dynamicCounts: { protein: 0, plants: 0, starch: 0, flavor: 0 }
+};
+
+const baseStatsByGroup = {
+  protein: { kcal: 190, protein: 24, plants: 0, taste: 7 },
+  plants: { kcal: 28, protein: 2, plants: 1, taste: 6 },
+  starch: { kcal: 200, protein: 4, plants: 0, taste: 7 },
+  flavor: { kcal: 20, protein: 1, plants: 0, taste: 7 }
+};
+
+function toApiLoadUrl(filePath) {
+  return `/api/load-file?file=${encodeURIComponent(filePath)}&_=${Date.now()}`;
+}
+
+function toStaticSyncUrl(path) {
+  const joiner = path.includes("?") ? "&" : "?";
+  return `${path}${joiner}sync=${Date.now()}`;
+}
+
+async function fetchManagedMenuPayload() {
+  try {
+    const apiResponse = await fetch(toApiLoadUrl(managedMenuFile), { cache: "no-store" });
+    if (apiResponse.ok) {
+      const payload = await apiResponse.json();
+      const parsed = JSON.parse(payload.content || "{}");
+      return { source: "api", payload: parsed };
+    }
+  } catch {
+    // Fall through to static payload.
+  }
+
+  const staticResponse = await fetch(toStaticSyncUrl(managedMenuFile), { cache: "no-store" });
+  if (!staticResponse.ok) {
+    throw new Error(`menu payload load failed: ${staticResponse.status}`);
+  }
+  return { source: "static", payload: await staticResponse.json() };
+}
+
+function slugifyIngredient(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 40);
+}
+
+function cleanIngredientName(raw) {
+  return String(raw || "")
+    .replace(/\s+/g, " ")
+    .replace(/[()]/g, "")
+    .trim();
+}
+
+function splitIngredientText(raw) {
+  if (Array.isArray(raw)) {
+    return raw.map(cleanIngredientName).filter(Boolean);
+  }
+  return String(raw || "")
+    .split(/[;,/]|\band\b/gi)
+    .map(cleanIngredientName)
+    .filter((item) => item.length >= 2 && item.length <= 40);
+}
+
+function cuisineTagFromMeal(meal) {
+  const cuisine = String(meal?.cuisine || "").toLowerCase();
+  if (cuisine.includes("japanese")) return "japanese";
+  if (cuisine.includes("korean")) return "korean";
+  if (cuisine.includes("thai")) return "thai";
+  if (cuisine.includes("mediterranean")) return "mediterranean";
+  if (cuisine.includes("mexican")) return "mexican";
+  return "global";
+}
+
+function hasCatalogMatch(group, name, id) {
+  const lower = name.toLowerCase();
+  return ingredientCatalog[group].some((item) => item.id === id || item.name.toLowerCase() === lower);
+}
+
+function addIngredientToCatalog(group, rawName, tags) {
+  const name = cleanIngredientName(rawName);
+  if (!name) return false;
+
+  const baseId = slugifyIngredient(name);
+  if (!baseId) return false;
+
+  const id = `${group}-${baseId}`;
+  if (hasCatalogMatch(group, name, id)) return false;
+
+  const base = baseStatsByGroup[group];
+  ingredientCatalog[group].push({
+    id,
+    name,
+    kcal: base.kcal,
+    protein: base.protein,
+    plants: base.plants,
+    taste: base.taste,
+    tags: Array.from(new Set([...(tags || []), "menu-sync"]))
+  });
+  return true;
+}
+
+function mergeCatalogFromManagedMeals(meals) {
+  const added = { protein: 0, plants: 0, starch: 0, flavor: 0 };
+  if (!Array.isArray(meals)) return added;
+
+  meals.forEach((meal) => {
+    const baseTags = [cuisineTagFromMeal(meal)];
+
+    if (addIngredientToCatalog("protein", meal?.protein, [...baseTags, "protein"])) added.protein += 1;
+
+    splitIngredientText(meal?.plants).forEach((item) => {
+      if (addIngredientToCatalog("plants", item, [...baseTags, "plants"])) added.plants += 1;
+    });
+
+    if (addIngredientToCatalog("starch", meal?.smartStarch, [...baseTags, "starch"])) added.starch += 1;
+
+    splitIngredientText(meal?.flavor).forEach((item) => {
+      if (addIngredientToCatalog("flavor", item, [...baseTags, "flavor"])) added.flavor += 1;
+    });
+  });
+
+  return added;
+}
+
+async function loadDynamicIngredientCatalog() {
+  try {
+    const { source, payload } = await fetchManagedMenuPayload();
+    const added = mergeCatalogFromManagedMeals(payload?.meals || []);
+    menuSyncState.source = source;
+    menuSyncState.dynamicCounts = added;
+  } catch (error) {
+    console.warn("Sprout Kitchen menu sync failed; using built-in catalog.", error);
+    menuSyncState.source = "defaults";
+    menuSyncState.dynamicCounts = { protein: 0, plants: 0, starch: 0, flavor: 0 };
+  }
+}
 
 function updateAudioToggleButtons() {
   if (dom.musicToggleBtn) {
@@ -343,7 +493,119 @@ function hasRequiredBuildSelections() {
 }
 
 function canStartSliceRound() {
-  return hasRequiredBuildSelections() && state.prepPlan.confirmed && !state.slicing.active && !state.slicing.countdownActive;
+  const guidedInProgress = state.slicing.prepQueue.length > 0
+    && state.slicing.prepIndex >= 0
+    && state.slicing.prepIndex < state.slicing.prepQueue.length;
+  return hasRequiredBuildSelections()
+    && state.prepPlan.confirmed
+    && !state.slicing.active
+    && !state.slicing.countdownActive
+    && !guidedInProgress
+    && !state.slicing.breakUntil;
+}
+
+function prepActionMode(action) {
+  const normalized = String(action || "").toLowerCase();
+  if (["mix", "whisk", "simmer", "drizzle", "marinate"].includes(normalized)) return "stir";
+  if (["juice", "pound"].includes(normalized)) return "pound";
+  return "slice";
+}
+
+function prepActionVerb(mode) {
+  if (mode === "stir") return "Stir";
+  if (mode === "pound") return "Pound";
+  return "Slice";
+}
+
+function prepHitsForRow(row) {
+  const unitScale = { cup: 0.9, tbsp: 0.45, tsp: 0.2, g: 1 / 70, oz: 0.34, piece: 0.85 };
+  const scaled = Math.max(0.5, Number(row.qty || 0)) * (unitScale[row.unit] || 0.7);
+  const mode = prepActionMode(row.action);
+  const base = mode === "slice" ? 2 : 3;
+  return Math.max(2, Math.min(5, Math.round(base + scaled)));
+}
+
+function buildGuidedPrepQueue() {
+  return state.prepPlan.rows.map((row) => {
+    const mode = prepActionMode(row.action);
+    const item = getById(row.group, row.id);
+    return {
+      ...row,
+      mode,
+      actionVerb: prepActionVerb(mode),
+      hitsRequired: prepHitsForRow(row),
+      item
+    };
+  });
+}
+
+function currentPrepStep() {
+  if (state.slicing.prepIndex < 0) return null;
+  return state.slicing.prepQueue[state.slicing.prepIndex] || null;
+}
+
+function startNextPrepStep() {
+  state.slicing.prepIndex += 1;
+  state.slicing.stepHits = 0;
+  state.slicing.stirAngleProgress = 0;
+  state.slicing.stirLastAngle = null;
+  flyingIngredients.length = 0;
+
+  const step = currentPrepStep();
+  if (!step) {
+    finishSliceRound("prep queue complete");
+    return;
+  }
+
+  state.slicing.stepHitsRequired = step.hitsRequired;
+  state.slicing.stepActionMode = step.mode;
+  state.slicing.stepTitle = `${step.actionVerb} ${step.name}`;
+  state.slicing.countdownActive = true;
+  state.slicing.countdownEndsAt = performance.now() + state.slicing.countdownSeconds * 1000;
+  dom.status.textContent = `${step.actionVerb} step coming up: ${step.name}.`;
+}
+
+function completeCurrentPrepStep(sourceX = canvas.width * 0.5, sourceY = 248) {
+  const step = currentPrepStep();
+  if (!step) return;
+
+  const plateX = canvas.width - 132;
+  const plateY = 278;
+  plateTransfers.push({
+    x: sourceX,
+    y: sourceY,
+    tx: plateX - 34 + Math.random() * 68,
+    ty: plateY - 22 + Math.random() * 44,
+    itemId: step.id,
+    color: colorForItem(step.item),
+    progress: 0,
+    done: false
+  });
+
+  state.slicing.score += 16;
+  dom.status.textContent = `${step.actionVerb} ${step.name}: complete. Nice rhythm, chef.`;
+  currentSproutMood = "happy";
+  state.slicing.active = false;
+  state.slicing.breakUntil = performance.now() + 900;
+}
+
+function registerPrepInteraction(itemId, hitX, hitY) {
+  const step = currentPrepStep();
+  if (!step || !state.slicing.active) return;
+
+  state.prep.currentSlices = Math.min(state.prep.targetSlices, state.prep.currentSlices + 1);
+  state.slicing.hitsThisRound += 1;
+  state.slicing.score = Math.max(0, state.slicing.score + 10);
+  state.slicing.stepHits += 1;
+  playSliceSfx();
+
+  if (state.slicing.stepHits >= state.slicing.stepHitsRequired) {
+    completeCurrentPrepStep(hitX, hitY);
+  }
+
+  if (step.id !== itemId) {
+    state.slicing.score = Math.max(0, state.slicing.score - 4);
+  }
 }
 
 function updateStartStepState(element, done) {
@@ -599,10 +861,10 @@ function defaultPrepSize(group) {
 
 function prepActionOptions(group) {
   const options = {
-    protein: ["slice", "dice", "cube", "marinate"],
-    plants: ["slice", "chop", "shred", "quick-pickle"],
+    protein: ["slice", "dice", "cube", "marinate", "pound"],
+    plants: ["slice", "chop", "shred", "quick-pickle", "juice"],
     starch: ["steam", "boil", "warm", "toast"],
-    flavor: ["mix", "whisk", "drizzle", "simmer"]
+    flavor: ["mix", "whisk", "drizzle", "simmer", "juice"]
   };
   return options[group] || ["prep"];
 }
@@ -732,6 +994,7 @@ function updateSliceStatsUI() {
   const now = performance.now();
   const seconds = state.slicing.active ? Math.max(0, Math.ceil(state.slicing.timeLeft)) : 0;
   const countdown = state.slicing.countdownActive ? Math.max(0, Math.ceil((state.slicing.countdownEndsAt - now) / 1000)) : 0;
+  const currentStep = currentPrepStep();
   const platedNeed = Math.max(1, state.slicing.requiredIds.length || selectedForSlicing().length);
   const timerText = state.slicing.active ? `${seconds}s` : "--";
   dom.sliceStats.textContent = `Score ${state.slicing.score} | Time ${timerText} | Plated ${platedUniqueCount()}/${platedNeed}`;
@@ -740,13 +1003,14 @@ function updateSliceStatsUI() {
   dom.livePlated.textContent = `Plated ${platedUniqueCount()}/${platedNeed}`;
 
   if (state.slicing.active) {
-    dom.sliceBtn.textContent = "Quick Chop";
+    const actionVerb = prepActionVerb(state.slicing.stepActionMode);
+    dom.sliceBtn.textContent = actionVerb;
     dom.sliceCountdownBadge.textContent = "Live";
-    dom.panelStatus.textContent = "Step 3 of 3: Swipe to slice and plate every selected ingredient.";
+    dom.panelStatus.textContent = `${currentStep?.name || "Prep step"}: ${actionVerb} ${state.slicing.stepHits}/${state.slicing.stepHitsRequired}.`;
   } else if (state.slicing.countdownActive) {
     dom.sliceBtn.textContent = "Get Ready";
-    dom.sliceCountdownBadge.textContent = `Starts in ${countdown}`;
-    dom.panelStatus.textContent = `Step 3 of 3: Round starts in ${countdown}...`;
+    dom.sliceCountdownBadge.textContent = `${countdown}`;
+    dom.panelStatus.textContent = `${currentStep?.actionVerb || "Prep"} ${currentStep?.name || "step"} in ${countdown}...`;
   } else {
     dom.sliceBtn.textContent = "Start Slice Round";
     dom.sliceCountdownBadge.textContent = "Ready";
@@ -760,9 +1024,15 @@ function updateSliceStatsUI() {
   }
 
   if (state.slicing.active) {
-    dom.sliceHint.textContent = "Swipe through flying ingredients. Plate every selected ingredient before time runs out.";
+    if (state.slicing.stepActionMode === "stir") {
+      dom.sliceHint.textContent = "Draw circles in the bowl to stir. Complete the stir count to plate this step.";
+    } else if (state.slicing.stepActionMode === "pound") {
+      dom.sliceHint.textContent = "Tap the mortar to pound/juice. Hit the target count to complete the step.";
+    } else {
+      dom.sliceHint.textContent = "Swipe across the moving ingredient to slice this step in order.";
+    }
   } else if (state.slicing.countdownActive) {
-    dom.sliceHint.textContent = "Round begins after countdown. Keep your finger near the canvas.";
+    dom.sliceHint.textContent = "3-2-1 countdown running. Get ready for this specific prep step.";
   } else if (!state.prepPlan.confirmed) {
     dom.sliceHint.textContent = hasRequiredBuildSelections()
       ? "Nice picks. Next tap Confirm Prep Plan."
@@ -770,7 +1040,20 @@ function updateSliceStatsUI() {
   } else if (state.prep.currentSlices >= state.prep.targetSlices && allIngredientsPlated()) {
     dom.sliceHint.textContent = "Prep cleared. You can submit your dish now.";
   } else {
-    dom.sliceHint.textContent = "Tap Start Slice Round, then slice and plate each selected ingredient.";
+    dom.sliceHint.textContent = "Start guided prep. Steps run in recipe order with short pauses between them.";
+  }
+
+  if (dom.prepStepTitle) {
+    if (state.slicing.active || state.slicing.countdownActive) {
+      const verb = currentStep?.actionVerb || prepActionVerb(state.slicing.stepActionMode);
+      const idx = Math.max(0, state.slicing.prepIndex) + 1;
+      const total = Math.max(1, state.slicing.prepQueue.length || state.prepPlan.rows.length);
+      dom.prepStepTitle.textContent = `Step ${idx}/${total}: ${verb} ${currentStep?.name || "ingredient"} (${state.slicing.stepHits}/${state.slicing.stepHitsRequired})`;
+    } else if (state.prepPlan.confirmed) {
+      dom.prepStepTitle.textContent = "Prep flow ready: press Start Slice Round for guided steps.";
+    } else {
+      dom.prepStepTitle.textContent = "Prep flow: waiting for a confirmed prep plan.";
+    }
   }
 
   updateStartGuideUI(countdown);
@@ -1156,18 +1439,23 @@ function drawIngredientSprite(x, y, size, item) {
 }
 
 function spawnIngredientTarget() {
-  const ids = state.slicing.requiredIds.length ? state.slicing.requiredIds : selectedForSlicing();
-  const id = ids[Math.floor(Math.random() * ids.length)];
-  const item = getById("protein", id) || getById("plants", id) || getById("starch", id) || getById("flavor", id);
+  const step = currentPrepStep();
+  const id = step?.id;
+  const item = step?.item || (id ? (getById("protein", id) || getById("plants", id) || getById("starch", id) || getById("flavor", id)) : null);
   if (!item) return;
+
+  const hasActiveTarget = flyingIngredients.some((target) => !target.sliced && target.item.id === item.id);
+  if (hasActiveTarget) return;
+
   flyingIngredients.push({
     id: `${item.id}-${Date.now()}-${Math.random()}`,
     item,
-    x: 70 + Math.random() * (canvas.width - 240),
-    y: canvas.height - 36,
-    vx: (Math.random() - 0.5) * 1.8,
-    vy: -(7.4 + Math.random() * 2.6),
+    x: 72,
+    y: 248,
+    vx: 1.8 + Math.random() * 1.1,
+    vy: 0,
     radius: 24 + Math.random() * 8,
+    roll: true,
     sliced: false,
     life: 1
   });
@@ -1186,26 +1474,9 @@ function distanceToSegment(px, py, ax, ay, bx, by) {
 function registerSliceHit(target) {
   target.sliced = true;
   target.life = 0.15;
-  playSliceSfx();
-  state.prep.currentSlices = Math.min(state.prep.targetSlices, state.prep.currentSlices + 1);
-  state.slicing.hitsThisRound += 1;
-  state.slicing.score = Math.max(0, state.slicing.score + 12);
-  if (!state.slicing.platedCounts[target.item.id]) state.slicing.score += 20;
+  registerPrepInteraction(target.item.id, target.x, target.y);
   currentSproutMood = "happy";
   state.celebrateUntil = Date.now() + 520;
-
-  const plateX = canvas.width - 132;
-  const plateY = 278;
-  plateTransfers.push({
-    x: target.x,
-    y: target.y,
-    tx: plateX - 34 + Math.random() * 68,
-    ty: plateY - 22 + Math.random() * 44,
-    itemId: target.item.id,
-    color: colorForItem(target.item),
-    progress: 0,
-    done: false
-  });
 
   for (let i = 0; i < 8; i += 1) {
     sliceBits.push({
@@ -1256,6 +1527,9 @@ function saveBestSliceScoreIfNeeded() {
 
 function finishSliceRound(reason) {
   state.slicing.active = false;
+  state.slicing.countdownActive = false;
+  state.slicing.breakUntil = 0;
+  state.slicing.countdownEndsAt = 0;
   const newTopScore = saveBestSliceScoreIfNeeded();
   if (allIngredientsPlated() && state.prep.currentSlices >= state.prep.targetSlices) {
     celebrateStep("prep");
@@ -1277,6 +1551,14 @@ function finishSliceRound(reason) {
     currentSproutMood = "sad";
     dom.status.textContent = `Round ended: ${reason}. Plate all picks and hit prep target next round.`;
   }
+  state.slicing.roundStartedAt = 0;
+  state.slicing.prepQueue = [];
+  state.slicing.prepIndex = -1;
+  state.slicing.stepHits = 0;
+  state.slicing.stepHitsRequired = 0;
+  state.slicing.stepActionMode = "slice";
+  state.slicing.stirAngleProgress = 0;
+  state.slicing.stirLastAngle = null;
   updateScoreUI();
 }
 
@@ -1352,35 +1634,47 @@ function advanceSlicingFrame() {
     if (remainingMs <= 0) {
       state.slicing.countdownActive = false;
       state.slicing.active = true;
-      state.slicing.roundStartedAt = performance.now();
-      state.slicing.timeLeft = state.slicing.timerSeconds;
-      for (let i = 0; i < 4; i += 1) spawnIngredientTarget();
-      dom.status.textContent = "Slice mode ON. Catch every ingredient and plate it!";
+      if (!state.slicing.roundStartedAt) state.slicing.roundStartedAt = performance.now();
+      dom.status.textContent = `${prepActionVerb(state.slicing.stepActionMode)} now: ${currentPrepStep()?.name || "ingredient"}!`;
+      if (state.slicing.stepActionMode === "slice") spawnIngredientTarget();
     } else {
-      dom.status.textContent = `Slice starts in ${Math.ceil(remainingMs / 1000)}...`;
+      const count = Math.max(1, Math.ceil(remainingMs / 1000));
+      const step = currentPrepStep();
+      dom.status.textContent = `${step?.actionVerb || "Prep"} ${step?.name || "step"}: ${count}...`;
     }
   }
 
-  if (state.slicing.active) {
+  if (state.slicing.roundStartedAt) {
     const elapsed = (performance.now() - state.slicing.roundStartedAt) / 1000;
     state.slicing.timeLeft = Math.max(0, state.slicing.timerSeconds - elapsed);
-    if (state.slicing.timeLeft <= 0) {
-      finishSliceRound("time up");
-    }
+  } else {
+    state.slicing.timeLeft = state.slicing.timerSeconds;
   }
 
-  spawnAccumulator += 1;
-  if (state.slicing.active && spawnAccumulator >= 26) {
+  if (state.slicing.timeLeft <= 0 && (state.slicing.active || state.slicing.countdownActive || state.slicing.breakUntil > 0)) {
+    finishSliceRound("time up");
+  }
+
+  if (state.slicing.active && state.slicing.stepActionMode === "slice") {
     spawnIngredientTarget();
-    if (Math.random() < 0.35) spawnIngredientTarget();
-    spawnAccumulator = 0;
+  }
+
+  if (!state.slicing.active && !state.slicing.countdownActive && state.slicing.breakUntil > 0 && performance.now() >= state.slicing.breakUntil) {
+    state.slicing.breakUntil = 0;
+    startNextPrepStep();
   }
 
   for (let i = flyingIngredients.length - 1; i >= 0; i -= 1) {
     const target = flyingIngredients[i];
-    target.x += target.vx;
-    target.y += target.vy;
-    target.vy += 0.2;
+    if (target.roll) {
+      target.x += target.vx;
+      target.y += Math.sin((performance.now() + i * 60) * 0.008) * 0.5;
+      if (target.x > canvas.width - 220 || target.x < 60) target.vx *= -1;
+    } else {
+      target.x += target.vx;
+      target.y += target.vy;
+      target.vy += 0.2;
+    }
     if (target.sliced) target.life -= 0.05;
 
     if (target.y > canvas.height + 40) {
@@ -1431,13 +1725,108 @@ function advanceSlicingFrame() {
     if (bit.life <= 0 || bit.y > canvas.height + 28) celebrationConfetti.splice(i, 1);
   }
 
-  if (state.slicing.active && state.prep.currentSlices >= state.prep.targetSlices && allIngredientsPlated()) {
-    const timeBonus = Math.round(state.slicing.timeLeft * 3);
+  if (state.slicing.active) {
+    const step = currentPrepStep();
+    if (!step) {
+      finishSliceRound("prep queue complete");
+    }
+  }
+
+  if (!state.slicing.active && !state.slicing.countdownActive && state.slicing.prepIndex >= state.slicing.prepQueue.length && state.slicing.prepQueue.length > 0) {
+    const timeBonus = Math.round(state.slicing.timeLeft * 2);
     state.slicing.score += timeBonus;
-    finishSliceRound(`all ingredients plated (+${timeBonus} time bonus)`);
+    finishSliceRound(`guided prep complete (+${timeBonus} time bonus)`);
   }
 
   updateSliceStatsUI();
+}
+
+function drawGuidedStepOverlay() {
+  const step = currentPrepStep();
+  if (!step) return;
+
+  const overlayW = 420;
+  const overlayH = 44;
+  const ox = (canvas.width - overlayW) / 2;
+  const oy = 24;
+  ctx.save();
+  ctx.fillStyle = "rgba(255, 249, 232, 0.95)";
+  ctx.strokeStyle = "rgba(152, 92, 23, 0.45)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(ox, oy, overlayW, overlayH, 12);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = "#793100";
+  ctx.font = "900 18px 'Trebuchet MS', sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText(`${step.actionVerb.toUpperCase()} ${step.name.toUpperCase()}`, canvas.width / 2, oy + 29);
+  ctx.restore();
+
+  if (state.slicing.countdownActive) {
+    const c = Math.max(1, Math.ceil((state.slicing.countdownEndsAt - performance.now()) / 1000));
+    ctx.save();
+    ctx.fillStyle = "rgba(22,54,41,0.75)";
+    ctx.font = "900 72px 'Trebuchet MS', sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(String(c), canvas.width / 2, 210);
+    ctx.fillStyle = "rgba(245, 170, 70, 0.95)";
+    ctx.font = "900 42px 'Trebuchet MS', sans-serif";
+    ctx.fillText(step.actionVerb.toUpperCase(), canvas.width / 2, 258);
+    ctx.restore();
+  }
+}
+
+function drawActionToolSurface() {
+  if (!state.slicing.active) return;
+  if (state.slicing.stepActionMode === "slice") return;
+
+  const cx = canvas.width * 0.48;
+  const cy = 246;
+  const progress = state.slicing.stepHitsRequired > 0 ? state.slicing.stepHits / state.slicing.stepHitsRequired : 0;
+  const ringColor = state.slicing.stepActionMode === "stir" ? "#4c8f73" : "#8b5f3c";
+
+  if (state.slicing.stepActionMode === "stir") {
+    ctx.save();
+    ctx.fillStyle = "rgba(234, 248, 241, 0.95)";
+    ctx.beginPath();
+    ctx.arc(cx, cy, 78, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(35, 83, 62, 0.45)";
+    ctx.lineWidth = 8;
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(76, 143, 115, 0.85)";
+    ctx.lineWidth = 10;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 86, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * Math.min(1, progress));
+    ctx.stroke();
+    ctx.fillStyle = "#1f3f31";
+    ctx.font = "800 16px 'Trebuchet MS', sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("STIR BOWL", cx, cy + 6);
+    ctx.restore();
+    return;
+  }
+
+  ctx.save();
+  ctx.fillStyle = "rgba(246, 238, 225, 0.96)";
+  ctx.beginPath();
+  ctx.roundRect(cx - 74, cy - 46, 148, 94, 26);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(84, 56, 33, 0.42)";
+  ctx.lineWidth = 6;
+  ctx.stroke();
+  ctx.strokeStyle = ringColor;
+  ctx.lineWidth = 8;
+  ctx.beginPath();
+  ctx.moveTo(cx - 64, cy + 56);
+  ctx.lineTo(cx - 64 + 128 * Math.min(1, progress), cy + 56);
+  ctx.stroke();
+  ctx.fillStyle = "#593621";
+  ctx.font = "800 16px 'Trebuchet MS', sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText("POUND / JUICE", cx, cy + 6);
+  ctx.restore();
 }
 
 function drawSlicingLayer() {
@@ -1484,6 +1873,9 @@ function drawSlicingLayer() {
     ctx.fillRect(-bit.size * 0.55, -bit.size * 0.25, bit.size, bit.size * 0.5);
     ctx.restore();
   });
+
+  drawActionToolSurface();
+  drawGuidedStepOverlay();
 }
 
 function drawKitchenBackdrop() {
@@ -1628,17 +2020,29 @@ function runSliceAction() {
   }
 
   if (state.slicing.countdownActive) {
-    dom.status.textContent = "Countdown is on. Blades ready, chef!";
+    const step = currentPrepStep();
+    dom.status.textContent = `Countdown is on. ${step?.actionVerb || "Prep"} ${step?.name || "step"} next.`;
     return;
   }
 
   if (!state.slicing.active) {
-    state.prep.targetSlices = computePrepTargetSlices();
     state.prep.currentSlices = 0;
     state.completedSteps.prep = false;
     state.slicing.score = 0;
     state.slicing.hitsThisRound = 0;
     state.slicing.misses = 0;
+    state.slicing.timeLeft = state.slicing.timerSeconds;
+    state.slicing.roundStartedAt = performance.now();
+    state.slicing.prepQueue = buildGuidedPrepQueue();
+    state.prep.targetSlices = state.slicing.prepQueue.reduce((sum, step) => sum + step.hitsRequired, 0);
+    state.slicing.prepIndex = -1;
+    state.slicing.stepHits = 0;
+    state.slicing.stepHitsRequired = 0;
+    state.slicing.stepActionMode = "slice";
+    state.slicing.stepTitle = "";
+    state.slicing.breakUntil = 0;
+    state.slicing.stirAngleProgress = 0;
+    state.slicing.stirLastAngle = null;
     state.slicing.requiredIds = [...new Set(selectedForSlicing())];
     state.slicing.platedCounts = Object.fromEntries(state.slicing.requiredIds.map((id) => [id, 0]));
     flyingIngredients.length = 0;
@@ -1646,16 +2050,21 @@ function runSliceAction() {
     sliceBits.length = 0;
     slashTrail.length = 0;
 
-    state.slicing.countdownActive = true;
-    state.slicing.countdownEndsAt = performance.now() + state.slicing.countdownSeconds * 1000;
-    dom.status.textContent = `Slice starts in ${state.slicing.countdownSeconds}... Deep breath!`;
+    if (!state.slicing.prepQueue.length) {
+      dom.status.textContent = "Your prep plan is empty. Add at least one prep step.";
+      return;
+    }
+
+    startNextPrepStep();
     updateScoreUI();
     return;
   }
 
-  const nearest = flyingIngredients.filter((target) => !target.sliced).sort((a, b) => a.y - b.y)[0];
-  if (nearest) registerSliceHit(nearest);
-  else spawnIngredientTarget();
+  if (state.slicing.stepActionMode === "slice") {
+    const nearest = flyingIngredients.filter((target) => !target.sliced).sort((a, b) => a.y - b.y)[0];
+    if (nearest) registerSliceHit(nearest);
+    else spawnIngredientTarget();
+  }
   updateScoreUI();
 }
 
@@ -1663,12 +2072,22 @@ function resetPrep() {
   state.slicing.active = false;
   state.slicing.countdownActive = false;
   state.slicing.countdownEndsAt = 0;
+  state.slicing.breakUntil = 0;
   state.prep.currentSlices = 0;
   state.completedSteps.prep = false;
   state.slicing.score = 0;
   state.slicing.hitsThisRound = 0;
   state.slicing.misses = 0;
   state.slicing.timeLeft = 0;
+  state.slicing.roundStartedAt = 0;
+  state.slicing.prepQueue = [];
+  state.slicing.prepIndex = -1;
+  state.slicing.stepHits = 0;
+  state.slicing.stepHitsRequired = 0;
+  state.slicing.stepActionMode = "slice";
+  state.slicing.stepTitle = "";
+  state.slicing.stirAngleProgress = 0;
+  state.slicing.stirLastAngle = null;
   state.slicing.requiredIds = [...new Set(selectedForSlicing())];
   state.slicing.platedCounts = Object.fromEntries(state.slicing.requiredIds.map((id) => [id, 0]));
   flyingIngredients.length = 0;
@@ -1691,15 +2110,62 @@ function canvasPointFromEvent(event) {
 function bindCanvasSlicing() {
   canvas.style.touchAction = "pan-y";
 
+  const toolCenter = () => ({ x: canvas.width * 0.48, y: 246 });
+
+  const registerPoundHit = (point) => {
+    const center = toolCenter();
+    const dist = Math.hypot(point.x - center.x, point.y - center.y);
+    if (dist > 88) return;
+    registerPrepInteraction(currentPrepStep()?.id, point.x, point.y);
+    sliceBits.push({
+      x: point.x,
+      y: point.y,
+      vx: (Math.random() - 0.5) * 2,
+      vy: -0.7 - Math.random() * 1.2,
+      life: 1,
+      color: "#8b5f3c"
+    });
+    updateScoreUI();
+  };
+
   canvas.addEventListener("pointerdown", (event) => {
     pointerDown = true;
     pointerLast = canvasPointFromEvent(event);
+
+    if (!state.slicing.active) return;
+    if (state.slicing.stepActionMode === "pound") {
+      registerPoundHit(pointerLast);
+    }
   });
 
   canvas.addEventListener("pointermove", (event) => {
     if (!pointerDown || !state.slicing.active) return;
     const point = canvasPointFromEvent(event);
-    if (pointerLast) {
+
+    if (state.slicing.stepActionMode === "stir") {
+      const center = toolCenter();
+      const dist = Math.hypot(point.x - center.x, point.y - center.y);
+      if (dist > 34 && dist < 104) {
+        const angle = Math.atan2(point.y - center.y, point.x - center.x);
+        if (state.slicing.stirLastAngle !== null) {
+          let delta = angle - state.slicing.stirLastAngle;
+          if (delta > Math.PI) delta -= Math.PI * 2;
+          if (delta < -Math.PI) delta += Math.PI * 2;
+          state.slicing.stirAngleProgress += Math.abs(delta);
+          if (state.slicing.stirAngleProgress >= Math.PI * 2) {
+            state.slicing.stirAngleProgress -= Math.PI * 2;
+            registerPrepInteraction(currentPrepStep()?.id, center.x, center.y);
+            updateScoreUI();
+          }
+        }
+        state.slicing.stirLastAngle = angle;
+      }
+      pointerLast = point;
+      slashTrail.push({ ax: center.x, ay: center.y, bx: point.x, by: point.y, life: 0.45 });
+      return;
+    }
+
+    if (pointerLast && state.slicing.stepActionMode === "slice") {
       sliceAlongSegment(pointerLast.x, pointerLast.y, point.x, point.y);
       slashTrail.push({ ax: pointerLast.x, ay: pointerLast.y, bx: point.x, by: point.y, life: 1 });
     }
@@ -1709,6 +2175,7 @@ function bindCanvasSlicing() {
   const stop = () => {
     pointerDown = false;
     pointerLast = null;
+    state.slicing.stirLastAngle = null;
   };
 
   canvas.addEventListener("pointerup", stop);
@@ -1906,10 +2373,11 @@ function submitRecipe() {
   dom.status.textContent = `Submitted ${payload.name}. Sprinkle those community votes!`;
 }
 
-function initGame() {
+async function initGame() {
   mobileGuide.enabled = isMobileViewport();
   dom.status.textContent = landingIntroSpeech;
   loadAudioPreferences();
+  await loadDynamicIngredientCatalog();
   state.slicing.bestScore = Number(localStorage.getItem(bestSliceScoreKey) || 0);
   loadCommunity();
   bindStationButtons();
@@ -1917,6 +2385,11 @@ function initGame() {
   renderRecipeSummary();
   renderCommunity();
   updateScoreUI();
+
+  const syncedCount = Object.values(menuSyncState.dynamicCounts).reduce((sum, value) => sum + value, 0);
+  if (syncedCount > 0) {
+    dom.status.textContent = `${landingIntroSpeech} Synced ${syncedCount} menu ingredients from ${menuSyncState.source === "api" ? "Menu Manager API" : "site data"}.`;
+  }
 
   dom.cuisineSelect.addEventListener("change", () => {
     state.cuisine = dom.cuisineSelect.value;

@@ -52,12 +52,57 @@ const appState = {
 	menuData: null,
 	dishConfig: null,
 	insights: [...fallbackInsights],
-	activeCategory: "all"
+	activeCategory: "all",
+	syncSource: "static"
+};
+
+const syncPaths = {
+	menu: {
+		apiFile: "assets/data/menu-content.json",
+		staticPath: "assets/data/menu-content.json"
+	},
+	dishMap: {
+		apiFile: "assets/data/dish-map.json",
+		staticPath: "assets/data/dish-map.json"
+	}
 };
 
 function pickRandom(items) {
 	if (!Array.isArray(items) || items.length === 0) return null;
 	return items[Math.floor(Math.random() * items.length)];
+}
+
+function toApiLoadUrl(filePath) {
+	return `/api/load-file?file=${encodeURIComponent(filePath)}&_=${Date.now()}`;
+}
+
+function toStaticSyncUrl(path) {
+	const joiner = path.includes("?") ? "&" : "?";
+	return `${path}${joiner}sync=${Date.now()}`;
+}
+
+async function tryLoadViaApi(filePath) {
+	try {
+		const response = await fetch(toApiLoadUrl(filePath), { cache: "no-store" });
+		if (!response.ok) return null;
+		const payload = await response.json();
+		if (!payload || typeof payload.content !== "string") return null;
+		return JSON.parse(payload.content);
+	} catch {
+		return null;
+	}
+}
+
+async function loadManagedJson({ apiFile, staticPath }) {
+	const apiPayload = await tryLoadViaApi(apiFile);
+	if (apiPayload) {
+		return { data: apiPayload, source: "api" };
+	}
+
+	const response = await fetch(toStaticSyncUrl(staticPath), { cache: "no-store" });
+	if (!response.ok) throw new Error(`load failed for ${staticPath}: ${response.status}`);
+	const data = await response.json();
+	return { data, source: "static" };
 }
 
 function buildMealMeta(meal) {
@@ -144,13 +189,11 @@ function pickBestAssetForMeal(pool, meal, usedCountsByCategory) {
 
 async function loadDishConfig() {
 	try {
-		const response = await fetch("assets/data/dish-map.json", { cache: "no-store" });
-		if (!response.ok) throw new Error(`dish map load failed: ${response.status}`);
-		const map = await response.json();
+		const { data: map } = await loadManagedJson(syncPaths.dishMap);
 
 		let assets = Array.isArray(map.assets) ? map.assets : [];
 		if (!assets.length && map.assetsManifest) {
-			const assetsResponse = await fetch(map.assetsManifest, { cache: "no-store" });
+			const assetsResponse = await fetch(toStaticSyncUrl(map.assetsManifest), { cache: "no-store" });
 			if (assetsResponse.ok) {
 				const manifest = await assetsResponse.json();
 				assets = Array.isArray(manifest.assets) ? manifest.assets : [];
@@ -308,7 +351,8 @@ function renderMenuSummary() {
 
 	const totalMeals = appState.menuData.meals?.length || 0;
 	const totalCategories = appState.menuData.categories?.length || 0;
-	summaryEl.textContent = `${totalMeals} meals across ${totalCategories} categories. Sprout surfaces rotating options so you see helpful variety, not the full list all at once.`;
+	const sourceLabel = appState.syncSource === "api" ? "Menu Manager API" : "published site data";
+	summaryEl.textContent = `${totalMeals} meals across ${totalCategories} categories. Synced from ${sourceLabel} on load.`;
 }
 
 function renderMenuCards(targetId, meals, limit = 0) {
@@ -392,13 +436,16 @@ function renderFullMenu() {
 
 async function loadMenuData() {
 	try {
-		const [response, dishConfig] = await Promise.all([
-			fetch("assets/data/menu-content.json", { cache: "no-store" }),
+		const [menuPayload, dishConfig] = await Promise.all([
+			loadManagedJson(syncPaths.menu),
 			loadDishConfig()
 		]);
-		if (!response.ok) throw new Error(`menu load failed: ${response.status}`);
-		const payload = await response.json();
+		const payload = menuPayload.data;
+		if (!payload || !Array.isArray(payload.meals) || !Array.isArray(payload.categories)) {
+			throw new Error("menu payload missing meals/categories arrays");
+		}
 		appState.dishConfig = dishConfig;
+		appState.syncSource = menuPayload.source;
 		applyDishImages(payload, dishConfig);
 		appState.menuData = payload;
 
@@ -413,6 +460,8 @@ async function loadMenuData() {
 		renderMenuSummary();
 		renderPreviewMenu();
 		renderFullMenu();
+		renderCategoryShowcase();
+		renderDishStrip();
 
 		if (payload.meals?.length) {
 			updateNextMealCard(pickRandom(payload.meals));
