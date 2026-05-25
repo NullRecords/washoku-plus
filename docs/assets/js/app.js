@@ -48,6 +48,17 @@ const dishHints = {
 	"meal-cat-24": ["bowl", "rice", "stir-fry", "plate"]
 };
 
+const categoryShowcaseHeroAssetById = {
+	"bowls": "meal-cat-01",
+	"burgers": "meal-cat-20",
+	"global-favorites": "meal-cat-24",
+	"plates-and-bento": "meal-cat-10",
+	"salads": "meal-cat-15",
+	"soups-and-noodles": "meal-cat-02",
+	"wraps-and-rolls": "meal-cat-07",
+	"default": "meal-cat-13"
+};
+
 const appState = {
 	menuData: null,
 	dishConfig: null,
@@ -244,7 +255,9 @@ function getDishAssetById(assetId) {
 
 function getCategoryDishAssets(categoryId, limit = 3) {
 	const pool = appState.dishConfig?.categoryPools?.[categoryId] || [];
-	return pool
+	const heroId = categoryShowcaseHeroAssetById[categoryId] || categoryShowcaseHeroAssetById.default;
+	const prioritized = heroId ? [heroId, ...pool.filter((id) => id !== heroId)] : pool;
+	return prioritized
 		.map((assetId) => getDishAssetById(assetId))
 		.filter(Boolean)
 		.slice(0, limit);

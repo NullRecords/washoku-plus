@@ -36,6 +36,7 @@
       <section class="game-card kitchen-stage" id="kitchenStage">
         <p class="kitchen-title">Sprout's Kitchen Lab</p>
         <canvas id="kitchenCanvas" width="760" height="520" aria-label="Sprout's kitchen animation"></canvas>
+        <button id="floatingStartBtn" class="floating-start-btn" type="button" aria-label="Start guided prep" hidden>Start Slice Round</button>
         <section class="slice-control-panel">
           <div class="slice-control-main">
             <section id="sproutStartGuide" class="sprout-start-guide" aria-live="polite" aria-label="How to start slice game">
@@ -50,6 +51,12 @@
               </div>
             </section>
             <p id="prepStepTitle" class="prep-step-title">Prep flow: waiting to start.</p>
+            <div class="tool-rack" id="toolRack" aria-label="Prep tools">
+              <button class="tool-pill is-active" type="button" data-tool="knife">Knife</button>
+              <button class="tool-pill" type="button" data-tool="juicer">Juicer</button>
+              <button class="tool-pill" type="button" data-tool="spoon">Spoon + Bowl</button>
+              <button class="tool-pill" type="button" data-tool="masher">Mash Bowl</button>
+            </div>
             <div class="slice-meters">
               <span id="liveTimer" class="slice-meter">Time --</span>
               <span id="liveScore" class="slice-meter">Score 0</span>
@@ -166,6 +173,12 @@
             <div class="score-line" id="totalBar"><span></span></div>
           </article>
         </div>
+
+        <section class="dish-reveal" id="dishReveal" hidden>
+          <p class="dish-reveal-title">Dish Reveal</p>
+          <img id="dishRevealImage" src="" alt="Finished dish reveal">
+          <p id="dishRevealText" class="help-note">Finish prep to reveal your final plate image.</p>
+        </section>
       </section>
     </div>
 
@@ -179,6 +192,12 @@
         <div>
           <h2 style="margin:0;">Community Board</h2>
           <p class="help-note" style="margin:0.25rem 0 0;">Recipes with 5+ votes and score 78+ are marked eligible for app/admin review. One vote per device per recipe.</p>
+        </div>
+        <div class="community-actions">
+          <button id="communityLoadTrackedBtn" class="community-action-btn" type="button">Refresh Checked-In</button>
+          <button id="communityImportBtn" class="community-action-btn" type="button">Import Snapshot</button>
+          <button id="communityExportBtn" class="community-action-btn primary" type="button">Export Local Snapshot</button>
+          <input id="communityImportInput" type="file" accept="application/json,.json" hidden>
         </div>
       </div>
       <div class="community-list" id="communityList"></div>

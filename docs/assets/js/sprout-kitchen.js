@@ -65,12 +65,19 @@ const state = {
     stepHits: 0,
     stepHitsRequired: 0,
     stepActionMode: "slice",
+    stepRequiredTool: "knife",
+    heldTool: "knife",
+    stepTimeSeconds: 7,
+    stepEndsAt: 0,
+    stepTimeLeft: 0,
     stepTitle: "",
     stirAngleProgress: 0,
-    stirLastAngle: null
+    stirLastAngle: null,
+    lastToolWarningAt: 0
   },
   completedSteps: { protein: false, plants: false, starch: false, flavor: false, prep: false },
-  community: [],
+  communityLocal: [],
+  communityTracked: [],
   activeStation: "protein",
   celebrateUntil: 0
 };
@@ -86,6 +93,7 @@ const musicEnabledKey = "washoku-audio-music-enabled-v1";
 const sfxEnabledKey = "washoku-audio-sfx-enabled-v1";
 const muteAllEnabledKey = "washoku-audio-mute-all-enabled-v1";
 const managedMenuFile = "assets/data/menu-content.json";
+const managedCommunityFile = "assets/data/community-submissions.json";
 
 const canvas = document.getElementById("kitchenCanvas");
 const ctx = canvas.getContext("2d");
@@ -116,6 +124,8 @@ const dom = {
   panelStatus: document.getElementById("panelStatus"),
   panelSproutText: document.getElementById("panelSproutText"),
   panelSproutAvatar: document.getElementById("panelSproutAvatar"),
+  toolRack: document.getElementById("toolRack"),
+  floatingStartBtn: document.getElementById("floatingStartBtn"),
   prepStepTitle: document.getElementById("prepStepTitle"),
   startStepBuild: document.getElementById("startStepBuild"),
   startStepPrep: document.getElementById("startStepPrep"),
@@ -141,7 +151,14 @@ const dom = {
   totalBar: document.getElementById("totalBar"),
   totals: document.getElementById("totalsLine"),
   communityList: document.getElementById("communityList"),
-  submitBtn: document.getElementById("submitRecipeBtn")
+  communityExportBtn: document.getElementById("communityExportBtn"),
+  communityImportBtn: document.getElementById("communityImportBtn"),
+  communityLoadTrackedBtn: document.getElementById("communityLoadTrackedBtn"),
+  communityImportInput: document.getElementById("communityImportInput"),
+  submitBtn: document.getElementById("submitRecipeBtn"),
+  dishReveal: document.getElementById("dishReveal"),
+  dishRevealImage: document.getElementById("dishRevealImage"),
+  dishRevealText: document.getElementById("dishRevealText")
 };
 
 const sproutExpressions = {
@@ -154,6 +171,27 @@ sproutExpressions.neutral.src = "assets/images/sprout/sprout-neutral.png";
 sproutExpressions.happy.src = "assets/images/sprout/sprout-happy.png";
 sproutExpressions.celebrate.src = "assets/images/sprout/sprout-celebrate.png";
 sproutExpressions.sad.src = "assets/images/sprout/sprout-sad.png";
+
+const kitchenBoardImage = new Image();
+const kitchenBoardImageCandidates = [
+  "assets/images/sprout/cooking-board.png",
+  "assets/images/cooking-board.png",
+  "assets/images/washoku-plus-app-image.png"
+];
+let kitchenBoardImageIndex = 0;
+
+function loadKitchenBoardImage() {
+  const nextPath = kitchenBoardImageCandidates[kitchenBoardImageIndex];
+  if (!nextPath) return;
+  kitchenBoardImage.src = nextPath;
+}
+
+kitchenBoardImage.addEventListener("error", () => {
+  kitchenBoardImageIndex += 1;
+  loadKitchenBoardImage();
+});
+
+loadKitchenBoardImage();
 
 let currentSproutMood = "neutral";
 const sprout = { x: STATION_X.protein, y: 468, targetX: STATION_X.protein, t: 0 };
@@ -206,9 +244,9 @@ function toStaticSyncUrl(path) {
   return `${path}${joiner}sync=${Date.now()}`;
 }
 
-async function fetchManagedMenuPayload() {
+async function fetchManagedJson(filePath) {
   try {
-    const apiResponse = await fetch(toApiLoadUrl(managedMenuFile), { cache: "no-store" });
+    const apiResponse = await fetch(toApiLoadUrl(filePath), { cache: "no-store" });
     if (apiResponse.ok) {
       const payload = await apiResponse.json();
       const parsed = JSON.parse(payload.content || "{}");
@@ -218,11 +256,15 @@ async function fetchManagedMenuPayload() {
     // Fall through to static payload.
   }
 
-  const staticResponse = await fetch(toStaticSyncUrl(managedMenuFile), { cache: "no-store" });
+  const staticResponse = await fetch(toStaticSyncUrl(filePath), { cache: "no-store" });
   if (!staticResponse.ok) {
-    throw new Error(`menu payload load failed: ${staticResponse.status}`);
+    throw new Error(`managed payload load failed for ${filePath}: ${staticResponse.status}`);
   }
   return { source: "static", payload: await staticResponse.json() };
+}
+
+async function fetchManagedMenuPayload() {
+  return fetchManagedJson(managedMenuFile);
 }
 
 function slugifyIngredient(value) {
@@ -517,12 +559,81 @@ function prepActionVerb(mode) {
   return "Slice";
 }
 
+function requiredToolForStep(step) {
+  const action = String(step?.action || "").toLowerCase();
+  if (action.includes("juice")) return "juicer";
+  if (step?.mode === "stir") return "spoon";
+  if (step?.mode === "pound") return "masher";
+  return "knife";
+}
+
+function toolLabel(tool) {
+  if (tool === "juicer") return "juicer";
+  if (tool === "spoon") return "spoon + bowl";
+  if (tool === "masher") return "mash bowl";
+  return "knife";
+}
+
+function stepTimeBudgetSeconds(step) {
+  const base = 4;
+  const byHits = Math.ceil((step?.hitsRequired || 2) * 1.15);
+  return Math.max(4, Math.min(9, base + byHits));
+}
+
+function getToolSurfaceCenter() {
+  const t = performance.now() * 0.001;
+  const baseX = canvas.width * 0.48;
+  const baseY = 246;
+
+  if (!state.slicing.active) {
+    return { x: baseX, y: baseY };
+  }
+
+  if (state.slicing.stepActionMode === "stir") {
+    return {
+      x: baseX + Math.sin(t * 1.7) * 28,
+      y: baseY + Math.cos(t * 2.1) * 17
+    };
+  }
+
+  if (state.slicing.stepActionMode === "pound") {
+    return {
+      x: baseX + Math.sin(t * 2.4) * 14,
+      y: baseY + Math.cos(t * 2.2) * 8
+    };
+  }
+
+  return { x: baseX, y: baseY };
+}
+
+function refreshToolRackUI() {
+  if (!dom.toolRack) return;
+  dom.toolRack.querySelectorAll("[data-tool]").forEach((btn) => {
+    const tool = btn.dataset.tool;
+    btn.classList.toggle("is-active", tool === state.slicing.heldTool);
+    btn.classList.toggle("is-required", state.slicing.active && tool === state.slicing.stepRequiredTool);
+  });
+}
+
+function setHeldTool(tool) {
+  state.slicing.heldTool = tool;
+  refreshToolRackUI();
+}
+
+function markToolMismatch(requiredTool) {
+  const now = performance.now();
+  if (now - state.slicing.lastToolWarningAt < 420) return;
+  state.slicing.lastToolWarningAt = now;
+  state.slicing.score = Math.max(0, state.slicing.score - 2);
+  dom.status.textContent = `Pick up the ${toolLabel(requiredTool)} for this step.`;
+}
+
 function prepHitsForRow(row) {
   const unitScale = { cup: 0.9, tbsp: 0.45, tsp: 0.2, g: 1 / 70, oz: 0.34, piece: 0.85 };
   const scaled = Math.max(0.5, Number(row.qty || 0)) * (unitScale[row.unit] || 0.7);
   const mode = prepActionMode(row.action);
-  const base = mode === "slice" ? 2 : 3;
-  return Math.max(2, Math.min(5, Math.round(base + scaled)));
+  const base = mode === "stir" ? 3 : 4;
+  return Math.max(3, Math.min(6, Math.round(base + scaled)));
 }
 
 function buildGuidedPrepQueue() {
@@ -559,13 +670,18 @@ function startNextPrepStep() {
 
   state.slicing.stepHitsRequired = step.hitsRequired;
   state.slicing.stepActionMode = step.mode;
+  state.slicing.stepRequiredTool = requiredToolForStep(step);
+  state.slicing.stepTimeSeconds = stepTimeBudgetSeconds(step);
+  state.slicing.stepTimeLeft = state.slicing.stepTimeSeconds;
+  state.slicing.stepEndsAt = 0;
   state.slicing.stepTitle = `${step.actionVerb} ${step.name}`;
   state.slicing.countdownActive = true;
   state.slicing.countdownEndsAt = performance.now() + state.slicing.countdownSeconds * 1000;
-  dom.status.textContent = `${step.actionVerb} step coming up: ${step.name}.`;
+  dom.status.textContent = `${step.actionVerb} step coming up: ${step.name}. Pick ${toolLabel(state.slicing.stepRequiredTool)}.`;
+  refreshToolRackUI();
 }
 
-function completeCurrentPrepStep(sourceX = canvas.width * 0.5, sourceY = 248) {
+function completeCurrentPrepStep(sourceX = canvas.width * 0.5, sourceY = 248, timedOut = false) {
   const step = currentPrepStep();
   if (!step) return;
 
@@ -582,16 +698,29 @@ function completeCurrentPrepStep(sourceX = canvas.width * 0.5, sourceY = 248) {
     done: false
   });
 
-  state.slicing.score += 16;
-  dom.status.textContent = `${step.actionVerb} ${step.name}: complete. Nice rhythm, chef.`;
+  state.slicing.score += timedOut ? 6 : 16;
+  if (timedOut) {
+    dom.status.textContent = `${step.actionVerb} ${step.name}: time up, plated with a small penalty.`;
+  } else {
+    dom.status.textContent = `${step.actionVerb} ${step.name}: complete. Nice rhythm, chef.`;
+  }
   currentSproutMood = "happy";
   state.slicing.active = false;
+  state.slicing.stepEndsAt = 0;
+  state.slicing.stepTimeLeft = 0;
   state.slicing.breakUntil = performance.now() + 900;
 }
 
 function registerPrepInteraction(itemId, hitX, hitY) {
   const step = currentPrepStep();
   if (!step || !state.slicing.active) return;
+
+  const requiredTool = state.slicing.stepRequiredTool;
+  if (state.slicing.heldTool !== requiredTool) {
+    markToolMismatch(requiredTool);
+    updateScoreUI();
+    return;
+  }
 
   state.prep.currentSlices = Math.min(state.prep.targetSlices, state.prep.currentSlices + 1);
   state.slicing.hitsThisRound += 1;
@@ -996,9 +1125,11 @@ function updateSliceStatsUI() {
   const countdown = state.slicing.countdownActive ? Math.max(0, Math.ceil((state.slicing.countdownEndsAt - now) / 1000)) : 0;
   const currentStep = currentPrepStep();
   const platedNeed = Math.max(1, state.slicing.requiredIds.length || selectedForSlicing().length);
+  const stepSeconds = state.slicing.active ? Math.max(0, Math.ceil(state.slicing.stepTimeLeft || 0)) : 0;
   const timerText = state.slicing.active ? `${seconds}s` : "--";
+  const stepTimerText = state.slicing.active ? `Step ${stepSeconds}s` : "Step --";
   dom.sliceStats.textContent = `Score ${state.slicing.score} | Time ${timerText} | Plated ${platedUniqueCount()}/${platedNeed}`;
-  dom.liveTimer.textContent = `Time ${timerText}`;
+  dom.liveTimer.textContent = `Time ${timerText} | ${stepTimerText}`;
   dom.liveScore.textContent = `Score ${state.slicing.score}`;
   dom.livePlated.textContent = `Plated ${platedUniqueCount()}/${platedNeed}`;
 
@@ -1006,7 +1137,7 @@ function updateSliceStatsUI() {
     const actionVerb = prepActionVerb(state.slicing.stepActionMode);
     dom.sliceBtn.textContent = actionVerb;
     dom.sliceCountdownBadge.textContent = "Live";
-    dom.panelStatus.textContent = `${currentStep?.name || "Prep step"}: ${actionVerb} ${state.slicing.stepHits}/${state.slicing.stepHitsRequired}.`;
+    dom.panelStatus.textContent = `${currentStep?.name || "Prep step"}: ${actionVerb} ${state.slicing.stepHits}/${state.slicing.stepHitsRequired} with ${toolLabel(state.slicing.stepRequiredTool)}.`;
   } else if (state.slicing.countdownActive) {
     dom.sliceBtn.textContent = "Get Ready";
     dom.sliceCountdownBadge.textContent = `${countdown}`;
@@ -1025,11 +1156,13 @@ function updateSliceStatsUI() {
 
   if (state.slicing.active) {
     if (state.slicing.stepActionMode === "stir") {
-      dom.sliceHint.textContent = "Draw circles in the bowl to stir. Complete the stir count to plate this step.";
+      dom.sliceHint.textContent = "Pick Spoon + Bowl, then draw circles while the bowl drifts around.";
     } else if (state.slicing.stepActionMode === "pound") {
-      dom.sliceHint.textContent = "Tap the mortar to pound/juice. Hit the target count to complete the step.";
+      dom.sliceHint.textContent = state.slicing.stepRequiredTool === "juicer"
+        ? "Pick Juicer, then tap the moving bowl target to squeeze fast."
+        : "Pick Mash Bowl, then tap the moving target for even prep.";
     } else {
-      dom.sliceHint.textContent = "Swipe across the moving ingredient to slice this step in order.";
+      dom.sliceHint.textContent = "Pick Knife, then swipe evenly across the rolling ingredient in order.";
     }
   } else if (state.slicing.countdownActive) {
     dom.sliceHint.textContent = "3-2-1 countdown running. Get ready for this specific prep step.";
@@ -1058,6 +1191,14 @@ function updateSliceStatsUI() {
 
   updateStartGuideUI(countdown);
   dom.sliceBtn.disabled = !canStartSliceRound() && !state.slicing.active;
+
+  const showFloatingStart = canStartSliceRound() && !state.slicing.active && !state.slicing.countdownActive;
+  if (dom.floatingStartBtn) {
+    dom.floatingStartBtn.hidden = !showFloatingStart;
+  }
+  if (dom.kitchenStage) {
+    dom.kitchenStage.classList.toggle("is-start-ready", showFloatingStart);
+  }
 }
 
 function celebrateStep(step) {
@@ -1305,6 +1446,101 @@ const mealPhotoPoolsByGroup = {
   starch: [1, 6, 10, 14, 18],
   flavor: [2, 4, 5, 17]
 };
+
+const cuisineHeroDishById = {
+  japanese: "meal-cat-10",
+  korean: "meal-cat-11",
+  thai: "meal-cat-18",
+  mediterranean: "meal-cat-15",
+  mexican: "meal-cat-14",
+  global: "meal-cat-24"
+};
+
+const ingredientIconById = {
+  salmon: "salmon.png",
+  chicken: "chicken.png",
+  tofu: "tofu.png",
+  shrimp: "shrimp.png",
+  edamame: "edamame.png",
+  tuna: "beef.png",
+  turkey: "chicken.png",
+  chickpeas: "chickpeas.png",
+  cabbage: "cabbage.png",
+  spinach: "spinach.png",
+  mushroom: "mushroom.png",
+  carrot: "carrot.png",
+  cucumber: "cucumber.png",
+  seaweed: "herb-flakes.png",
+  "kimchi-veg": "salsa.png",
+  "bell-pepper": "tomato.png",
+  broccoli: "broccoli.png",
+  "brown-rice": "white-rice.png",
+  "white-rice": "white-rice.png",
+  "rice-noodle": "rice-noodle.png",
+  potato: "potato.png",
+  quinoa: "white-rice.png",
+  "corn-tortilla": "corn-tortilla.png",
+  tamari: "tamari.png",
+  miso: "tamari.png",
+  kimchi: "chili-flakes.png",
+  ginger: "orange.png",
+  herb: "herb-flakes.png",
+  gochujang: "chili-flakes.png",
+  salsa: "salsa.png",
+  apple: "apple.png",
+  banana: "banana.png",
+  strawberry: "strawberry.png",
+  blueberries: "blueberries.png",
+  grapes: "grapes.png",
+  orange: "orange.png",
+  lime: "lime.png",
+  bread: "bread.png",
+  baguette: "baguette.png",
+  salt: "salt.png",
+  pepper: "pepper.png"
+};
+
+const ingredientIconAliases = {
+  "protein-salmon": "salmon.png",
+  "protein-chicken-breast": "chicken.png",
+  "protein-chicken": "chicken.png",
+  "protein-shrimp": "shrimp.png",
+  "protein-tofu": "tofu.png",
+  "protein-edamame": "edamame.png",
+  "protein-tuna": "beef.png",
+  "protein-turkey": "chicken.png",
+  "protein-chickpeas": "chickpeas.png",
+  "plants-cabbage": "cabbage.png",
+  "plants-spinach": "spinach.png",
+  "plants-mushroom": "mushroom.png",
+  "plants-carrot": "carrot.png",
+  "plants-cucumber": "cucumber.png",
+  "plants-seaweed": "herb-flakes.png",
+  "plants-kimchi-veg-mix": "salsa.png",
+  "plants-bell-pepper": "tomato.png",
+  "plants-broccoli": "broccoli.png",
+  "starch-brown-rice": "white-rice.png",
+  "starch-white-rice": "white-rice.png",
+  "starch-rice-noodles": "rice-noodle.png",
+  "starch-potato": "potato.png",
+  "starch-quinoa": "white-rice.png",
+  "starch-corn-tortilla": "corn-tortilla.png",
+  "flavor-wheat-free-tamari": "tamari.png",
+  "flavor-miso-broth": "tamari.png",
+  "flavor-kimchi-style-chili": "chili-flakes.png",
+  "flavor-ginger-citrus": "orange.png",
+  "flavor-herb-lemon": "herb-flakes.png",
+  "flavor-gochujang-style": "chili-flakes.png",
+  "flavor-fresh-salsa": "salsa.png"
+};
+
+const defaultIconByGroup = {
+  protein: "chicken.png",
+  plants: "spinach.png",
+  starch: "white-rice.png",
+  flavor: "tamari.png"
+};
+
 const mealPhotoCache = new Map();
 
 function hashText(input) {
@@ -1321,10 +1557,18 @@ function mealPhotoPathByIndex(index) {
 }
 
 function mealPhotoForItem(item) {
-  const group = ingredientGroupForId(item.id);
-  const pool = mealPhotoPoolsByGroup[group] || [1, 3, 13, 24];
-  const idx = pool[hashText(item.id) % pool.length];
-  const path = mealPhotoPathByIndex(idx);
+  const iconFile = resolveIngredientIconFile(item);
+  if (iconFile) {
+    const iconPath = `assets/images/ingredient-icons/${iconFile}`;
+    if (!mealPhotoCache.has(iconPath)) {
+      const icon = new Image();
+      icon.src = iconPath;
+      mealPhotoCache.set(iconPath, icon);
+    }
+    return mealPhotoCache.get(iconPath);
+  }
+
+  const path = "assets/images/ingredient-icons/spinach.png";
   if (!mealPhotoCache.has(path)) {
     const img = new Image();
     img.src = path;
@@ -1333,19 +1577,42 @@ function mealPhotoForItem(item) {
   return mealPhotoCache.get(path);
 }
 
+function resolveIngredientIconFile(item) {
+  if (!item) return "";
+
+  if (ingredientIconById[item.id]) {
+    return ingredientIconById[item.id];
+  }
+
+  const rawId = String(item.id || "").toLowerCase();
+  const group = ingredientGroupForId(item.id);
+  const strippedId = rawId.replace(/^(protein|plants|starch|flavor)-/, "");
+  if (ingredientIconById[strippedId]) {
+    return ingredientIconById[strippedId];
+  }
+
+  const byAliasId = ingredientIconAliases[rawId] || ingredientIconAliases[`${group}-${strippedId}`];
+  if (byAliasId) {
+    return byAliasId;
+  }
+
+  const nameSlug = slugifyIngredient(item.name || "");
+  if (nameSlug) {
+    if (ingredientIconById[nameSlug]) {
+      return ingredientIconById[nameSlug];
+    }
+    const byAliasName = ingredientIconAliases[nameSlug] || ingredientIconAliases[`${group}-${nameSlug}`];
+    if (byAliasName) {
+      return byAliasName;
+    }
+  }
+
+  return defaultIconByGroup[group] || "spinach.png";
+}
+
 function heroMealPhotoForCuisine() {
-  const pools = {
-    japanese: [1, 2, 4, 8, 10],
-    korean: [11, 14, 17, 24],
-    thai: [2, 14, 17, 18],
-    mediterranean: [3, 13, 15, 19],
-    mexican: [7, 14, 16, 24],
-    global: [11, 12, 21, 22, 24]
-  };
-  const selectedIds = selectedIdsInOrder().map((entry) => entry.id).join("|");
-  const pool = pools[state.cuisine] || pools.global;
-  const idx = pool[hashText(`${state.cuisine}|${selectedIds}`) % pool.length];
-  const path = mealPhotoPathByIndex(idx);
+  const dishId = cuisineHeroDishById[state.cuisine] || cuisineHeroDishById.global;
+  const path = `assets/images/dishes/${dishId}.png`;
   if (!mealPhotoCache.has(path)) {
     const img = new Image();
     img.src = path;
@@ -1371,6 +1638,12 @@ function drawPreviewFoodPiece(drawCtx, x, y, size, item, opacity = 1) {
     drawCtx.drawImage(photo, x - size * 1.15, y - size * 1.15, size * 2.3, size * 2.3);
   }
   drawCtx.restore();
+}
+
+function ingredientShortLabel(item) {
+  if (!item || !item.name) return "";
+  const firstWord = String(item.name).split(" ")[0] || "";
+  return firstWord.toUpperCase().slice(0, 8);
 }
 
 function traceIngredientShapePath(group, size) {
@@ -1406,6 +1679,8 @@ function drawPhotoFoodPiece(x, y, size, item, options = {}) {
   const color = colorForItem(item);
   const photo = mealPhotoForItem(item);
   const opacity = options.opacity ?? 1;
+  const usePhoto = options.usePhoto !== false;
+  const showLabel = options.showLabel === true;
 
   ctx.save();
   ctx.translate(x, y);
@@ -1415,7 +1690,7 @@ function drawPhotoFoodPiece(x, y, size, item, options = {}) {
   ctx.fillStyle = color;
   ctx.fill();
 
-  if (photo && photo.complete && photo.naturalWidth > 0) {
+  if (usePhoto && photo && photo.complete && photo.naturalWidth > 0) {
     ctx.save();
     traceIngredientShapePath(group, size);
     ctx.clip();
@@ -1430,6 +1705,20 @@ function drawPhotoFoodPiece(x, y, size, item, options = {}) {
   ctx.lineWidth = Math.max(1.4, size * 0.08);
   traceIngredientShapePath(group, size);
   ctx.stroke();
+
+  if (showLabel) {
+    const label = ingredientShortLabel(item);
+    if (label) {
+      ctx.fillStyle = "rgba(255,255,255,0.92)";
+      ctx.beginPath();
+      ctx.roundRect(-size * 0.72, size * 0.82, size * 1.44, size * 0.58, size * 0.22);
+      ctx.fill();
+      ctx.fillStyle = "#1d3a2d";
+      ctx.font = `900 ${Math.max(8, Math.round(size * 0.3))}px 'Trebuchet MS', sans-serif`;
+      ctx.textAlign = "center";
+      ctx.fillText(label, 0, size * 1.22);
+    }
+  }
 
   ctx.restore();
 }
@@ -1447,15 +1736,16 @@ function spawnIngredientTarget() {
   const hasActiveTarget = flyingIngredients.some((target) => !target.sliced && target.item.id === item.id);
   if (hasActiveTarget) return;
 
+  const startX = 70 + Math.random() * (canvas.width - 240);
   flyingIngredients.push({
     id: `${item.id}-${Date.now()}-${Math.random()}`,
     item,
-    x: 72,
-    y: 248,
-    vx: 1.8 + Math.random() * 1.1,
-    vy: 0,
-    radius: 24 + Math.random() * 8,
-    roll: true,
+    x: startX,
+    y: canvas.height - 30,
+    vx: (Math.random() - 0.5) * 2.2,
+    vy: -(8.5 + Math.random() * 2.9),
+    radius: 20 + Math.random() * 5,
+    roll: false,
     sliced: false,
     life: 1
   });
@@ -1471,10 +1761,14 @@ function distanceToSegment(px, py, ax, ay, bx, by) {
   return Math.hypot(px - cx, py - cy);
 }
 
-function registerSliceHit(target) {
+function registerSliceHit(target, distance = 0) {
   target.sliced = true;
   target.life = 0.15;
   registerPrepInteraction(target.item.id, target.x, target.y);
+  const precisionBonus = Math.max(0, 5 - Math.round(distance / 3));
+  if (precisionBonus > 0) {
+    state.slicing.score += precisionBonus;
+  }
   currentSproutMood = "happy";
   state.celebrateUntil = Date.now() + 520;
 
@@ -1493,8 +1787,9 @@ function registerSliceHit(target) {
 function sliceAlongSegment(ax, ay, bx, by) {
   flyingIngredients.forEach((target) => {
     if (target.sliced) return;
-    if (distanceToSegment(target.x, target.y, ax, ay, bx, by) <= target.radius + 8) {
-      registerSliceHit(target);
+    const distance = distanceToSegment(target.x, target.y, ax, ay, bx, by);
+    if (distance <= target.radius + 8) {
+      registerSliceHit(target, distance);
     }
   });
   updateScoreUI();
@@ -1529,10 +1824,13 @@ function finishSliceRound(reason) {
   state.slicing.active = false;
   state.slicing.countdownActive = false;
   state.slicing.breakUntil = 0;
+  state.slicing.stepEndsAt = 0;
+  state.slicing.stepTimeLeft = 0;
   state.slicing.countdownEndsAt = 0;
   const newTopScore = saveBestSliceScoreIfNeeded();
   if (allIngredientsPlated() && state.prep.currentSlices >= state.prep.targetSlices) {
     celebrateStep("prep");
+    showDishReveal();
     if (newTopScore) {
       currentSproutMood = "celebrate";
       triggerTopScoreCelebration();
@@ -1557,8 +1855,10 @@ function finishSliceRound(reason) {
   state.slicing.stepHits = 0;
   state.slicing.stepHitsRequired = 0;
   state.slicing.stepActionMode = "slice";
+  state.slicing.stepRequiredTool = "knife";
   state.slicing.stirAngleProgress = 0;
   state.slicing.stirLastAngle = null;
+  refreshToolRackUI();
   updateScoreUI();
 }
 
@@ -1634,6 +1934,7 @@ function advanceSlicingFrame() {
     if (remainingMs <= 0) {
       state.slicing.countdownActive = false;
       state.slicing.active = true;
+      state.slicing.stepEndsAt = performance.now() + state.slicing.stepTimeSeconds * 1000;
       if (!state.slicing.roundStartedAt) state.slicing.roundStartedAt = performance.now();
       dom.status.textContent = `${prepActionVerb(state.slicing.stepActionMode)} now: ${currentPrepStep()?.name || "ingredient"}!`;
       if (state.slicing.stepActionMode === "slice") spawnIngredientTarget();
@@ -1651,12 +1952,26 @@ function advanceSlicingFrame() {
     state.slicing.timeLeft = state.slicing.timerSeconds;
   }
 
+  if (state.slicing.active && state.slicing.stepEndsAt > 0) {
+    state.slicing.stepTimeLeft = Math.max(0, (state.slicing.stepEndsAt - performance.now()) / 1000);
+    if (state.slicing.stepTimeLeft <= 0) {
+      state.slicing.misses += 1;
+      state.slicing.score = Math.max(0, state.slicing.score - 5);
+      const center = getToolSurfaceCenter();
+      completeCurrentPrepStep(center.x, center.y, true);
+    }
+  }
+
   if (state.slicing.timeLeft <= 0 && (state.slicing.active || state.slicing.countdownActive || state.slicing.breakUntil > 0)) {
     finishSliceRound("time up");
   }
 
-  if (state.slicing.active && state.slicing.stepActionMode === "slice") {
-    spawnIngredientTarget();
+  if (state.slicing.active && state.slicing.stepActionMode !== "stir") {
+    spawnAccumulator += 1;
+    if (spawnAccumulator >= 21) {
+      spawnIngredientTarget();
+      spawnAccumulator = 0;
+    }
   }
 
   if (!state.slicing.active && !state.slicing.countdownActive && state.slicing.breakUntil > 0 && performance.now() >= state.slicing.breakUntil) {
@@ -1680,7 +1995,7 @@ function advanceSlicingFrame() {
     if (target.y > canvas.height + 40) {
       if (!target.sliced && state.slicing.active) {
         state.slicing.misses += 1;
-        state.slicing.score = Math.max(0, state.slicing.score - 2);
+        state.slicing.score = Math.max(0, state.slicing.score - 4);
       }
       flyingIngredients.splice(i, 1);
       continue;
@@ -1781,8 +2096,9 @@ function drawActionToolSurface() {
   if (!state.slicing.active) return;
   if (state.slicing.stepActionMode === "slice") return;
 
-  const cx = canvas.width * 0.48;
-  const cy = 246;
+  const center = getToolSurfaceCenter();
+  const cx = center.x;
+  const cy = center.y;
   const progress = state.slicing.stepHitsRequired > 0 ? state.slicing.stepHits / state.slicing.stepHitsRequired : 0;
   const ringColor = state.slicing.stepActionMode === "stir" ? "#4c8f73" : "#8b5f3c";
 
@@ -1804,6 +2120,8 @@ function drawActionToolSurface() {
     ctx.font = "800 16px 'Trebuchet MS', sans-serif";
     ctx.textAlign = "center";
     ctx.fillText("STIR BOWL", cx, cy + 6);
+    ctx.font = "700 12px 'Trebuchet MS', sans-serif";
+    ctx.fillText(`Tool: ${toolLabel(state.slicing.stepRequiredTool).toUpperCase()}`, cx, cy + 24);
     ctx.restore();
     return;
   }
@@ -1826,13 +2144,15 @@ function drawActionToolSurface() {
   ctx.font = "800 16px 'Trebuchet MS', sans-serif";
   ctx.textAlign = "center";
   ctx.fillText("POUND / JUICE", cx, cy + 6);
+  ctx.font = "700 12px 'Trebuchet MS', sans-serif";
+  ctx.fillText(`Tool: ${toolLabel(state.slicing.stepRequiredTool).toUpperCase()}`, cx, cy + 24);
   ctx.restore();
 }
 
 function drawSlicingLayer() {
   flyingIngredients.forEach((target) => {
     ctx.globalAlpha = Math.max(0.22, target.life);
-    drawIngredientSprite(target.x, target.y, target.radius, target.item);
+    drawPhotoFoodPiece(target.x, target.y, target.radius, target.item, { usePhoto: true, showLabel: true });
     ctx.globalAlpha = 1;
   });
 
@@ -1879,6 +2199,24 @@ function drawSlicingLayer() {
 }
 
 function drawKitchenBackdrop() {
+  if (kitchenBoardImage.complete && kitchenBoardImage.naturalWidth > 0) {
+    const imgW = kitchenBoardImage.naturalWidth;
+    const imgH = kitchenBoardImage.naturalHeight;
+    const scale = Math.min(canvas.width / imgW, canvas.height / imgH);
+    const drawW = imgW * scale;
+    const drawH = imgH * scale;
+    const dx = (canvas.width - drawW) / 2;
+    const dy = (canvas.height - drawH) / 2;
+    ctx.drawImage(kitchenBoardImage, dx, dy, drawW, drawH);
+
+    const vignette = ctx.createRadialGradient(canvas.width * 0.5, canvas.height * 0.54, 120, canvas.width * 0.5, canvas.height * 0.58, canvas.width * 0.58);
+    vignette.addColorStop(0, "rgba(255, 255, 255, 0)");
+    vignette.addColorStop(1, "rgba(0, 0, 0, 0.11)");
+    ctx.fillStyle = vignette;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    return;
+  }
+
   const t = performance.now() * 0.001;
   const hueShift = Math.sin(t * 0.4) * 4;
   const wallGradient = ctx.createLinearGradient(0, 0, 0, 220);
@@ -1913,6 +2251,21 @@ function drawKitchenBackdrop() {
   }
 }
 
+function drawSelectedBoardIngredients() {
+  const selected = selectedIdsInOrder().map((entry) => getById(entry.group, entry.id)).filter(Boolean);
+  if (!selected.length) return;
+
+  const startX = 94;
+  const startY = 286;
+  selected.slice(0, 7).forEach((item, index) => {
+    const col = index % 3;
+    const row = Math.floor(index / 3);
+    const x = startX + col * 48 + (row % 2) * 6;
+    const y = startY + row * 43;
+    drawPhotoFoodPiece(x, y, 14, item, { opacity: 0.92 });
+  });
+}
+
 function drawKitchen() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawKitchenBackdrop();
@@ -1929,6 +2282,8 @@ function drawKitchen() {
   state.selected.plants.length && drawIngredientDot(STATION_X.plants, 120, "#6f9a4a");
   state.selected.starch.length && drawIngredientDot(STATION_X.starch, 120, "#a57d3e");
   state.selected.flavor.length && drawIngredientDot(STATION_X.flavor, 120, "#b4623f");
+
+  drawSelectedBoardIngredients();
 
   advanceSlicingFrame();
   drawSlicingLayer();
@@ -2026,6 +2381,7 @@ function runSliceAction() {
   }
 
   if (!state.slicing.active) {
+    hideDishReveal();
     state.prep.currentSlices = 0;
     state.completedSteps.prep = false;
     state.slicing.score = 0;
@@ -2039,6 +2395,9 @@ function runSliceAction() {
     state.slicing.stepHits = 0;
     state.slicing.stepHitsRequired = 0;
     state.slicing.stepActionMode = "slice";
+    state.slicing.stepRequiredTool = "knife";
+    state.slicing.stepEndsAt = 0;
+    state.slicing.stepTimeLeft = 0;
     state.slicing.stepTitle = "";
     state.slicing.breakUntil = 0;
     state.slicing.stirAngleProgress = 0;
@@ -2046,6 +2405,7 @@ function runSliceAction() {
     state.slicing.requiredIds = [...new Set(selectedForSlicing())];
     state.slicing.platedCounts = Object.fromEntries(state.slicing.requiredIds.map((id) => [id, 0]));
     flyingIngredients.length = 0;
+    spawnAccumulator = 0;
     plateTransfers.length = 0;
     sliceBits.length = 0;
     slashTrail.length = 0;
@@ -2061,6 +2421,11 @@ function runSliceAction() {
   }
 
   if (state.slicing.stepActionMode === "slice") {
+    if (state.slicing.heldTool !== "knife") {
+      markToolMismatch("knife");
+      updateScoreUI();
+      return;
+    }
     const nearest = flyingIngredients.filter((target) => !target.sliced).sort((a, b) => a.y - b.y)[0];
     if (nearest) registerSliceHit(nearest);
     else spawnIngredientTarget();
@@ -2073,6 +2438,8 @@ function resetPrep() {
   state.slicing.countdownActive = false;
   state.slicing.countdownEndsAt = 0;
   state.slicing.breakUntil = 0;
+  state.slicing.stepEndsAt = 0;
+  state.slicing.stepTimeLeft = 0;
   state.prep.currentSlices = 0;
   state.completedSteps.prep = false;
   state.slicing.score = 0;
@@ -2085,15 +2452,19 @@ function resetPrep() {
   state.slicing.stepHits = 0;
   state.slicing.stepHitsRequired = 0;
   state.slicing.stepActionMode = "slice";
+  state.slicing.stepRequiredTool = "knife";
   state.slicing.stepTitle = "";
   state.slicing.stirAngleProgress = 0;
   state.slicing.stirLastAngle = null;
   state.slicing.requiredIds = [...new Set(selectedForSlicing())];
   state.slicing.platedCounts = Object.fromEntries(state.slicing.requiredIds.map((id) => [id, 0]));
   flyingIngredients.length = 0;
+  spawnAccumulator = 0;
   plateTransfers.length = 0;
   sliceBits.length = 0;
   slashTrail.length = 0;
+  hideDishReveal();
+  refreshToolRackUI();
   updateScoreUI();
 }
 
@@ -2110,7 +2481,7 @@ function canvasPointFromEvent(event) {
 function bindCanvasSlicing() {
   canvas.style.touchAction = "pan-y";
 
-  const toolCenter = () => ({ x: canvas.width * 0.48, y: 246 });
+  const toolCenter = () => getToolSurfaceCenter();
 
   const registerPoundHit = (point) => {
     const center = toolCenter();
@@ -2134,6 +2505,20 @@ function bindCanvasSlicing() {
 
     if (!state.slicing.active) return;
     if (state.slicing.stepActionMode === "pound") {
+      if (state.slicing.heldTool !== state.slicing.stepRequiredTool) {
+        markToolMismatch(state.slicing.stepRequiredTool);
+        return;
+      }
+      const nearest = flyingIngredients
+        .filter((target) => !target.sliced)
+        .sort((a, b) => Math.hypot(pointerLast.x - a.x, pointerLast.y - a.y) - Math.hypot(pointerLast.x - b.x, pointerLast.y - b.y))[0];
+      if (nearest) {
+        const dist = Math.hypot(pointerLast.x - nearest.x, pointerLast.y - nearest.y);
+        if (dist <= nearest.radius + 16) {
+          registerSliceHit(nearest, dist);
+          return;
+        }
+      }
       registerPoundHit(pointerLast);
     }
   });
@@ -2143,6 +2528,11 @@ function bindCanvasSlicing() {
     const point = canvasPointFromEvent(event);
 
     if (state.slicing.stepActionMode === "stir") {
+      if (state.slicing.heldTool !== state.slicing.stepRequiredTool) {
+        markToolMismatch(state.slicing.stepRequiredTool);
+        pointerLast = point;
+        return;
+      }
       const center = toolCenter();
       const dist = Math.hypot(point.x - center.x, point.y - center.y);
       if (dist > 34 && dist < 104) {
@@ -2166,6 +2556,11 @@ function bindCanvasSlicing() {
     }
 
     if (pointerLast && state.slicing.stepActionMode === "slice") {
+      if (state.slicing.heldTool !== state.slicing.stepRequiredTool) {
+        markToolMismatch(state.slicing.stepRequiredTool);
+        pointerLast = point;
+        return;
+      }
       sliceAlongSegment(pointerLast.x, pointerLast.y, point.x, point.y);
       slashTrail.push({ ax: pointerLast.x, ay: pointerLast.y, bx: point.x, by: point.y, life: 1 });
     }
@@ -2181,6 +2576,33 @@ function bindCanvasSlicing() {
   canvas.addEventListener("pointerup", stop);
   canvas.addEventListener("pointercancel", stop);
   canvas.addEventListener("pointerleave", stop);
+}
+
+function bindToolRack() {
+  if (!dom.toolRack) return;
+  dom.toolRack.querySelectorAll("[data-tool]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      setHeldTool(btn.dataset.tool);
+    });
+  });
+  refreshToolRackUI();
+}
+
+function hideDishReveal() {
+  if (!dom.dishReveal) return;
+  dom.dishReveal.hidden = true;
+  if (dom.dishRevealImage) dom.dishRevealImage.removeAttribute("src");
+  if (dom.dishRevealText) dom.dishRevealText.textContent = "Finish prep to reveal your final plate image.";
+}
+
+function showDishReveal() {
+  if (!dom.dishReveal || !dom.dishRevealImage) return;
+  const name = (dom.recipeName.value || "Your Dish").trim() || "Your Dish";
+  dom.dishRevealImage.src = generateDishPreviewDataUrl(name);
+  dom.dishReveal.hidden = false;
+  if (dom.dishRevealText) {
+    dom.dishRevealText.textContent = `${name} is plated. Submit to add it to the community board.`;
+  }
 }
 
 function generateDishPreviewDataUrl(recipeName) {
@@ -2280,13 +2702,209 @@ function recipePayloadFromState() {
   };
 }
 
+function normalizeCommunityRecipe(recipe, extras = {}) {
+  const normalized = {
+    ...recipe,
+    votes: Number(recipe?.votes || 0),
+    score: {
+      tastiness: Number(recipe?.score?.tastiness || 0),
+      protein: Number(recipe?.score?.protein || 0),
+      nutrition: Number(recipe?.score?.nutrition || 0),
+      washoku: Number(recipe?.score?.washoku || 0),
+      overall: Number(recipe?.score?.overall || 0)
+    },
+    nutrition: {
+      kcal: Number(recipe?.nutrition?.kcal || 0),
+      protein: Number(recipe?.nutrition?.protein || 0),
+      plants: Number(recipe?.nutrition?.plants || 0)
+    },
+    reviewStatus: recipe?.reviewStatus || "pending",
+    sourceLabel: recipe?.sourceLabel || "",
+    importedAt: recipe?.importedAt || "",
+    readOnly: Boolean(recipe?.readOnly),
+    ...extras
+  };
+  normalized.eligibleForReview = normalized.votes >= 5 && normalized.score.overall >= 78;
+  return normalized;
+}
+
+function mergeCommunityRecipe(existing, incoming) {
+  const merged = {
+    ...existing,
+    ...incoming,
+    votes: Math.max(Number(existing?.votes || 0), Number(incoming?.votes || 0)),
+    readOnly: Boolean(incoming?.readOnly),
+    reviewStatus: existing?.reviewStatus && existing.reviewStatus !== "pending"
+      ? existing.reviewStatus
+      : incoming?.reviewStatus || existing?.reviewStatus || "pending",
+    sourceLabel: incoming?.sourceLabel || existing?.sourceLabel || ""
+  };
+
+  if ((existing?.score?.overall || 0) > (incoming?.score?.overall || 0)) {
+    merged.score = existing.score;
+  }
+  if ((existing?.nutrition?.protein || 0) > (incoming?.nutrition?.protein || 0)) {
+    merged.nutrition = existing.nutrition;
+  }
+
+  merged.eligibleForReview = merged.votes >= 5 && merged.score.overall >= 78;
+  return merged;
+}
+
+function getAllCommunityRecipes() {
+  const merged = new Map();
+
+  state.communityTracked.forEach((recipe) => {
+    if (!recipe?.id) return;
+    merged.set(recipe.id, normalizeCommunityRecipe(recipe, { readOnly: true }));
+  });
+
+  state.communityLocal.forEach((recipe) => {
+    if (!recipe?.id) return;
+    const normalized = normalizeCommunityRecipe(recipe, {
+      readOnly: false,
+      sourceLabel: recipe?.sourceLabel || "Local board"
+    });
+    const existing = merged.get(recipe.id);
+    merged.set(recipe.id, existing ? mergeCommunityRecipe(existing, normalized) : normalized);
+  });
+
+  return Array.from(merged.values());
+}
+
+function extractRecipesFromImportPayload(payload) {
+  if (Array.isArray(payload)) {
+    return payload;
+  }
+  if (Array.isArray(payload?.recipes)) {
+    return payload.recipes;
+  }
+  if (Array.isArray(payload?.community)) {
+    return payload.community;
+  }
+  return [];
+}
+
+function mergeImportedRecipes(recipes, sourceLabel = "Imported snapshot") {
+  if (!Array.isArray(recipes) || !recipes.length) return 0;
+
+  const localById = new Map(state.communityLocal.map((recipe) => [recipe.id, normalizeCommunityRecipe(recipe, { readOnly: false })]));
+  let addedCount = 0;
+
+  recipes.forEach((recipe) => {
+    if (!recipe?.id) return;
+    const normalized = normalizeCommunityRecipe(recipe, {
+      readOnly: false,
+      sourceLabel: recipe?.sourceLabel || sourceLabel
+    });
+    const existing = localById.get(recipe.id);
+    if (existing) {
+      localById.set(recipe.id, mergeCommunityRecipe(existing, normalized));
+    } else {
+      localById.set(recipe.id, normalized);
+      addedCount += 1;
+    }
+  });
+
+  state.communityLocal = Array.from(localById.values()).map((recipe) => ({
+    ...recipe,
+    readOnly: false
+  }));
+  return addedCount;
+}
+
+function downloadCommunitySnapshot() {
+  const payload = {
+    version: "1.0.0",
+    exportedAt: new Date().toISOString(),
+    source: "sprout-kitchen-local-export",
+    recipeCount: state.communityLocal.length,
+    recipes: state.communityLocal
+  };
+
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `sprout-community-snapshot-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(link.href);
+}
+
+async function importCommunitySnapshotFiles(fileList) {
+  const files = Array.from(fileList || []);
+  if (!files.length) return;
+
+  let importedCount = 0;
+  for (const file of files) {
+    const text = await file.text();
+    const payload = JSON.parse(text);
+    const recipes = extractRecipesFromImportPayload(payload);
+    importedCount += mergeImportedRecipes(recipes, file.name || "Imported snapshot");
+  }
+
+  saveCommunity();
+  renderCommunity();
+  dom.status.textContent = importedCount
+    ? `Imported ${importedCount} community recipes into your local review board.`
+    : "Import completed, but no recipes were found in the selected file.";
+}
+
+async function loadTrackedCommunity() {
+  try {
+    const { source, payload } = await fetchManagedJson(managedCommunityFile);
+    const recipes = extractRecipesFromImportPayload(payload);
+    state.communityTracked = recipes
+      .filter((recipe) => recipe?.id)
+      .map((recipe) => normalizeCommunityRecipe(recipe, {
+        readOnly: true,
+        sourceLabel: recipe?.sourceLabel || `Checked-in ${source === "api" ? "admin" : "site"} data`
+      }));
+  } catch (error) {
+    console.warn("Community submission sync failed; continuing with local board only.", error);
+    state.communityTracked = [];
+  }
+}
+
+function bindCommunityControls() {
+  dom.communityExportBtn?.addEventListener("click", () => {
+    downloadCommunitySnapshot();
+    dom.status.textContent = "Downloaded your local community board snapshot as JSON.";
+  });
+
+  dom.communityImportBtn?.addEventListener("click", () => {
+    dom.communityImportInput?.click();
+  });
+
+  dom.communityImportInput?.addEventListener("change", async (event) => {
+    try {
+      await importCommunitySnapshotFiles(event.target.files);
+    } catch (error) {
+      console.error(error);
+      dom.status.textContent = "Snapshot import failed. Check the JSON file format.";
+    } finally {
+      event.target.value = "";
+    }
+  });
+
+  dom.communityLoadTrackedBtn?.addEventListener("click", async () => {
+    await loadTrackedCommunity();
+    renderCommunity();
+    dom.status.textContent = state.communityTracked.length
+      ? `Loaded ${state.communityTracked.length} checked-in community submissions for review.`
+      : "No checked-in community submissions were found yet.";
+  });
+}
+
 function loadCommunity() {
   try {
     const raw = localStorage.getItem(storageKey);
-    state.community = raw ? JSON.parse(raw) : [];
-    if (!Array.isArray(state.community)) state.community = [];
+    state.communityLocal = raw ? JSON.parse(raw) : [];
+    if (!Array.isArray(state.communityLocal)) state.communityLocal = [];
+    state.communityLocal = state.communityLocal.map((recipe) => normalizeCommunityRecipe(recipe, { readOnly: false }));
   } catch {
-    state.community = [];
+    state.communityLocal = [];
   }
 }
 
@@ -2305,31 +2923,48 @@ function saveVoteRegistry(registry) {
 }
 
 function saveCommunity() {
-  localStorage.setItem(storageKey, JSON.stringify(state.community));
+  localStorage.setItem(storageKey, JSON.stringify(state.communityLocal));
 }
 
 function renderCommunity() {
   const voteRegistry = loadVoteRegistry();
-  if (!state.community.length) {
+  const recipes = getAllCommunityRecipes();
+  if (!recipes.length) {
     dom.communityList.innerHTML = "<p class='help-note'>No community recipes yet. Submit one to start.</p>";
     return;
   }
 
-  const sorted = [...state.community].sort((a, b) => (b.votes + b.score.overall / 10) - (a.votes + a.score.overall / 10));
+  const sorted = [...recipes].sort((a, b) => (b.votes + b.score.overall / 10) - (a.votes + a.score.overall / 10));
   dom.communityList.innerHTML = sorted.map((recipe) => {
     const hasVoted = Boolean(voteRegistry[recipe.id]);
-    const eligible = recipe.votes >= 5 && recipe.score.overall >= 78;
+    const eligible = recipe.eligibleForReview;
+    const isTracked = Boolean(recipe.readOnly);
     const prepLine = Array.isArray(recipe.prepPlan) && recipe.prepPlan.length
       ? `<p>Prep: ${recipe.prepPlan.map((row) => `${row.action} ${row.name} ${row.qty} ${row.unit}`).join(" | ")}</p>`
       : "";
     const sliceLine = recipe.sliceRound
       ? `<p>Slice score ${recipe.sliceRound.score} | misses ${recipe.sliceRound.misses}</p>`
       : "";
+    const sourceBits = [];
+    if (recipe.sourceLabel) {
+      sourceBits.push(recipe.sourceLabel);
+    }
+    if (recipe.importedAt) {
+      sourceBits.push(`Imported ${new Date(recipe.importedAt).toLocaleDateString()}`);
+    }
+    if (isTracked) {
+      sourceBits.push(`Review ${recipe.reviewStatus}`);
+    }
     const image = recipe.dishImage
       ? `<img src="${recipe.dishImage}" alt="${recipe.name} preview" style="width:74px;height:74px;border-radius:10px;border:1px solid rgba(22,54,41,0.14);object-fit:cover;">`
       : "";
+    const buttonLabel = isTracked ? "Tracked" : hasVoted ? "Voted" : `Vote (${recipe.votes})`;
+    const disabledAttr = isTracked || hasVoted ? "disabled" : "";
+    const sourceLine = sourceBits.length ? `<p class="community-source-note">${sourceBits.join(" · ")}</p>` : "";
+    const trackedBadge = isTracked ? `<span class="badge tracked">Checked-in</span>` : "";
+    const reviewBadge = isTracked ? `<span class="badge ${recipe.reviewStatus}">${recipe.reviewStatus}</span>` : "";
 
-    return `<article class="community-item"><div><strong>${recipe.name}</strong><p>${recipe.cuisine} | ${recipe.nutrition.kcal} kcal | ${recipe.nutrition.protein}g protein | score ${recipe.score.overall}</p>${prepLine}${sliceLine}<span class="badge">Tastiness ${recipe.score.tastiness}</span><span class="badge">Protein ${recipe.score.protein}</span><span class="badge">Nutrition ${recipe.score.nutrition}</span><span class="badge">Washoku ${recipe.score.washoku}</span>${eligible ? '<span class="badge">Eligible for app review</span>' : ''}</div><div>${image}<button class="vote-btn" data-vote="${recipe.id}" ${hasVoted ? "disabled" : ""}>${hasVoted ? "Voted" : `Vote (${recipe.votes})`}</button></div></article>`;
+    return `<article class="community-item"><div><strong>${recipe.name}</strong><p>${recipe.cuisine} | ${recipe.nutrition.kcal} kcal | ${recipe.nutrition.protein}g protein | score ${recipe.score.overall}</p>${prepLine}${sliceLine}<span class="badge">Tastiness ${recipe.score.tastiness}</span><span class="badge">Protein ${recipe.score.protein}</span><span class="badge">Nutrition ${recipe.score.nutrition}</span><span class="badge">Washoku ${recipe.score.washoku}</span>${eligible ? '<span class="badge">Eligible for app review</span>' : ''}${trackedBadge}${reviewBadge}${sourceLine}</div><div class="community-item-actions">${image}<button class="vote-btn" data-vote="${recipe.id}" ${disabledAttr}>${buttonLabel}</button></div></article>`;
   }).join("");
 
   dom.communityList.querySelectorAll("[data-vote]").forEach((btn) => {
@@ -2338,7 +2973,7 @@ function renderCommunity() {
       if (registry[btn.dataset.vote]) {
         return;
       }
-      const recipe = state.community.find((item) => item.id === btn.dataset.vote);
+      const recipe = state.communityLocal.find((item) => item.id === btn.dataset.vote);
       if (!recipe) return;
       recipe.votes += 1;
       registry[btn.dataset.vote] = true;
@@ -2364,8 +2999,12 @@ function submitRecipe() {
     return;
   }
 
+  if (dom.dishReveal?.hidden) {
+    showDishReveal();
+  }
+
   const payload = recipePayloadFromState();
-  state.community.push(payload);
+  state.communityLocal.push(normalizeCommunityRecipe(payload, { readOnly: false, sourceLabel: "Local board" }));
   saveCommunity();
   renderCommunity();
   celebrateStep("prep");
@@ -2380,8 +3019,12 @@ async function initGame() {
   await loadDynamicIngredientCatalog();
   state.slicing.bestScore = Number(localStorage.getItem(bestSliceScoreKey) || 0);
   loadCommunity();
+  await loadTrackedCommunity();
+  bindCommunityControls();
+  bindToolRack();
   bindStationButtons();
   refreshButtonState();
+  hideDishReveal();
   renderRecipeSummary();
   renderCommunity();
   updateScoreUI();
@@ -2397,6 +3040,9 @@ async function initGame() {
   });
   dom.submitBtn.addEventListener("click", submitRecipe);
   dom.sliceBtn.addEventListener("click", runSliceAction);
+  if (dom.floatingStartBtn) {
+    dom.floatingStartBtn.addEventListener("click", runSliceAction);
+  }
   dom.resetPrepBtn.addEventListener("click", resetPrep);
   if (dom.musicToggleBtn) {
     dom.musicToggleBtn.addEventListener("click", () => {

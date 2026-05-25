@@ -48,8 +48,34 @@
 }
 
 .kitchen-stage {
+  position: relative;
   display: grid;
   gap: 0.42rem;
+}
+
+.floating-start-btn {
+  position: absolute;
+  right: 1rem;
+  bottom: clamp(10.6rem, 17vh, 12.2rem);
+  z-index: 26;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.66rem 1rem;
+  font-size: 0.96rem;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  color: #fffef7;
+  background: linear-gradient(130deg, #ef5b2b, #f5a43a);
+  box-shadow: 0 10px 26px rgba(157, 71, 26, 0.32);
+  cursor: pointer;
+}
+
+.kitchen-stage.is-start-ready .floating-start-btn {
+  animation: start-btn-pop 900ms ease-in-out infinite;
+}
+
+.floating-start-btn[hidden] {
+  display: none !important;
 }
 
 .kitchen-title {
@@ -147,6 +173,34 @@
   font-size: 0.92rem;
   font-weight: 800;
   letter-spacing: 0.01em;
+}
+
+.tool-rack {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.tool-pill {
+  border: 1px solid rgba(22, 54, 41, 0.22);
+  border-radius: 999px;
+  padding: 0.46rem 0.5rem;
+  background: #fff;
+  color: #355948;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tool-pill.is-active {
+  background: rgba(29, 107, 70, 0.16);
+  border-color: rgba(29, 107, 70, 0.38);
+  color: #0f5030;
+}
+
+.tool-pill.is-required {
+  box-shadow: 0 0 0 2px rgba(212, 155, 69, 0.28);
+  border-color: rgba(212, 155, 69, 0.72);
 }
 
 .slice-control-panel.is-onboarding .sprout-start-guide {
@@ -523,6 +577,38 @@
   gap: 0.6rem;
 }
 
+.dish-reveal {
+  margin-top: 0.9rem;
+  border: 1px solid var(--game-line);
+  border-radius: 14px;
+  background: linear-gradient(160deg, rgba(255, 250, 240, 0.96), rgba(244, 252, 244, 0.92));
+  padding: 0.72rem;
+  display: grid;
+  grid-template-columns: 108px 1fr;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.dish-reveal[hidden] {
+  display: none !important;
+}
+
+.dish-reveal-title {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-weight: 900;
+  color: #19422f;
+}
+
+#dishRevealImage {
+  width: 108px;
+  height: 108px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid rgba(22, 54, 41, 0.2);
+  background: #f1e7d4;
+}
+
 .score-card {
   border: 1px solid var(--game-line);
   border-radius: 12px;
@@ -552,6 +638,29 @@
 
 .community-panel {
   margin-top: 1rem;
+}
+
+.community-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.community-action-btn {
+  border: 1px solid rgba(22, 54, 41, 0.16);
+  border-radius: 999px;
+  padding: 0.52rem 0.82rem;
+  background: #fff;
+  color: var(--game-ink);
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.community-action-btn.primary {
+  color: #fffef7;
+  border-color: rgba(29, 107, 70, 0.46);
+  background: linear-gradient(135deg, #1d6b46, #2f8f5a);
 }
 
 .community-list {
@@ -585,6 +694,39 @@
   background: rgba(29, 107, 70, 0.12);
   color: #0f5030;
   font-size: 0.73rem;
+  font-weight: 700;
+}
+
+.community-item .badge.tracked {
+  background: rgba(212, 155, 69, 0.2);
+  color: #7a4b10;
+}
+
+.community-item .badge.pending {
+  background: rgba(212, 155, 69, 0.18);
+  color: #7a4b10;
+}
+
+.community-item .badge.approved {
+  background: rgba(29, 107, 70, 0.16);
+  color: #0f5030;
+}
+
+.community-item .badge.rejected {
+  background: rgba(156, 62, 33, 0.16);
+  color: #8b341a;
+}
+
+.community-item-actions {
+  display: grid;
+  justify-items: end;
+  gap: 0.45rem;
+}
+
+.community-source-note {
+  margin-top: 0.34rem;
+  color: #6a614d;
+  font-size: 0.76rem;
   font-weight: 700;
 }
 
@@ -623,8 +765,23 @@
     height: min(66dvh, 560px);
   }
 
+  .floating-start-btn {
+    right: 0.72rem;
+    bottom: clamp(11.2rem, 19vh, 13.4rem);
+    font-size: 0.92rem;
+    padding: 0.62rem 0.9rem;
+  }
+
   .game-layout {
     grid-template-columns: 1fr;
+  }
+
+  .community-actions {
+    width: 100%;
+  }
+
+  .community-action-btn {
+    flex: 1 1 11rem;
   }
 
   .builder-grid {
@@ -660,6 +817,10 @@
   .slice-meters {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.5rem;
+  }
+
+  .tool-rack {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .slice-meter {
@@ -734,5 +895,14 @@
     justify-content: flex-start;
     padding: 0 0.85rem;
     font-size: 1rem;
+  }
+
+  .dish-reveal {
+    grid-template-columns: 82px 1fr;
+  }
+
+  #dishRevealImage {
+    width: 82px;
+    height: 82px;
   }
 }
