@@ -12,6 +12,9 @@
     .support-hero{padding:4rem 0 2.5rem;text-align:center}
     .support-hero h1{font-size:clamp(2.4rem,5vw,4rem);margin-bottom:.5rem}
     .support-hero .lead{max-width:52ch;margin-inline:auto}
+    .source-callout{max-width:880px;margin:0 auto 1.6rem;background:rgba(255,255,255,.8);border:1px solid rgba(20,53,40,.14);border-radius:16px;padding:1rem 1.2rem;color:var(--ink-2)}
+    .source-callout p{margin:.25rem 0}
+    .source-callout a{color:var(--moss);font-weight:700;text-decoration:underline}
     .faq-section{padding:3rem 0 4rem}
     .faq-grid{display:grid;gap:.75rem;max-width:800px;margin:2rem auto 0}
     .faq-item{background:rgba(255,255,255,.74);border:1px solid rgba(20,53,40,.1);border-radius:20px;overflow:hidden;box-shadow:0 8px 24px rgba(35,45,32,.06)}
@@ -70,6 +73,10 @@
     <p class="eyebrow">Help &amp; Support</p>
     <h1>How can we help?</h1>
     <p class="lead">Browse common questions below. If you don't find an answer, you can submit an issue and we'll get back to you.</p>
+    <div class="source-callout">
+      <p>Nutrition and allergy-related app content is educational and not medical advice.</p>
+      <p>See <a href="sources-methodology.html">Sources &amp; Methodology</a> for references and how recommendations are generated.</p>
+    </div>
   </section>
 
   <!-- FAQ ---------------------------------------------------------------->
@@ -111,6 +118,19 @@
           </summary>
           <div class="faq-answer">
             <p>Navigate to <strong>Meal Plan → Week View</strong> and tap the three-dot menu in the top-right corner. Select <em>Reset Week</em> or <em>Start Fresh</em>. This will clear the current week's plan but preserve your meal history and saved recipes.</p>
+          </div>
+        </details>
+
+        <details class="faq-item reveal">
+          <summary class="faq-question">
+            Where do nutrition and allergy references come from?
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </summary>
+          <div class="faq-answer">
+            <p>Washoku Plus uses official references for educational nutrition and allergy guidance. Nutrition estimates are based on <a href="https://fdc.nal.usda.gov/" target="_blank" rel="noopener">USDA FoodData Central</a> and the <a href="https://fdc.nal.usda.gov/api-guide" target="_blank" rel="noopener">FoodData Central API Guide</a>.</p>
+            <p>General meal-pattern language references <a href="https://www.dietaryguidelines.gov/" target="_blank" rel="noopener">Dietary Guidelines for Americans</a> and <a href="https://www.cdc.gov/nutrition/features/healthy-eating-tips.html" target="_blank" rel="noopener">CDC Healthy Eating Tips</a>.</p>
+            <p>Allergy information references <a href="https://www.fda.gov/food/nutrition-food-labeling-and-critical-foods/food-allergies" target="_blank" rel="noopener">FDA Food Allergies</a> and <a href="https://www.fda.gov/food/food-allergensgluten-free-guidance-documents-regulatory-information/frequently-asked-questions-food-allergen-labeling-guidance-industry" target="_blank" rel="noopener">FDA Food Allergen Labeling Guidance</a>. Ingredient lists can vary, so verify labels and restaurant details.</p>
+            <p>Complete details: <a href="sources-methodology.html">Sources &amp; Methodology</a>.</p>
           </div>
         </details>
 
@@ -236,6 +256,7 @@
       <a href="index.html#approach">Approach</a>
       <a href="index.html#guides">Guides</a>
       <a href="ios.html">App Store</a>
+      <a href="sources-methodology.html">Sources &amp; Methodology</a>
       <a href="privacy.html">Privacy</a>
       <a href="user-agreement.html">User Agreement</a>
       <a href="ios.html">iOS App</a>

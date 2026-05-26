@@ -382,6 +382,10 @@ function renderMenuCards(targetId, meals, limit = 0) {
 		.map((meal) => {
 			const tags = Array.isArray(meal.tags) ? meal.tags.slice(0, 3).join(" · ") : "";
 			const cuisine = meal.cuisine || "Global-inspired";
+			const hasNutritionEstimate = typeof meal.estimatedProteinG === "number" || typeof meal.estimatedCalories === "number";
+			const nutritionSourceNote = hasNutritionEstimate
+				? `<p class="nutrition-source-note">Nutrition source: <a href="https://fdc.nal.usda.gov/" target="_blank" rel="noopener">USDA FoodData Central</a> estimates. <a href="sources-methodology.html">Sources</a></p>`
+				: "";
 			const imageMarkup = meal.image
 				? `<figure class="menu-card-media"><img src="${meal.image}" alt="${meal.name || "Meal"} dish"></figure>`
 				: "";
@@ -394,6 +398,7 @@ function renderMenuCards(targetId, meals, limit = 0) {
 						<p class="menu-cuisine">${cuisine}</p>
 						<p class="menu-meta">${buildMealMeta(meal)}</p>
 						<p>${meal.protein || "Protein"} + ${(meal.plants || []).slice(0, 2).join(", ") || "plants"}</p>
+						${nutritionSourceNote}
 						${tags ? `<p class="menu-tags">${tags}</p>` : ""}
 					</div>
 				</article>

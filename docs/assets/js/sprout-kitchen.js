@@ -2961,10 +2961,11 @@ function renderCommunity() {
     const buttonLabel = isTracked ? "Tracked" : hasVoted ? "Voted" : `Vote (${recipe.votes})`;
     const disabledAttr = isTracked || hasVoted ? "disabled" : "";
     const sourceLine = sourceBits.length ? `<p class="community-source-note">${sourceBits.join(" · ")}</p>` : "";
+    const nutritionSourceLine = `<p class="community-source-note">Nutrition source: <a href="https://fdc.nal.usda.gov/" target="_blank" rel="noopener">USDA FoodData Central</a> estimates. <a href="sources-methodology.html">Sources</a></p>`;
     const trackedBadge = isTracked ? `<span class="badge tracked">Checked-in</span>` : "";
     const reviewBadge = isTracked ? `<span class="badge ${recipe.reviewStatus}">${recipe.reviewStatus}</span>` : "";
 
-    return `<article class="community-item"><div><strong>${recipe.name}</strong><p>${recipe.cuisine} | ${recipe.nutrition.kcal} kcal | ${recipe.nutrition.protein}g protein | score ${recipe.score.overall}</p>${prepLine}${sliceLine}<span class="badge">Tastiness ${recipe.score.tastiness}</span><span class="badge">Protein ${recipe.score.protein}</span><span class="badge">Nutrition ${recipe.score.nutrition}</span><span class="badge">Washoku ${recipe.score.washoku}</span>${eligible ? '<span class="badge">Eligible for app review</span>' : ''}${trackedBadge}${reviewBadge}${sourceLine}</div><div class="community-item-actions">${image}<button class="vote-btn" data-vote="${recipe.id}" ${disabledAttr}>${buttonLabel}</button></div></article>`;
+    return `<article class="community-item"><div><strong>${recipe.name}</strong><p>${recipe.cuisine} | ${recipe.nutrition.kcal} kcal | ${recipe.nutrition.protein}g protein | score ${recipe.score.overall}</p>${nutritionSourceLine}${prepLine}${sliceLine}<span class="badge">Tastiness ${recipe.score.tastiness}</span><span class="badge">Protein ${recipe.score.protein}</span><span class="badge">Nutrition ${recipe.score.nutrition}</span><span class="badge">Washoku ${recipe.score.washoku}</span>${eligible ? '<span class="badge">Eligible for app review</span>' : ''}${trackedBadge}${reviewBadge}${sourceLine}</div><div class="community-item-actions">${image}<button class="vote-btn" data-vote="${recipe.id}" ${disabledAttr}>${buttonLabel}</button></div></article>`;
   }).join("");
 
   dom.communityList.querySelectorAll("[data-vote]").forEach((btn) => {

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Sources & Methodology - Washoku Plus</title>
+  <meta name="description" content="Verified nutrition, healthy-eating, and food-allergy sources used by Washoku Plus educational recommendations.">
+  <meta name="theme-color" content="#123B2A">
+  <link rel="icon" href="assets/images/favicon.svg">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<header class="site-header">
+  <nav class="shell nav">
+    <a class="brand" href="index.html" aria-label="Washoku Plus home">
+      <span class="logo-dot" aria-hidden="true"></span>
+      <span>Washoku <strong>Plus</strong></span>
+    </a>
+    <button class="menu-button" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <div class="nav-links" id="nav-links">
+      <a href="index.html#approach">Approach</a>
+      <a href="index.html#guides">Guides</a>
+      <a href="menu.html">Menu</a>
+      <a href="support.html">Support</a>
+      <a href="ios.html" class="nav-cta">App Store</a>
+    </div>
+  </nav>
+</header>
+
+<main class="section shell">
+  <article class="waitlist-card" style="max-width: 900px; margin:auto; text-align:left;">
+    <p class="eyebrow">Review Info</p>
+    <h1>Sources &amp; Methodology</h1>
+    <p>This page explains the references and estimation approach used for nutrition, meal-pattern, and allergy-related educational content in Washoku Plus.</p>
+
+    <h2>Important Notice</h2>
+    <p>Washoku Plus is educational wellness support and is not medical advice, diagnosis, or treatment.</p>
+
+    <h2>How recommendations are generated</h2>
+    <p>Meal suggestions are educational and based on general nutrition guidance, user preferences, meal-rotation patterns, and estimated nutrition values for ingredients and portions.</p>
+
+    <h2>Nutrition values</h2>
+    <p>Calories, protein, carbs, fats, fiber, and related nutrition values are estimates derived from USDA data and recipe assumptions. Actual values can vary by brand, preparation method, and portion size.</p>
+
+    <h2>Allergy guidance</h2>
+    <p>Allergy warnings and substitutions are informational only. Restaurant and packaged ingredients can vary. Always verify labels and confirm ingredients with the restaurant or manufacturer.</p>
+
+    <h2>Verified official sources</h2>
+    <ul>
+      <li><a href="https://fdc.nal.usda.gov/" target="_blank" rel="noopener">USDA FoodData Central</a> - nutrition data estimates, calories, macros, fiber, and ingredient profiles.</li>
+      <li><a href="https://fdc.nal.usda.gov/api-guide" target="_blank" rel="noopener">USDA FoodData Central API Guide</a> - methodology reference for developer nutrition-data usage.</li>
+      <li><a href="https://www.dietaryguidelines.gov/" target="_blank" rel="noopener">Dietary Guidelines for Americans</a> - general balanced eating and meal-pattern guidance.</li>
+      <li><a href="https://www.cdc.gov/nutrition/features/healthy-eating-tips.html" target="_blank" rel="noopener">CDC Healthy Eating Tips</a> - plain-language healthy eating pattern guidance.</li>
+      <li><a href="https://www.fda.gov/food/nutrition-food-labeling-and-critical-foods/food-allergies" target="_blank" rel="noopener">FDA Food Allergies</a> - major allergen guidance including wheat, tree nuts, peanuts, milk, egg, fish, shellfish, soy, and sesame.</li>
+      <li><a href="https://www.fda.gov/food/food-allergensgluten-free-guidance-documents-regulatory-information/frequently-asked-questions-food-allergen-labeling-guidance-industry" target="_blank" rel="noopener">FDA Food Allergen Labeling Guidance</a> - allergen-labeling methodology and interpretation reference.</li>
+    </ul>
+
+    <p><a class="button secondary" href="support.html">Support</a> <a class="button secondary" href="index.html#app">Back to app overview</a></p>
+  </article>
+</main>
+
+<footer class="site-footer">
+  <div class="shell footer-grid">
+    <div><strong>Washoku Plus</strong><p>Balanced meals. Better patterns. Calmer health.</p></div>
+    <div>
+      <a href="index.html#approach">Approach</a>
+      <a href="index.html#guides">Guides</a>
+      <a href="menu.html">Menu</a>
+      <a href="ios.html">App Store</a>
+      <a href="support.html">Support</a>
+      <a href="sources-methodology.html">Sources &amp; Methodology</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="user-agreement.html">User Agreement</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const menu = document.querySelector(".menu-button");
+  const navLinks = document.querySelector("#nav-links");
+  menu?.addEventListener("click", () => {
+    const open = navLinks.classList.toggle("open");
+    menu.setAttribute("aria-expanded", String(open));
+  });
+</script>
+</body>
+</html>
