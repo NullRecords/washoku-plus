@@ -1,0 +1,35 @@
+name: Daily Social Pack
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "5 7 * * *"
+
+jobs:
+  generate-and-queue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Generate daily shorts pack
+        run: |
+          python docs/tools/generate_shorts_pack.py --count 3
+
+      - name: Build publish queue (dry-run)
+        run: |
+          python docs/tools/publish_social_content.py --mode dry-run
+
+      - name: Upload social automation artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-social-pack
+          path: |
+            docs/assets/data/social/*.json
+            docs/assets/data/social/*.md
+            automation/social/outbox/*.json

@@ -1,0 +1,28 @@
+{
+  "platforms": {
+    "youtube_shorts": {
+      "enabled": true,
+      "channelId": "YOUR_YOUTUBE_CHANNEL_ID",
+      "oauthClientId": "YOUR_OAUTH_CLIENT_ID",
+      "oauthClientSecret": "YOUR_OAUTH_CLIENT_SECRET",
+      "refreshToken": "YOUR_REFRESH_TOKEN",
+      "privacyStatus": "public",
+      "categoryId": "22"
+    },
+    "instagram_reels": {
+      "enabled": true,
+      "instagramBusinessAccountId": "YOUR_IG_BUSINESS_ACCOUNT_ID",
+      "facebookPageId": "YOUR_FACEBOOK_PAGE_ID",
+      "accessToken": "YOUR_META_ACCESS_TOKEN",
+      "publishWebhookUrl": "https://your-automation-endpoint.example/instagram/publish",
+      "webhookToken": "OPTIONAL_WEBHOOK_BEARER_TOKEN"
+    },
+    "tiktok": {
+      "enabled": true,
+      "advertiserOrBusinessId": "YOUR_TIKTOK_BUSINESS_ID",
+      "accessToken": "YOUR_TIKTOK_ACCESS_TOKEN",
+      "publishWebhookUrl": "https://your-automation-endpoint.example/tiktok/publish",
+      "webhookToken": "OPTIONAL_WEBHOOK_BEARER_TOKEN"
+    }
+  }
+}

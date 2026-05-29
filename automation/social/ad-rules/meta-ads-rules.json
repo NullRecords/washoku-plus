@@ -1,0 +1,42 @@
+{
+  "version": "1.0",
+  "platform": "meta",
+  "objective": "app_installs",
+  "dailyBudget": {
+    "currency": "USD",
+    "amount": 45
+  },
+  "targeting": {
+    "locations": ["US", "CA", "IL"],
+    "ageMin": 21,
+    "ageMax": 55,
+    "interests": ["healthy eating", "meal prep", "nutrition", "wellness"]
+  },
+  "autoRules": [
+    {
+      "name": "pause_low_ctr",
+      "windowHours": 48,
+      "if": {
+        "impressionsGte": 2500,
+        "ctrLt": 0.8
+      },
+      "then": {
+        "action": "pause_ad"
+      }
+    },
+    {
+      "name": "boost_top_creatives",
+      "windowHours": 72,
+      "if": {
+        "spendGte": 20,
+        "cpiLt": 2.5,
+        "ctrGte": 1.5
+      },
+      "then": {
+        "action": "increase_budget_percent",
+        "value": 20,
+        "maxDailyBudget": 120
+      }
+    }
+  ]
+}

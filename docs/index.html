@@ -170,6 +170,65 @@
     </div>
     <div class="menu-library-panel reveal">
       <div class="menu-summary" id="menuSummary">Loading menu data...</div>
+      <section class="menu-planner-controls" aria-label="Seasonal and regional meal planner filters">
+        <div class="menu-planner-grid">
+          <label class="menu-planner-field" for="menuIngredientSearch">
+            <span>Find by ingredient</span>
+            <input id="menuIngredientSearch" type="search" placeholder="Try spinach, salmon, cabbage, tofu..." autocomplete="off">
+          </label>
+          <label class="menu-planner-field" for="menuSeasonSelect">
+            <span>Season</span>
+            <select id="menuSeasonSelect">
+              <option value="auto">Auto (current season)</option>
+              <option value="spring">Spring</option>
+              <option value="summer">Summer</option>
+              <option value="fall">Fall</option>
+              <option value="winter">Winter</option>
+            </select>
+          </label>
+          <label class="menu-planner-field" for="menuRegionSelect">
+            <span>Region</span>
+            <select id="menuRegionSelect">
+              <option value="global">Global</option>
+              <option value="north-america">North America</option>
+              <option value="us-northeast">US Northeast</option>
+              <option value="us-midwest">US Midwest</option>
+              <option value="us-south">US South</option>
+              <option value="us-west">US West</option>
+              <option value="east-asia">East Asia</option>
+              <option value="mediterranean">Mediterranean</option>
+              <option value="latin-america">Latin America</option>
+              <option value="europe">Europe</option>
+              <option value="oceania">Oceania</option>
+            </select>
+          </label>
+          <label class="menu-planner-field" for="menuZipInput">
+            <span>ZIP code (optional)</span>
+            <input id="menuZipInput" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="10" placeholder="US ZIP code">
+          </label>
+        </div>
+        <div class="menu-planner-actions">
+          <label class="menu-planner-checkbox" for="menuSeasonalOnly">
+            <input id="menuSeasonalOnly" type="checkbox">
+            <span>Show only meals with in-season or regional ingredient matches</span>
+          </label>
+          <div class="menu-planner-buttons">
+            <button id="menuAutoRegionBtn" class="button secondary" type="button">Use my location</button>
+            <button id="menuPlannerResetBtn" class="button secondary" type="button">Reset filters</button>
+            <button id="menuPlannerQuestBtn" class="button secondary" type="button">New quest</button>
+            <button id="menuPlannerShareBtn" class="button secondary" type="button">Share plan</button>
+            <button id="menuPlannerCsvBtn" class="button secondary" type="button">Download CSV</button>
+            <button id="menuPlannerJsonBtn" class="button secondary" type="button">Download JSON</button>
+            <button id="menuPlannerPdfBtn" class="button secondary" type="button">Download PDF</button>
+          </div>
+        </div>
+        <p class="menu-planner-status" id="menuPlannerStatus">Planner defaults to current season and global ingredients.</p>
+        <p class="menu-planner-coach" id="menuPlannerCoach" aria-live="polite">Sprout quest prompt: choose one in-season ingredient and build a quick bowl around it.</p>
+        <div class="menu-planner-game" aria-live="polite">
+          <p class="menu-planner-game-score" id="menuPlannerGameScore">Planner score: 0 · Level 1 Pathfinder</p>
+          <p class="menu-planner-game-badges" id="menuPlannerGameBadges">Badges: Start a quest to unlock seasonal and regional badges.</p>
+        </div>
+      </section>
       <div class="menu-categories" id="menuCategoryChips"></div>
       <div class="menu-preview-grid" id="menuPreviewGrid"></div>
       <div class="menu-library-actions">

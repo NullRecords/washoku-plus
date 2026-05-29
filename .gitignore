@@ -1,1 +1,6 @@
 .DS_Store
+automation/social/publisher-config.json
+automation/social/outbox/*.json
+docs/assets/data/social/daily-shorts-pack-*.json
+docs/assets/data/social/daily-shorts-pack-*.md
+automation/social/media/*.mp4

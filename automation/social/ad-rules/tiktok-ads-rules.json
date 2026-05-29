@@ -1,0 +1,41 @@
+{
+  "version": "1.0",
+  "platform": "tiktok",
+  "objective": "app_installs",
+  "dailyBudget": {
+    "currency": "USD",
+    "amount": 35
+  },
+  "targeting": {
+    "locations": ["US", "CA", "IL"],
+    "ageMin": 18,
+    "ageMax": 44,
+    "interests": ["foodtok", "healthy lifestyle", "meal planning"]
+  },
+  "autoRules": [
+    {
+      "name": "pause_underperformers",
+      "windowHours": 48,
+      "if": {
+        "impressionsGte": 3000,
+        "ctrLt": 0.9
+      },
+      "then": {
+        "action": "pause_adgroup"
+      }
+    },
+    {
+      "name": "scale_low_cpa",
+      "windowHours": 72,
+      "if": {
+        "conversionsGte": 8,
+        "cpaLt": 2.3
+      },
+      "then": {
+        "action": "increase_budget_percent",
+        "value": 15,
+        "maxDailyBudget": 90
+      }
+    }
+  ]
+}

@@ -49,3 +49,21 @@ git commit -m "chore: update ForgeWeb submodule"
 - The signup form is static and needs to be connected to an email provider.
 - The companion character is HTML/CSS/JS, so it is lightweight and easy to animate.
 - Avoid medical claims. Use educational language and “possible contributor” wording for health insights.
+
+## Social Automation (Phase 1)
+
+- Daily shorts pack generator: `docs/tools/generate_shorts_pack.py`
+- Connector-ready publisher interface: `docs/tools/publish_social_content.py`
+- Unified local runner: `ops/startup.sh`
+- Daily workflow: `.github/workflows/daily-social-pack.yml`
+- Operations guide: `devdocs/SOCIAL-AUTOMATION.md`
+- Account setup guide with platform links: `devdocs/SOCIAL-ACCOUNT-SETUP.md`
+
+Quick local workflow:
+
+```bash
+bash ops/startup.sh social-setup
+bash ops/startup.sh social-pack 3
+bash ops/startup.sh social-media-plan
+bash ops/startup.sh social-queue dry-run
+```
